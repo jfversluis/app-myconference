@@ -4,12 +4,35 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Conference.Maui"
+    xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
     Shell.FlyoutBehavior="Disabled"
-    Title="Conference.Maui">
+    Title="{x:Static localization:Strings.AppTitle}">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <Tab Title="{x:Static localization:Strings.ScheduleTabTitle}">
+            <ShellContent
+                Title="{x:Static localization:Strings.SchedulePageTitle}"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="Schedule" />
+        </Tab>
+        <Tab Title="{x:Static localization:Strings.MyAgendaTabTitle}">
+            <ShellContent
+                Title="{x:Static localization:Strings.MyAgendaPageTitle}"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="MyAgenda" />
+        </Tab>
+        <Tab Title="{x:Static localization:Strings.SponsorsTabTitle}">
+            <ShellContent
+                Title="{x:Static localization:Strings.SponsorsPageTitle}"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="Sponsors" />
+        </Tab>
+        <Tab Title="{x:Static localization:Strings.AboutTabTitle}">
+            <ShellContent
+                Title="{x:Static localization:Strings.AboutPageTitle}"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="About" />
+        </Tab>
+    </TabBar>
 
 </Shell>
