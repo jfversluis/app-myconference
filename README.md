@@ -8,8 +8,9 @@ At the time of writing I don't have a fully etched out plan yet, so stay tuned a
 
 Great that you're using this app for your own event! Here are the steps you need to take to make it align with your own branding.
 
-1. Open the **Resources/Strings/Strings.resx** file and replace all texts with what you want them to be. You at least want to change the app name from "My Conference" to be your own event name. If there are any additional resx files either remove those if you don't want translations, or change them accordingly.
-1. TBD
+1. Open the **src/Conference.Maui/Resources/Strings/Strings.resx** file and replace all texts with what you want them to be. You at least want to change the app name from "My Conference" to be your own event name. If there are any additional resx files either remove those if you don't want translations, or change them accordingly.
+1. Change the value for **ApplicationTitle** in the **src/Conference.Maui/Conference.Maui.csproj** file, this will be the name that shows up on the device home screen
+1. Change the value for **ApplicationId** in the **src/Conference.Maui/Conference.Maui.csproj** file, this will be the unique identifier used for the app stores
 
 ## Acknowledgements
 
@@ -27,4 +28,3 @@ Used icons are provided under the most permissive license, mostly CC0 license.
 * [tab_myagenda.svg](https://www.svgrepo.com/svg/424364/favorite-like-love)
 * [tab_sponsors.svg](https://www.svgrepo.com/svg/51130/two-balloons)
 * [tab_about.svg](https://www.svgrepo.com/svg/156386/conversation-questions)
-* 
