@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Conference.Maui.Interfaces;
+using Conference.Maui.Pages;
+using Conference.Maui.Services;
+using Conference.Maui.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace Conference.Maui;
 
@@ -15,8 +19,14 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        // TODO I don't think HttpClientFactory is great for mobile...?
+        builder.Services.AddHttpClient();
+        builder.Services.AddSingleton<IEventDataService, SessionizeService>();
+        builder.Services.AddTransient<ScheduleViewModel>();
+        builder.Services.AddTransient<SchedulePage>();
+
 #if DEBUG
-		builder.Logging.AddDebug();
+        builder.Logging.AddDebug();
 #endif
 
         return builder.Build();

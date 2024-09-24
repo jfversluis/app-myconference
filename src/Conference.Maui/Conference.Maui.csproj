@@ -62,6 +62,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.90" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+		<PackageReference Include="Sessionize.Api.Client" Version="1.1.0" />
 	</ItemGroup>
 
 	<!-- Localization -->

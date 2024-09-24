@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             x:DataType="viewmodels:ScheduleViewModel"
              x:Class="Conference.Maui.Pages.SchedulePage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <CollectionView ItemsSource="{Binding Sessions}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="models:Session">
+                <VerticalStackLayout Margin="10">
+                    <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="32" />
+                    <Label Text="{Binding Description}" />
+                </VerticalStackLayout>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>
