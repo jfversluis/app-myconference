@@ -9,25 +9,25 @@
     Title="{x:Static localization:Strings.AppTitle}">
 
     <TabBar>
-        <Tab Title="{x:Static localization:Strings.ScheduleTabTitle}">
+        <Tab Title="{x:Static localization:Strings.ScheduleTabTitle}" Icon="tab_schedule.png">
             <ShellContent
                 Title="{x:Static localization:Strings.SchedulePageTitle}"
                 ContentTemplate="{DataTemplate local:MainPage}"
                 Route="Schedule" />
         </Tab>
-        <Tab Title="{x:Static localization:Strings.MyAgendaTabTitle}">
+        <Tab Title="{x:Static localization:Strings.MyAgendaTabTitle}" Icon="tab_myagenda.png">
             <ShellContent
                 Title="{x:Static localization:Strings.MyAgendaPageTitle}"
                 ContentTemplate="{DataTemplate local:MainPage}"
                 Route="MyAgenda" />
         </Tab>
-        <Tab Title="{x:Static localization:Strings.SponsorsTabTitle}">
+        <Tab Title="{x:Static localization:Strings.SponsorsTabTitle}" Icon="tab_sponsors.png">
             <ShellContent
                 Title="{x:Static localization:Strings.SponsorsPageTitle}"
                 ContentTemplate="{DataTemplate local:MainPage}"
                 Route="Sponsors" />
         </Tab>
-        <Tab Title="{x:Static localization:Strings.AboutTabTitle}">
+        <Tab Title="{x:Static localization:Strings.AboutTabTitle}" Icon="tab_about.png">
             <ShellContent
                 Title="{x:Static localization:Strings.AboutPageTitle}"
                 ContentTemplate="{DataTemplate local:MainPage}"

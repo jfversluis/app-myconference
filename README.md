@@ -18,3 +18,13 @@ This idea came from the [Xamarin pre-build conference app](https://github.com/xa
 Now with all the conferences using Sessionize, I thought it might be a good idea to rebuild this app, now with .NET MAUI and powered by Sessionize!
 
 As a starting point I took some inspiration from James who started to build a [version of this](https://github.com/jamesmontemagno/app-myconference).
+
+### Icons
+
+Used icons are provided under the most permissive license, mostly CC0 license.
+
+* [tab_schedule.svg](https://www.svgrepo.com/svg/35457/calendar-symbol)
+* [tab_myagenda.svg](https://www.svgrepo.com/svg/424364/favorite-like-love)
+* [tab_sponsors.svg](https://www.svgrepo.com/svg/51130/two-balloons)
+* [tab_about.svg](https://www.svgrepo.com/svg/156386/conversation-questions)
+* 
