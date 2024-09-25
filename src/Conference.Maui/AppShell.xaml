@@ -15,6 +15,12 @@
                 ContentTemplate="{DataTemplate pages:SchedulePage}"
                 Route="Schedule" />
         </Tab>
+        <Tab Title="{x:Static localization:Strings.SpeakersTabTitle}" Icon="tab_speakers.png">
+            <ShellContent
+                Title="{x:Static localization:Strings.SpeakersPageTitle}"
+                ContentTemplate="{DataTemplate pages:SpeakersPage}"
+                Route="Speakers" />
+        </Tab>
         <Tab Title="{x:Static localization:Strings.MyAgendaTabTitle}" Icon="tab_myagenda.png">
             <ShellContent
                 Title="{x:Static localization:Strings.MyAgendaPageTitle}"

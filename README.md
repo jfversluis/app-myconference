@@ -25,6 +25,7 @@ As a starting point I took some inspiration from James who started to build a [v
 Used icons are provided under the most permissive license, mostly CC0 license.
 
 * [tab_schedule.svg](https://www.svgrepo.com/svg/35457/calendar-symbol)
+* [tab_speakers.svg](https://www.svgrepo.com/svg/307370/indifferent-unsure-shrug-irresponsible)
 * [tab_myagenda.svg](https://www.svgrepo.com/svg/424364/favorite-like-love)
 * [tab_sponsors.svg](https://www.svgrepo.com/svg/51130/two-balloons)
 * [tab_about.svg](https://www.svgrepo.com/svg/156386/conversation-questions)

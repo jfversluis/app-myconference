@@ -125,9 +125,17 @@
     <value>Schedule</value>
     <comment>Main page tab title for the schedule tab</comment>
   </data>
+  <data name="SpeakersTabTitle" xml:space="preserve">
+    <value>Speakers</value>
+    <comment>Main page tab title for the speakers tab</comment>
+  </data>
   <data name="SchedulePageTitle" xml:space="preserve">
     <value>Schedule</value>
     <comment>Title for the schedule page</comment>
+  </data>
+  <data name="SpeakersPageTitle" xml:space="preserve">
+    <value>Speakers</value>
+    <comment>Title for the speakers page</comment>
   </data>
   <data name="SponsorsTabTitle" xml:space="preserve">
     <value>Sponsors</value>

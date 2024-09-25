@@ -124,6 +124,24 @@ namespace Conference.Maui.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Speakers.
+        /// </summary>
+        internal static string SpeakersPageTitle {
+            get {
+                return ResourceManager.GetString("SpeakersPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speakers.
+        /// </summary>
+        internal static string SpeakersTabTitle {
+            get {
+                return ResourceManager.GetString("SpeakersTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sponsors.
         /// </summary>
         internal static string SponsorsPageTitle {
