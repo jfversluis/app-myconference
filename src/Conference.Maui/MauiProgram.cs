@@ -1,4 +1,5 @@
-﻿using Conference.Maui.Interfaces;
+﻿using CommunityToolkit.Maui;
+using Conference.Maui.Interfaces;
 using Conference.Maui.Pages;
 using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
@@ -17,7 +18,8 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            });
+            })
+            .UseMauiCommunityToolkit();
 
         // TODO I don't think HttpClientFactory is great for mobile...?
         builder.Services.AddHttpClient();
