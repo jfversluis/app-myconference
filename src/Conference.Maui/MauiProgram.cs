@@ -25,6 +25,9 @@ public static class MauiProgram
         builder.Services.AddTransient<ScheduleViewModel>();
         builder.Services.AddTransient<SchedulePage>();
 
+        builder.Services.AddTransient<SpeakersViewModel>();
+        builder.Services.AddTransient<SpeakersPage>();
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

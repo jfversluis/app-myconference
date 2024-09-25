@@ -20,6 +20,23 @@ public class SessionizeService : IEventDataService
         }));
     }
 
+    public async Task<List<Speaker>> GetAllSpeakers()
+    {
+        var remoteSpeakers = await _sessionizeClient.GetSpeakersListAsync();
+
+        return remoteSpeakers.Select(speaker => new Speaker
+        {
+            Bio = speaker.Bio,
+            FirstName = speaker.FirstName,
+            Id = speaker.Id,
+            IsTopSpeaker = speaker.IsTopSpeaker,
+            LastName = speaker.LastName,
+            ProfilePictureUrl = speaker.ProfilePicture,
+            TagLine = speaker.TagLine,
+            //Sessions = speaker.Sessions,
+        }).ToList();
+    }
+
     public async Task<List<Session>> GetAllSessions()
     {
         // TODO what are groups in Sessionize?
@@ -38,8 +55,9 @@ public class SessionizeService : IEventDataService
             Room = session.Room,
             Speakers = session.Speakers.Select(speaker => new Speaker
             {
-                Id = speaker.Id,
-                Name = speaker.Name,
+                // TODO first only get minimal info?
+                Id = Guid.Parse(speaker.Id),
+                FirstName = speaker.Name,
             }).ToList(),
             StartsAt = session.StartsAt,
             Status = session.Status,
