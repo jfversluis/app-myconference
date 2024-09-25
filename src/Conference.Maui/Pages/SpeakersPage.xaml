@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             x:DataType="viewmodels:SpeakersViewModel"
              x:Class="Conference.Maui.Pages.SpeakersPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <CollectionView ItemsSource="{Binding Speakers}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="models:Speaker">
+                <Grid Margin="10" RowDefinitions="*,*" ColumnDefinitions="50,*" ColumnSpacing="10">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
+                    </Grid.GestureRecognizers>
+                    
+                    <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="2" ImageSource="{Binding ProfilePictureUrl}" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding FullName}" FontAttributes="Bold" FontSize="18" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding TagLine}" MaxLines="3" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>

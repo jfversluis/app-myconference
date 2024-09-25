@@ -161,4 +161,8 @@
     <value>About</value>
     <comment>Title for the about page</comment>
   </data>
+  <data name="SessionsAtThisEventHeader" xml:space="preserve">
+    <value>Sessions at this event</value>
+    <comment>On the speaker details page shown as a header above the sessions this speaker has at this event</comment>
+  </data>
 </root>

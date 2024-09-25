@@ -124,6 +124,15 @@ namespace Conference.Maui.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sessions at this event.
+        /// </summary>
+        internal static string SessionsAtThisEventHeader {
+            get {
+                return ResourceManager.GetString("SessionsAtThisEventHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Speakers.
         /// </summary>
         internal static string SpeakersPageTitle {
