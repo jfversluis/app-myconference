@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
+             x:DataType="viewmodels:SpeakerDetailsViewModel"
+             x:Class="Conference.Maui.Pages.SpeakerDetailsPage"
+             Title="{Binding SelectedSpeaker.FullName}">
+    <VerticalStackLayout Margin="10" Spacing="10">
+        <toolkit:AvatarView ImageSource="{Binding SelectedSpeaker.ProfilePictureUrl}" />
+
+        <Label Text="{Binding SelectedSpeaker.TagLine}" HorizontalOptions="Center" />
+
+        <Label 
+            Text="{Binding SelectedSpeaker.Bio}"
+            HorizontalOptions="Center" />
+
+        <Label Text="{x:Static localization:Strings.SessionsAtThisEventHeader}" FontAttributes="Bold" />
+        
+        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding SelectedSpeaker.Sessions}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="models:Session">
+                    <!-- TODO make pretty -->
+                    <Label Text="{Binding Title}" />
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

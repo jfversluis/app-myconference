@@ -12,6 +12,8 @@ public class Session
 
     public DateTimeOffset EndsAt { get; set; }
 
+    public int DurationInMinutes => (int)EndsAt.Subtract(StartsAt).TotalMinutes;
+
     public bool IsServiceSession { get; set; }
 
     public bool IsPlenumSession { get; set; }

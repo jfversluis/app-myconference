@@ -10,9 +10,12 @@
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="models:Speaker">
                 <Grid Margin="10" RowDefinitions="*,*" ColumnDefinitions="50,*" ColumnSpacing="10">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
+                    </Grid.GestureRecognizers>
                     
                     <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="2" ImageSource="{Binding ProfilePictureUrl}" />
-                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding FullName}" FontAttributes="Bold" FontSize="24" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding FullName}" FontAttributes="Bold" FontSize="18" />
                     <Label Grid.Row="1" Grid.Column="1" Text="{Binding TagLine}" MaxLines="3" />
                 </Grid>
             </DataTemplate>

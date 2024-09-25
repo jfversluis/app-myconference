@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using System.Collections.ObjectModel;
@@ -20,5 +21,12 @@ public partial class SpeakersViewModel(IEventDataService eventDataService) : Obs
         {
             Speakers.Add(speaker);
         }
+    }
+
+    [RelayCommand]
+    private async Task GoToSpeakerDetails(Speaker selectedSpeaker)
+    {
+        await Shell.Current.GoToAsync("SpeakerDetails",
+            new Dictionary<string, object> { { "SelectedSpeaker", selectedSpeaker } });
     }
 }

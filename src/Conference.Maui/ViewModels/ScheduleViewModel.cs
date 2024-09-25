@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using System.Collections.ObjectModel;
@@ -20,5 +21,12 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
         {
             Sessions.Add(session);
         }
+    }
+
+    [RelayCommand]
+    private async Task GoToSessionDetails(Session selectedSession)
+    {
+        await Shell.Current.GoToAsync("SessionDetails",
+            new Dictionary<string, object> { { "SelectedSession", selectedSession } });
     }
 }

@@ -24,11 +24,18 @@ public static class MauiProgram
         // TODO I don't think HttpClientFactory is great for mobile...?
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton<IEventDataService, SessionizeService>();
+        
         builder.Services.AddTransient<ScheduleViewModel>();
         builder.Services.AddTransient<SchedulePage>();
 
         builder.Services.AddTransient<SpeakersViewModel>();
         builder.Services.AddTransient<SpeakersPage>();
+
+        builder.Services.AddTransient<SessionDetailsViewModel>();
+        builder.Services.AddTransient<SessionDetailsPage>();
+
+        builder.Services.AddTransient<SpeakerDetailsViewModel>();
+        builder.Services.AddTransient<SpeakerDetailsPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

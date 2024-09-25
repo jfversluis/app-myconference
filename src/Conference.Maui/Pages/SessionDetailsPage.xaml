@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+             x:DataType="viewmodels:SessionDetailsViewModel"
+             x:Class="Conference.Maui.Pages.SessionDetailsPage"
+             Title="{Binding SelectedSession.Title}">
+    <VerticalStackLayout Margin="10" Spacing="10">
+        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding SelectedSession.Speakers}"
+                               HorizontalOptions="Center">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="models:Speaker">
+                    <VerticalStackLayout>
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SessionDetailsViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
+                        </VerticalStackLayout.GestureRecognizers>
+                        
+                        <toolkit:AvatarView ImageSource="{Binding ProfilePictureUrl}" />
+                        <Label Text="{Binding FullName}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </HorizontalStackLayout>
+
+        <Label Text="{Binding SelectedSession.Room}" FontAttributes="Bold" HorizontalOptions="Center" />
+
+        <Label HorizontalOptions="Center">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="{Binding SelectedSession.StartsAt, StringFormat='{0:dddd, d MMMM HH:mm }'}" />
+                    <Span Text="{Binding SelectedSession.DurationInMinutes, StringFormat='({0} minutes)'}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label 
+            Text="{Binding SelectedSession.Description}"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+    </VerticalStackLayout>
+</ContentPage>

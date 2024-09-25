@@ -11,6 +11,9 @@ public class SessionizeService : IEventDataService
 {
     private readonly SessionizeApiClient _sessionizeClient;
 
+    private List<Speaker> _speakers = [];
+    private List<Session> _sessions = [];
+
     public SessionizeService(IHttpClientFactory httpClientFactory, ILogger<SessionizeApiClient> logger)
     {
         _sessionizeClient = new SessionizeApiClient(httpClientFactory, logger, Options.Create(new SessionizeConfiguration
@@ -20,29 +23,22 @@ public class SessionizeService : IEventDataService
         }));
     }
 
-    public async Task<List<Speaker>> GetAllSpeakers()
+    private async Task GetAllData()
     {
-        var remoteSpeakers = await _sessionizeClient.GetSpeakersListAsync();
+        var remoteAllData = await _sessionizeClient.GetAllDataAsync();
 
-        return remoteSpeakers.Select(speaker => new Speaker
+        _speakers = remoteAllData.Speakers.Select(speaker => new Speaker
         {
             Bio = speaker.Bio,
             FirstName = speaker.FirstName,
-            Id = speaker.Id,
+            Id = Guid.Parse(speaker.Id),
             IsTopSpeaker = speaker.IsTopSpeaker,
             LastName = speaker.LastName,
             ProfilePictureUrl = speaker.ProfilePicture,
             TagLine = speaker.TagLine,
-            //Sessions = speaker.Sessions,
-        }).ToList();
-    }
+        }).ToList() ?? [];
 
-    public async Task<List<Session>> GetAllSessions()
-    {
-        // TODO what are groups in Sessionize?
-        var remoteSessions = await _sessionizeClient.GetSessionsListAsync();
-
-        return remoteSessions.FirstOrDefault()?.Sessions.Select(session => new Session
+        _sessions = remoteAllData?.Sessions.Select(session => new Session
         {
             Description = session.Description ?? string.Empty,
             EndsAt = session.EndsAt,
@@ -52,16 +48,38 @@ public class SessionizeService : IEventDataService
             IsPlenumSession = session.IsPlenumSession,
             IsServiceSession = session.IsServiceSession,
             RoomId = session.RoomId,
-            Room = session.Room,
-            Speakers = session.Speakers.Select(speaker => new Speaker
-            {
-                // TODO first only get minimal info?
-                Id = Guid.Parse(speaker.Id),
-                FirstName = speaker.Name,
-            }).ToList(),
+            Room = remoteAllData.Rooms.FirstOrDefault(room => session.RoomId == room.Id)?.Name ?? string.Empty,
+            Speakers = _speakers.Where(s => session.Speakers.Contains(s.Id.ToString())).ToList(),
             StartsAt = session.StartsAt,
             Status = session.Status,
             Title = session.Title,
         }).ToList() ?? [];
+
+        foreach (var speaker in _speakers)
+        {
+            speaker.Sessions = _sessions.Where(session => session.Speakers.Any(s => s.Id == speaker.Id)).ToList();
+        }
+    }
+
+    public async Task<List<Speaker>> GetAllSpeakers()
+    {
+        // TODO add way to refresh data/hard refresh
+        if (_speakers.Count == 0)
+        {
+            await GetAllData();
+        }
+
+        return _speakers;
+    }
+
+    public async Task<List<Session>> GetAllSessions()
+    {
+        // TODO add way to refresh data/hard refresh
+        if (_sessions.Count == 0)
+        {
+            await GetAllData();
+        }
+
+        return _sessions;
     }
 }
