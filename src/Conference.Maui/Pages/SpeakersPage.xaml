@@ -9,14 +9,42 @@
     <CollectionView ItemsSource="{Binding Speakers}">
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="models:Speaker">
-                <Grid Margin="10" RowDefinitions="*,*" ColumnDefinitions="50,*" ColumnSpacing="10">
+                <Grid ColumnSpacing="16" Margin="10">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
                     </Grid.GestureRecognizers>
-                    
-                    <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="2" ImageSource="{Binding ProfilePictureUrl}" />
-                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding FullName}" FontAttributes="Bold" FontSize="18" />
-                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding TagLine}" MaxLines="3" />
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+
+                    <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="3"
+                        HorizontalOptions="Center" CornerRadius="40"
+                        WidthRequest="80" HeightRequest="80"
+                        ImageSource="{Binding ProfilePictureUrl}" />
+
+                    <Label Text="{Binding FullName}"
+                           Grid.Row="0" Grid.Column="1"
+                           MaxLines="1" FontFamily="PoppinsSemibold"
+                           FontSize="20" LineBreakMode="TailTruncation"/>
+
+                    <Label Text="{Binding TagLine}"
+                           Grid.Row="1" Grid.Column="1"
+                           MaxLines="1" LineBreakMode="TailTruncation"
+                           TextColor="{StaticResource Primary}"/>
+
+                    <Label Text="{Binding Bio}"
+                           TextColor="{StaticResource Gray400}"
+                           MaxLines="3" Grid.Row="2" Grid.Column="1"
+                           LineBreakMode="TailTruncation"/>
+
                 </Grid>
             </DataTemplate>
         </CollectionView.ItemTemplate>
