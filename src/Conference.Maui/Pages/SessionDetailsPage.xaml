@@ -17,14 +17,18 @@
                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SessionDetailsViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
                         </VerticalStackLayout.GestureRecognizers>
                         
-                        <toolkit:AvatarView ImageSource="{Binding ProfilePictureUrl}" />
-                        <Label Text="{Binding FullName}" />
+                        <toolkit:AvatarView ImageSource="{Binding ProfilePictureUrl}"
+                                            WidthRequest="80" HeightRequest="80" CornerRadius="40" />
+
+                        <Label Text="{Binding FullName}" HorizontalOptions="Center" />
+                        <Label Text="{Binding TagLine}" HorizontalOptions="Center" TextColor="{StaticResource Gray400}" />
                     </VerticalStackLayout>
                 </DataTemplate>
             </BindableLayout.ItemTemplate>
         </HorizontalStackLayout>
 
-        <Label Text="{Binding SelectedSession.Room}" FontAttributes="Bold" HorizontalOptions="Center" />
+        <Label Text="{Binding SelectedSession.Room}" FontAttributes="Bold"
+               HorizontalOptions="Center" TextColor="{StaticResource Primary}" />
 
         <Label HorizontalOptions="Center">
             <Label.FormattedText>
@@ -37,7 +41,7 @@
 
         <Label 
             Text="{Binding SelectedSession.Description}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+            VerticalOptions="Center" HorizontalOptions="Center"
+            TextColor="{StaticResource Gray600}"/>
     </VerticalStackLayout>
 </ContentPage>

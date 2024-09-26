@@ -9,15 +9,17 @@
              x:Class="Conference.Maui.Pages.SpeakerDetailsPage"
              Title="{Binding SelectedSpeaker.FullName}">
     <VerticalStackLayout Margin="10" Spacing="10">
-        <toolkit:AvatarView ImageSource="{Binding SelectedSpeaker.ProfilePictureUrl}" />
+        <toolkit:AvatarView ImageSource="{Binding SelectedSpeaker.ProfilePictureUrl}"
+                            WidthRequest="80" HeightRequest="80" CornerRadius="40"/>
 
-        <Label Text="{Binding SelectedSpeaker.TagLine}" HorizontalOptions="Center" />
+        <Label Text="{Binding SelectedSpeaker.TagLine}" HorizontalOptions="Center" TextColor="{StaticResource Gray400}" />
 
         <Label 
             Text="{Binding SelectedSpeaker.Bio}"
-            HorizontalOptions="Center" />
+            HorizontalOptions="Center" TextColor="{StaticResource Gray600}" />
 
-        <Label Text="{x:Static localization:Strings.SessionsAtThisEventHeader}" FontAttributes="Bold" />
+        <Label Text="{x:Static localization:Strings.SessionsAtThisEventHeader}"
+               TextColor="{StaticResource Primary}" FontAttributes="Bold" />
         
         <HorizontalStackLayout BindableLayout.ItemsSource="{Binding SelectedSpeaker.Sessions}">
             <BindableLayout.ItemTemplate>
