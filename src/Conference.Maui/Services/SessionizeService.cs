@@ -18,7 +18,7 @@ public class SessionizeService : IEventDataService
     {
         _sessionizeClient = new SessionizeApiClient(httpClientFactory, logger, Options.Create(new SessionizeConfiguration
         {
-            ApiId = "8cknf5zh",
+            ApiId = "9vn5sw3z",
             BaseUrl = "https://sessionize.com"
         }));
     }
