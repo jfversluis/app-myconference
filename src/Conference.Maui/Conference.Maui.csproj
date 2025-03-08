@@ -48,6 +48,11 @@
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+		<MauiImage Update="Resources\Images\tab_about.svg" Resize="True" BaseSize="25,25" />
+		<MauiImage Update="Resources\Images\tab_myagenda.svg" Resize="True" BaseSize="25,25" />
+		<MauiImage Update="Resources\Images\tab_schedule.svg" Resize="True" BaseSize="25,25" />
+		<MauiImage Update="Resources\Images\tab_speakers.svg" Resize="True" BaseSize="25,25" />
+		<MauiImage Update="Resources\Images\tab_sponsors.svg" Resize="True" BaseSize="25,25" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
