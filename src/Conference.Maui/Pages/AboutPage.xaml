@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Conference.Maui.Pages.AboutPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+<ContentPage
+    x:Class="Conference.Maui.Pages.AboutPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
+    Title="{x:Static localization:Strings.AboutPageTitle}">
+    <ScrollView Padding="10">
+        <VerticalStackLayout Spacing="15">
+            <Label Style="{StaticResource Headline}" Text="The Only Conference Dedicated to .NET MAUI" />
+            <Image
+                HorizontalOptions="Center"
+                Source="https://mauiday.net/images/people.png"
+                VerticalOptions="Center" />
+            <Label
+                FontSize="16"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text=".NET MAUI Day is a vibrant, one-day event dedicated to exploring the power of .NET Multi-platform App UI (.NET MAUI). Join us as we dive into the latest tools, techniques, and trends for building native, cross-platform applications with .NET. Whether you're a seasoned developer or just starting your journey, MauiDay offers inspiring talks, expert-led sessions, and networking opportunities to help you level up your skills and connect with the community."
+                TextType="Text" />
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>

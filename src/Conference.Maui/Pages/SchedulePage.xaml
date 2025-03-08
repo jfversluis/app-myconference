@@ -1,59 +1,86 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
-             xmlns:models="clr-namespace:Conference.Maui.Models"
-             x:DataType="viewmodels:ScheduleViewModel"
-             x:Class="Conference.Maui.Pages.SchedulePage">
-    <CollectionView ItemsSource="{Binding Sessions}">
+<ContentPage
+    x:Class="Conference.Maui.Pages.SchedulePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:Conference.Maui.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+    xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
+    x:DataType="viewmodels:ScheduleViewModel"
+    Title="{x:Static localization:Strings.SchedulePageTitle}">
+    <CollectionView Margin="10" ItemsSource="{Binding Sessions}">
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+
+        </CollectionView.ItemsLayout>
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="models:Session">
-                <Grid ColumnSpacing="16" Margin="10">
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ScheduleViewModel}}, Path=GoToSessionDetailsCommand}" CommandParameter="{Binding .}" />
-                    </Grid.GestureRecognizers>
+                <Border
+                    Padding="10"
+                    Stroke="Black"
+                    StrokeShape="RoundRectangle 20"
+                    StrokeThickness="1">
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
 
-                    <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="3"
-                                        HorizontalOptions="Center" CornerRadius="40"
-                                        WidthRequest="80" HeightRequest="80"
-                                        ImageSource="{Binding Speakers[0].ProfilePictureUrl}" />
+                    <Grid ColumnSpacing="16">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ScheduleViewModel}}, Path=GoToSessionDetailsCommand}" CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
 
-                    <Label Text="{Binding Title}"
-                            Grid.Row="0" Grid.Column="1"
-                            MaxLines="2" FontFamily="PoppinsSemibold"
-                            FontSize="20" LineBreakMode="TailTruncation"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
 
-                    <Label Text="{Binding Description}"
-                           TextColor="{StaticResource Gray400}"
-                           MaxLines="3" Grid.Row="1" Grid.Column="1"
-                           LineBreakMode="TailTruncation"/>
+                        <toolkit:AvatarView
+                            Grid.RowSpan="3"
+                            Grid.Column="0"
+                            CornerRadius="40"
+                            HeightRequest="80"
+                            HorizontalOptions="Center"
+                            ImageSource="{Binding Speakers[0].ProfilePictureUrl}"
+                            VerticalOptions="Start"
+                            WidthRequest="80" />
 
-                    <Label Grid.Row="2" Grid.Column="1">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="{Binding Room}"
-                                      TextColor="{StaticResource Primary}"/>
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            FontFamily="PoppinsSemibold"
+                            FontSize="20"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2"
+                            Text="{Binding Title}" />
 
-                                <Span Text=" · " FontAttributes="Bold"
-                                      TextColor="{StaticResource Gray400}"/>
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="3"
+                            Text="{Binding Description}"
+                            TextColor="{StaticResource Gray400}" />
 
-                                <Span Text="{Binding StartsAt, StringFormat='{0:dddd, HH:mm}'}"
-                                      TextColor="{StaticResource Gray200}"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                </Grid>
+                        <Label Grid.Row="2" Grid.Column="1">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Room}" TextColor="{StaticResource Primary}" />
+
+                                    <Span
+                                        FontAttributes="Bold"
+                                        Text=" · "
+                                        TextColor="{StaticResource Gray400}" />
+
+                                    <Span Text="{Binding StartsAt, StringFormat='{0:dddd, HH:mm}'}" TextColor="{StaticResource Gray200}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Grid>
+                </Border>
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

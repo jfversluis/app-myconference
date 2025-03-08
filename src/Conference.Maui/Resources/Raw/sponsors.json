@@ -1,0 +1,42 @@
+[
+  {
+    "Name": "Syncfusion",
+    "ImageUrl": "https://mauiday.net/images/sponsors/syncfusion.png",
+    "Website": "https://syncfusion.com/"
+  },
+  {
+    "Name": "Telerik",
+    "ImageUrl": "https://mauiday.net/images/sponsors/progress.png",
+    "Website": "https://www.telerik.com/maui-ui"
+  },
+  {
+    "Name": "Sentry",
+    "ImageUrl": "https://mauiday.net/images/sponsors/sentry.png",
+    "Website": "https://sentry.io/"
+  },
+  {
+    "Name": "Microsoft",
+    "ImageUrl": "https://mauiday.net/images/sponsors/microsoft.png",
+    "Website": "https://www.microsoft.com/"
+  },
+  {
+    "Name": "Sessionize",
+    "ImageUrl": "https://mauiday.net/images/sponsors/sessionize.png",
+    "Website": "https://sessionize.com/"
+  },
+  {
+    "Name": "Jetbrains",
+    "ImageUrl": "https://mauiday.net/images/sponsors/jetbrains.png",
+    "Website": "https://www.jetbrains.com/"
+  },
+  {
+    "Name": "JUST EAT",
+    "ImageUrl": "https://mauiday.net/images/sponsors/justeat.png",
+    "Website": "https://www.just-eat.co.uk/"
+  },
+  {
+    "Name": "UXDIVERS",
+    "ImageUrl": "https://mauiday.net/images/sponsors/ux-divers.png",
+    "Website": "https://uxdivers.com/"
+  }
+]

@@ -1,11 +1,45 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Conference.Maui.Pages.SponsorsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+<ContentPage
+    x:Class="Conference.Maui.Pages.SponsorsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
+    xmlns:models="clr-namespace:Conference.Maui.Models"
+    xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+    Title="{x:Static localization:Strings.SponsorsPageTitle}">
+    <CollectionView ItemsSource="{Binding Sponsors}">
+        <CollectionView.Header>
+            <StackLayout Padding="10" Spacing="10">
+                <Label Style="{StaticResource Headline}" Text="We couldn't do it without you" />
+
+                <Label
+                    FontSize="16"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="Our awesome sponsors are what make this event possible. They help us to keep the event free and accessible to everyone. Please take a moment to check them out and show them some love."
+                    TextType="Text" />
+            </StackLayout>
+        </CollectionView.Header>
+        <CollectionView.ItemsLayout>
+            <GridItemsLayout Orientation="Vertical" Span="2" />
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="models:Sponsor">
+                <Grid Margin="10" ColumnSpacing="16">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SponsorsViewModel}}, Path=OpenSponsorWebsiteCommand}" CommandParameter="{Binding .}" />
+                    </Grid.GestureRecognizers>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80" />
+                    </Grid.RowDefinitions>
+                    <Image
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Aspect="AspectFit"
+                        HorizontalOptions="Center"
+                        Source="{Binding ImageUrl}" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>

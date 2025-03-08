@@ -40,5 +40,4 @@
                 Route="About" />
         </Tab>
     </TabBar>
-
 </Shell>
