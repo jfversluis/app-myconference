@@ -44,7 +44,7 @@
                             CornerRadius="40"
                             HeightRequest="80"
                             HorizontalOptions="Center"
-                            ImageSource="{Binding Speakers[0].ProfilePictureUrl}"
+                            ImageSource="{Binding Speakers[0].ProfilePicture}"
                             VerticalOptions="Start"
                             WidthRequest="80" />
 

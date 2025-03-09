@@ -1,32 +1,62 @@
-﻿namespace Conference.Maui.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Conference.Maui.Models;
 
 public class Session
 {
-    public string Id { get; set; } = string.Empty;
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = string.Empty;
 
-    public string Title { get; set; } = string.Empty;
+        [JsonPropertyName("title")]
+        public string Title { get; set; } = string.Empty;
 
-    public string Description { get; set; } = string.Empty;
+        [JsonPropertyName("description")]
+        public string Description { get; set; } = string.Empty;
 
-    public DateTimeOffset StartsAt { get; set; }
+        [JsonPropertyName("startsAt")]
+        public DateTime StartsAt { get; set; }
 
-    public DateTimeOffset EndsAt { get; set; }
+        [JsonPropertyName("endsAt")]
+        public DateTime EndsAt { get; set; }
 
-    public int DurationInMinutes => (int)EndsAt.Subtract(StartsAt).TotalMinutes;
+        [JsonIgnore]
+        public int DurationInMinutes => (int)EndsAt.Subtract(StartsAt).TotalMinutes;
 
-    public bool IsServiceSession { get; set; }
+        [JsonPropertyName("isServiceSession")]
+        public bool IsServiceSession { get; set; }
 
-    public bool IsPlenumSession { get; set; }
+        [JsonPropertyName("isPlenumSession")]
+        public bool IsPlenumSession { get; set; }
 
-    public int RoomId { get; set; }
+        [JsonPropertyName("speakers")]
+        public List<string> SpeakerIds { get; set; } = [];
 
-    public string Room { get; set; } = string.Empty;
+        [JsonIgnore]
+        public List<Speaker> Speakers { get; set; } = [];
 
-    public string Status { get; set; } = string.Empty;
+        [JsonPropertyName("categoryItems")]
+        public List<object> CategoryItems { get; set; } = [];
 
-    public bool IsInformed { get; set; }
+        [JsonPropertyName("questionAnswers")]
+        public List<object> QuestionAnswers { get; set; } = [];
 
-    public bool IsConfirmed { get; set; }
+        [JsonPropertyName("roomId")]
+        public int RoomId { get; set; }
 
-    public List<Speaker> Speakers { get; set; } = [];
+        public string Room { get; set; } = string.Empty;
+
+        [JsonPropertyName("liveUrl")]
+        public string LiveUrl { get; set; } = string.Empty;
+
+        [JsonPropertyName("recordingUrl")]
+        public string RecordingUrl { get; set; } = string.Empty;
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; } = string.Empty;
+
+        [JsonPropertyName("isInformed")]
+        public bool IsInformed { get; set; }
+
+        [JsonPropertyName("isConfirmed")]
+        public bool IsConfirmed { get; set; }
 }

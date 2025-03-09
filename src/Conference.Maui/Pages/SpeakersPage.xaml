@@ -30,7 +30,7 @@
                     <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="3"
                         HorizontalOptions="Center" CornerRadius="40"
                         WidthRequest="80" HeightRequest="80"
-                        ImageSource="{Binding ProfilePictureUrl}" />
+                        ImageSource="{Binding ProfilePicture}" />
 
                     <Label Text="{Binding FullName}"
                            Grid.Row="0" Grid.Column="1"

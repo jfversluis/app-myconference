@@ -23,7 +23,7 @@ public static class MauiProgram
             .UseMauiCommunityToolkit();
 
         // TODO I don't think HttpClientFactory is great for mobile...?
-        builder.Services.AddHttpClient();
+        //builder.Services.AddHttpClient();
         builder.Services.AddSingleton<IEventDataService, SessionizeService>();
         builder.Services.AddSingleton<ISponsorService, SponsorService>();
 

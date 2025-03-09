@@ -6,6 +6,7 @@
     xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
     xmlns:models="clr-namespace:Conference.Maui.Models"
     xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+    x:DataType="viewmodels:SponsorsViewModel"
     Title="{x:Static localization:Strings.SponsorsPageTitle}">
     <CollectionView ItemsSource="{Binding Sponsors}">
         <CollectionView.Header>

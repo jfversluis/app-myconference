@@ -1,44 +1,40 @@
-﻿using Conference.Maui.Interfaces;
+﻿using System.Linq;
+using System.Net.Http.Json;
+using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Sessionize.Api.Client;
-using Sessionize.Api.Client.Configuration;
 
 namespace Conference.Maui.Services;
 
 public class SessionizeService : IEventDataService
 {
-    private readonly SessionizeApiClient _sessionizeClient;
-
     private List<Speaker> _speakers = [];
     private List<Session> _sessions = [];
 
-    public SessionizeService(IHttpClientFactory httpClientFactory, ILogger<SessionizeApiClient> logger)
-    {
-        _sessionizeClient = new SessionizeApiClient(httpClientFactory, logger, Options.Create(new SessionizeConfiguration
-        {
-            ApiId = "9vn5sw3z",
-            BaseUrl = "https://sessionize.com"
-        }));
-    }
+    private readonly HttpClient _httpClient = new();
 
     private async Task GetAllData()
     {
-        var remoteAllData = await _sessionizeClient.GetAllDataAsync();
+        var remoteAllData = await _httpClient.GetFromJsonAsync<AllData>(
+            $"https://sessionize.com/api/v2/9vn5sw3z/view/All");
 
-        _speakers = remoteAllData.Speakers.Select(speaker => new Speaker
+        _speakers = remoteAllData?.Speakers?.Select(speaker => new Speaker
         {
-            Bio = speaker.Bio,
-            FirstName = speaker.FirstName,
-            Id = Guid.Parse(speaker.Id),
-            IsTopSpeaker = speaker.IsTopSpeaker,
-            LastName = speaker.LastName,
-            ProfilePictureUrl = speaker.ProfilePicture,
-            TagLine = speaker.TagLine,
+            Id = speaker.Id,
+            FirstName = speaker.FirstName ?? string.Empty,
+            LastName = speaker.LastName ?? string.Empty,
+            ProfilePicture = speaker.ProfilePicture ?? string.Empty,
+            TagLine = speaker.TagLine ?? string.Empty,
+            Bio = speaker.Bio ?? string.Empty,
+            Links = speaker.Links?.Select(link => new Link
+            {
+                Title = link.Title ?? string.Empty,
+                Url = link.Url ?? string.Empty,
+                LinkType = link.LinkType ?? string.Empty
+            }).ToList() ?? [],
+            SessionIds = speaker.SessionIds,
         }).ToList() ?? [];
 
-        _sessions = remoteAllData?.Sessions.Select(session => new Session
+        _sessions = remoteAllData?.Sessions?.Select(session => new Session
         {
             Description = session.Description ?? string.Empty,
             EndsAt = session.EndsAt,
@@ -48,8 +44,9 @@ public class SessionizeService : IEventDataService
             IsPlenumSession = session.IsPlenumSession,
             IsServiceSession = session.IsServiceSession,
             RoomId = session.RoomId,
-            Room = remoteAllData.Rooms.FirstOrDefault(room => session.RoomId == room.Id)?.Name ?? string.Empty,
-            Speakers = _speakers.Where(s => session.Speakers.Contains(s.Id.ToString())).ToList(),
+            Room = remoteAllData.Rooms?.FirstOrDefault(room => session.RoomId == room.Id)?.Name ?? string.Empty,
+            SpeakerIds = session.SpeakerIds,
+            Speakers = _speakers.Where(s => session.SpeakerIds.Contains(s.Id)).ToList(),
             StartsAt = session.StartsAt,
             Status = session.Status,
             Title = session.Title,
@@ -57,7 +54,7 @@ public class SessionizeService : IEventDataService
 
         foreach (var speaker in _speakers)
         {
-            speaker.Sessions = _sessions.Where(session => session.Speakers.Any(s => s.Id == speaker.Id)).ToList();
+            speaker.Sessions = _sessions.Where(session => session.SpeakerIds.Contains(speaker.Id)).ToList();
         }
     }
 

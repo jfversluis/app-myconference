@@ -9,7 +9,7 @@
              x:Class="Conference.Maui.Pages.SpeakerDetailsPage"
              Title="{Binding SelectedSpeaker.FullName}">
     <VerticalStackLayout Margin="10" Spacing="10">
-        <toolkit:AvatarView ImageSource="{Binding SelectedSpeaker.ProfilePictureUrl}"
+        <toolkit:AvatarView ImageSource="{Binding SelectedSpeaker.ProfilePicture}"
                             WidthRequest="80" HeightRequest="80" CornerRadius="40"/>
 
         <Label Text="{Binding SelectedSpeaker.TagLine}" HorizontalOptions="Center" TextColor="{StaticResource Gray400}" />
