@@ -14,7 +14,7 @@
                 <DataTemplate x:DataType="models:Speaker">
                     <VerticalStackLayout>
                         <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SessionDetailsViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
+                            <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SessionDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SessionDetailsViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
                         </VerticalStackLayout.GestureRecognizers>
                         
                         <toolkit:AvatarView ImageSource="{Binding ProfilePicture}"

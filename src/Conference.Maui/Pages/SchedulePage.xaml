@@ -25,7 +25,7 @@
 
                     <Grid ColumnSpacing="16">
                         <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ScheduleViewModel}}, Path=GoToSessionDetailsCommand}" CommandParameter="{Binding .}" />
+                            <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:ScheduleViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:ScheduleViewModel}}, Path=GoToSessionDetailsCommand}" CommandParameter="{Binding .}" />
                         </Grid.GestureRecognizers>
 
                         <Grid.ColumnDefinitions>
@@ -44,7 +44,7 @@
                             CornerRadius="40"
                             HeightRequest="80"
                             HorizontalOptions="Center"
-                            ImageSource="{Binding Speakers[0].ProfilePicture}"
+                            ImageSource="{Binding SpeakerProfilePicture}"
                             VerticalOptions="Start"
                             WidthRequest="80" />
 

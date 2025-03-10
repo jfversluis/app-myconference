@@ -13,7 +13,7 @@
             <DataTemplate x:DataType="models:Speaker">
                 <Grid ColumnSpacing="16" Margin="10">
                     <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
+                        <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SpeakersViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
                     </Grid.GestureRecognizers>
 
                     <Grid.ColumnDefinitions>

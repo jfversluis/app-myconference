@@ -28,7 +28,7 @@
             <DataTemplate x:DataType="models:Sponsor">
                 <Grid Margin="10" ColumnSpacing="16">
                     <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SponsorsViewModel}}, Path=OpenSponsorWebsiteCommand}" CommandParameter="{Binding .}" />
+                        <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SponsorsViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SponsorsViewModel}}, Path=OpenSponsorWebsiteCommand}" CommandParameter="{Binding .}" />
                     </Grid.GestureRecognizers>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80" />

@@ -34,6 +34,9 @@ public class Session
         [JsonIgnore]
         public List<Speaker> Speakers { get; set; } = [];
 
+        [JsonIgnore]
+        public string SpeakerProfilePicture => Speakers?.FirstOrDefault()?.ProfilePicture ?? string.Empty;
+
         [JsonPropertyName("categoryItems")]
         public List<object> CategoryItems { get; set; } = [];
 
