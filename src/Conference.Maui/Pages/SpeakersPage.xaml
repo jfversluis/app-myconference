@@ -8,47 +8,49 @@
              x:DataType="viewmodels:SpeakersViewModel"
              x:Class="Conference.Maui.Pages.SpeakersPage"
              Title="{x:Static localization:Strings.SpeakersPageTitle}">
-    <CollectionView ItemsSource="{Binding Speakers}">
-        <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="models:Speaker">
-                <Grid ColumnSpacing="16" Margin="10">
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SpeakersViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
-                    </Grid.GestureRecognizers>
+    <Grid>
+        <CollectionView ItemsSource="{Binding Speakers}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Speaker">
+                    <Grid ColumnSpacing="16" Margin="10">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SpeakersViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
 
-                    <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="3"
-                        HorizontalOptions="Center" CornerRadius="40"
-                        WidthRequest="80" HeightRequest="80"
-                        ImageSource="{Binding ProfilePicture}" />
+                        <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="3"
+                            HorizontalOptions="Center" CornerRadius="40"
+                            WidthRequest="80" HeightRequest="80"
+                            ImageSource="{Binding ProfilePicture}" />
 
-                    <Label Text="{Binding FullName}"
-                           Grid.Row="0" Grid.Column="1"
-                           MaxLines="1" FontFamily="PoppinsSemibold"
-                           FontSize="20" LineBreakMode="TailTruncation"/>
+                        <Label Text="{Binding FullName}"
+                            Grid.Row="0" Grid.Column="1"
+                            MaxLines="1" FontFamily="PoppinsSemibold"
+                            FontSize="20" LineBreakMode="TailTruncation"/>
 
-                    <Label Text="{Binding TagLine}"
-                           Grid.Row="1" Grid.Column="1"
-                           MaxLines="1" LineBreakMode="TailTruncation"
-                           TextColor="{StaticResource Primary}"/>
+                        <Label Text="{Binding TagLine}"
+                            Grid.Row="1" Grid.Column="1"
+                            MaxLines="1" LineBreakMode="TailTruncation"
+                            TextColor="{StaticResource Primary}"/>
 
-                    <Label Text="{Binding Bio}"
-                           TextColor="{StaticResource Gray400}"
-                           MaxLines="3" Grid.Row="2" Grid.Column="1"
-                           LineBreakMode="TailTruncation"/>
+                        <Label Text="{Binding Bio}"
+                            TextColor="{StaticResource Gray400}"
+                            MaxLines="3" Grid.Row="2" Grid.Column="1"
+                            LineBreakMode="TailTruncation"/>
 
-                </Grid>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>
