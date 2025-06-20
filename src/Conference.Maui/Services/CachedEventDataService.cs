@@ -127,16 +127,14 @@ public class CachedEventDataService : IEventDataService
     {
         // Get all sessions
         var cachedSessions = await _databaseService.GetCachedSessionsAsync();
-        var sessionLookup = cachedSessions.ToDictionary(s => s.Id, s => s.ToSession());
+        var sessions = cachedSessions.Select(cs => cs.ToSession()).ToList();
 
         // Populate sessions for each speaker
         foreach (var speaker in speakers)
         {
-            // Convert SessionIds from int to string for lookup
-            var sessionIds = speaker.SessionIds.Select(id => id.ToString()).ToList();
-            speaker.Sessions = sessionIds
-                .Where(id => sessionLookup.ContainsKey(id))
-                .Select(id => sessionLookup[id])
+            // Find sessions where this speaker's ID is in the SpeakerIds list
+            speaker.Sessions = sessions
+                .Where(session => session.SpeakerIds.Contains(speaker.Id))
                 .ToList();
         }
     }

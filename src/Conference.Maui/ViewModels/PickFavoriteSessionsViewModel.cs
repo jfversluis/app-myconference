@@ -38,18 +38,28 @@ namespace Conference.Maui.ViewModels
         [RelayCommand]
         private async Task Swiped(SwipedCardEventArgs args)
         {
-            if (args.Direction == SwipeCardDirection.Right)
+            if (args.Session is Session session)
             {
-                // Like - add to favorites
-               
-            }
-            else if (args.Direction == SwipeCardDirection.Left)
-            {
-                // Nope - remove from list
-                // Do nothing with the database for non-favorites
+                if (args.Direction == SwipeCardDirection.Right)
+                {
+                    // Like - add to favorites
+                    var favoriteSession = new FavoriteSession
+                    {
+                        SessionId = session.Id,
+                        IsFavorite = true,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    await _databaseService.SaveFavoriteSessionAsync(favoriteSession);
+                }
+                else if (args.Direction == SwipeCardDirection.Left)
+                {
+                    // Nope - remove from favorites if it exists
+                    await _databaseService.DeleteFavoriteSessionAsync(session.Id);
+                }
             }
 
             // Check if we've swiped all cards
+            HasSwipedAllCards = Sessions.Count == 0;
         }
 
         [RelayCommand]

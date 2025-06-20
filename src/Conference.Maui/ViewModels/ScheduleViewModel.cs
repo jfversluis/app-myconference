@@ -13,6 +13,9 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
 
     public ObservableCollection<Session> Sessions { get; set; } = [];
 
+    [ObservableProperty]
+    private bool _isRefreshing;
+
     public async Task LoadEventData()
     {
         var sessions = await _eventService.GetAllSessions();
@@ -25,11 +28,28 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
     }
 
     [RelayCommand]
+    private async Task RefreshData()
+    {
+        IsRefreshing = true;
+        try
+        {
+            // Force refresh from remote while preserving favorites
+            await _eventService.RefreshDataAsync();
+            await LoadEventData();
+        }
+        finally
+        {
+            IsRefreshing = false;
+        }
+    }
+
+    [RelayCommand]
     private async Task GoToSessionDetails(Session selectedSession)
     {
         await Shell.Current.GoToAsync("SessionDetails",
             new Dictionary<string, object> { { "SelectedSession", selectedSession } });
     }
+    
     [RelayCommand]
     private async Task GoToPickFavoriteSessionsPage()
     {
