@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Conference.Maui.Pages.PickFavoriteSessionsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:Conference.Maui.Models"
+    xmlns:swipeCardView="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+    Title="PickFavoriteSessionsPage"
+    x:DataType="viewmodels:PickFavoriteSessionsViewModel"
+    Shell.PresentationMode="ModalAnimated">
+    <Grid RowDefinitions="*,100">
+        <swipeCardView:SwipeCardView
+            x:Name="SwipeCardView"
+            Padding="10"
+            Dragging="OnDragging"
+            DraggingCommand="{Binding DraggingCommand}"
+            ItemsSource="{Binding Sessions}"
+            LoopCards="True"
+            SupportedDraggingDirections="Left, Right, Up, Down"
+            SupportedSwipeDirections="Left, Right, Up"
+            SwipedCommand="{Binding SwipedCommand}"
+            Threshold="{Binding Threshold}">
+            <swipeCardView:SwipeCardView.ItemTemplate>
+                <DataTemplate x:DataType="models:Session">
+                    <Grid>
+                        <Border
+                            Padding="10,20"
+                            Background="White"
+                            InputTransparent="True"
+                            Stroke="Gray"
+                            StrokeShape="RoundRectangle 10">
+                            <AbsoluteLayout>
+                                <VerticalStackLayout
+                                    AbsoluteLayout.LayoutBounds=".5,0.5,1,1"
+                                    AbsoluteLayout.LayoutFlags="All"
+                                    Spacing="20">
+                                    <toolkit:AvatarView
+                                        CornerRadius="50"
+                                        HeightRequest="100"
+                                        HorizontalOptions="Center"
+                                        ImageSource="{Binding SpeakerProfilePicture}"
+                                        VerticalOptions="Start"
+                                        WidthRequest="100" />
+                                    <Label Style="{StaticResource Headline}" Text="{Binding Title}" />
+                                    <BoxView HeightRequest="1" Color="Gray" />
+                                    <Label
+                                        LineBreakMode="TailTruncation"
+                                        MaxLines="10"
+                                        Text="{Binding Description}" />
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Room}" TextColor="{StaticResource Primary}" />
+
+                                                <Span
+                                                    FontAttributes="Bold"
+                                                    Text=" · "
+                                                    TextColor="{StaticResource Gray400}" />
+
+                                                <Span Text="{Binding StartsAt, StringFormat='{0:dddd, HH:mm}'}" TextColor="{StaticResource Gray200}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+
+
+
+                                </VerticalStackLayout>
+
+                                <Border
+                                    x:Name="LikeFrame"
+                                    Padding="0"
+                                    AbsoluteLayout.LayoutBounds="0.1,.1, 150, 50"
+                                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                                    BackgroundColor="Transparent"
+                                    Opacity="0"
+                                    Rotation="-20"
+                                    Stroke="#63DD99"
+                                    StrokeShape="RoundRectangle 20">
+                                    <Label
+                                        x:Name="LikeText"
+                                        BackgroundColor="Transparent"
+                                        FontSize="32"
+                                        HorizontalTextAlignment="Center"
+                                        Text="LIKE"
+                                        TextColor="#63DD99"
+                                        VerticalTextAlignment="Center" />
+                                </Border>
+                                <Border
+                                    x:Name="NopeFrame"
+                                    Padding="0"
+                                    AbsoluteLayout.LayoutBounds="0.9,.1, 150, 50"
+                                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                                    BackgroundColor="Transparent"
+                                    Opacity="0"
+                                    Rotation="20"
+                                    Stroke="#FF6A4F"
+                                    StrokeShape="RoundRectangle 20">
+                                    <Label
+                                        BackgroundColor="Transparent"
+                                        FontSize="32"
+                                        HorizontalTextAlignment="Center"
+                                        Text="NOPE"
+                                        TextColor="#FF6A4F"
+                                        VerticalTextAlignment="Center" />
+                                </Border>
+
+
+                            </AbsoluteLayout>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </swipeCardView:SwipeCardView.ItemTemplate>
+        </swipeCardView:SwipeCardView>
+        <HorizontalStackLayout
+            Grid.Row="1"
+            Padding="10,10,10,20"
+            HorizontalOptions="Center"
+            Spacing="30">
+            <StackLayout>
+                <Button
+                    x:Name="nopeButton"
+                    Background="Red"
+                    BackgroundColor="White"
+                    Clicked="OnDislikeClicked"
+                    CornerRadius="30"
+                    HeightRequest="60"
+                    Scale="1"
+                    WidthRequest="60" />
+            </StackLayout>
+
+            <StackLayout>
+                <Button
+                    x:Name="likeButton"
+                    Background="Green"
+                    BackgroundColor="White"
+                    Clicked="OnLikeClicked"
+                    CornerRadius="30"
+                    HeightRequest="60"
+                    Scale="1"
+                    WidthRequest="60" />
+            </StackLayout>
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

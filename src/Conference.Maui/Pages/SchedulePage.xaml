@@ -3,13 +3,13 @@
     x:Class="Conference.Maui.Pages.SchedulePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Conference.Maui.Controls"
+    xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
     xmlns:models="clr-namespace:Conference.Maui.Models"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
-    xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
-    xmlns:controls="clr-namespace:Conference.Maui.Controls"
-    x:DataType="viewmodels:ScheduleViewModel"
-    Title="{x:Static localization:Strings.SchedulePageTitle}">
+    Title="{x:Static localization:Strings.SchedulePageTitle}"
+    x:DataType="viewmodels:ScheduleViewModel">
     <Grid>
         <CollectionView Margin="10" ItemsSource="{Binding Sessions}">
             <CollectionView.ItemsLayout>
@@ -88,6 +88,7 @@
         </CollectionView>
 
         <controls:FloatingButton
+            Command="{Binding GoToPickFavoriteSessionsPageCommand}"
             ImageSource="icon_myagenda.png"
             SemanticProperties.Description="Select favorite sessions" />
     </Grid>

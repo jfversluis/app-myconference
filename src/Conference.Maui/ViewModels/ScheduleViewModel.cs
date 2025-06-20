@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
+using Conference.Maui.Pages;
 using System.Collections.ObjectModel;
 
 namespace Conference.Maui.ViewModels;
@@ -28,5 +29,13 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
     {
         await Shell.Current.GoToAsync("SessionDetails",
             new Dictionary<string, object> { { "SelectedSession", selectedSession } });
+    }
+    [RelayCommand]
+    private async Task GoToPickFavoriteSessionsPage()
+    {
+        await Shell.Current.GoToAsync(nameof(PickFavoriteSessionsPage), new Dictionary<string, object>()
+        {
+            { "AllSessions", Sessions.ToList()   }
+        });
     }
 }

@@ -9,6 +9,7 @@ public partial class AppShell : Shell
         InitializeComponent();
 
         Routing.RegisterRoute("SessionDetails", typeof(SessionDetailsPage));
-        Routing.RegisterRoute("SpeakerDetails", typeof(SpeakerDetailsPage));
+        Routing.RegisterRoute(nameof(PickFavoriteSessionsPage), typeof(PickFavoriteSessionsPage));
+
     }
 }
