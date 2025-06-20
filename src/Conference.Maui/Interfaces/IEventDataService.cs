@@ -7,4 +7,6 @@ public interface IEventDataService
     Task<List<Session>> GetAllSessions();
 
     Task<List<Speaker>> GetAllSpeakers();
+    
+    Task RefreshDataAsync();
 }

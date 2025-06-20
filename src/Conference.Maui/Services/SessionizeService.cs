@@ -79,4 +79,12 @@ public class SessionizeService : IEventDataService
 
         return _sessions;
     }
+
+    public async Task RefreshDataAsync()
+    {
+        // Clear cached data and refetch
+        _sessions.Clear();
+        _speakers.Clear();
+        await GetAllData();
+    }
 }

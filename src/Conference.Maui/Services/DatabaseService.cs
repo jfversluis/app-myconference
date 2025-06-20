@@ -22,6 +22,10 @@ public class DatabaseService : IDatabaseService
 
         _database = new SQLiteAsyncConnection(_databasePath);
         await _database.CreateTableAsync<FavoriteSession>();
+        await _database.CreateTableAsync<CachedSession>();
+        await _database.CreateTableAsync<CachedSpeaker>();
+        await _database.CreateTableAsync<CachedRoom>();
+        await _database.CreateTableAsync<CacheMetadata>();
         
         _isInitialized = true;
     }
@@ -30,6 +34,8 @@ public class DatabaseService : IDatabaseService
     {
         await InitializeDatabaseAsync();
     }
+
+    #region Favorite Sessions
 
     public async Task<List<FavoriteSession>> GetAllFavoriteSessionsAsync()
     {
@@ -71,4 +77,113 @@ public class DatabaseService : IDatabaseService
         var favoriteSession = await GetFavoriteSessionAsync(sessionId);
         return favoriteSession != null && favoriteSession.IsFavorite;
     }
+
+    #endregion
+
+    #region Cached Event Data
+
+    public async Task<List<CachedSession>> GetCachedSessionsAsync()
+    {
+        await InitializeDatabaseAsync();
+        return await _database.Table<CachedSession>().ToListAsync();
+    }
+
+    public async Task<List<CachedSpeaker>> GetCachedSpeakersAsync()
+    {
+        await InitializeDatabaseAsync();
+        return await _database.Table<CachedSpeaker>().ToListAsync();
+    }
+
+    public async Task<List<CachedRoom>> GetCachedRoomsAsync()
+    {
+        await InitializeDatabaseAsync();
+        return await _database.Table<CachedRoom>().ToListAsync();
+    }
+
+    public async Task SaveCachedSessionsAsync(List<CachedSession> sessions)
+    {
+        await InitializeDatabaseAsync();
+        await _database.DeleteAllAsync<CachedSession>();
+        if (sessions.Any())
+        {
+            await _database.InsertAllAsync(sessions);
+        }
+    }
+
+    public async Task SaveCachedSpeakersAsync(List<CachedSpeaker> speakers)
+    {
+        await InitializeDatabaseAsync();
+        await _database.DeleteAllAsync<CachedSpeaker>();
+        if (speakers.Any())
+        {
+            await _database.InsertAllAsync(speakers);
+        }
+    }
+
+    public async Task SaveCachedRoomsAsync(List<CachedRoom> rooms)
+    {
+        await InitializeDatabaseAsync();
+        await _database.DeleteAllAsync<CachedRoom>();
+        if (rooms.Any())
+        {
+            await _database.InsertAllAsync(rooms);
+        }
+    }
+
+    public async Task ClearCachedDataAsync()
+    {
+        await InitializeDatabaseAsync();
+        await _database.DeleteAllAsync<CachedSession>();
+        await _database.DeleteAllAsync<CachedSpeaker>();
+        await _database.DeleteAllAsync<CachedRoom>();
+    }
+
+    #endregion
+
+    #region Cache Metadata
+
+    public async Task<DateTime?> GetLastCacheUpdateAsync()
+    {
+        await InitializeDatabaseAsync();
+        var metadata = await _database.Table<CacheMetadata>()
+            .Where(m => m.Key == "LastUpdate")
+            .FirstOrDefaultAsync();
+        return metadata?.LastUpdated;
+    }
+
+    public async Task SetLastCacheUpdateAsync(DateTime timestamp)
+    {
+        await InitializeDatabaseAsync();
+        var metadata = new CacheMetadata
+        {
+            Key = "LastUpdate",
+            LastUpdated = timestamp,
+            Version = "1.0"
+        };
+        
+        var existing = await _database.Table<CacheMetadata>()
+            .Where(m => m.Key == "LastUpdate")
+            .FirstOrDefaultAsync();
+            
+        if (existing != null)
+        {
+            metadata.Key = existing.Key;
+            await _database.UpdateAsync(metadata);
+        }
+        else
+        {
+            await _database.InsertAsync(metadata);
+        }
+    }
+
+    public async Task<bool> IsCacheExpiredAsync(TimeSpan maxAge)
+    {
+        var lastUpdate = await GetLastCacheUpdateAsync();
+        if (!lastUpdate.HasValue)
+            return true;
+            
+        return DateTime.UtcNow - lastUpdate.Value > maxAge;
+    }
+
+    #endregion
 }

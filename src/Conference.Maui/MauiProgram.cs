@@ -25,9 +25,9 @@ public static class MauiProgram
             .UseSwipeCardView(); // Add SwipeCardView initialization
 
         // Register services
-        builder.Services.AddSingleton<IEventDataService, SessionizeService>();
+        builder.Services.AddSingleton<IDatabaseService, DatabaseService>(); // Add DatabaseService first
+        builder.Services.AddSingleton<IEventDataService, CachedEventDataService>(); // Use cached version
         builder.Services.AddSingleton<ISponsorService, SponsorService>();
-        builder.Services.AddSingleton<IDatabaseService, DatabaseService>(); // Add DatabaseService
 
         // Register view models and pages
         builder.Services.AddTransient<ScheduleViewModel>();
