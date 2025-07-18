@@ -6,85 +6,101 @@
     xmlns:controls="clr-namespace:Conference.Maui.Controls"
     xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
     xmlns:models="clr-namespace:Conference.Maui.Models"
+    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
     Title="{x:Static localization:Strings.SchedulePageTitle}"
     x:DataType="viewmodels:ScheduleViewModel">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Session Data Template for reuse -->
+            <DataTemplate x:Key="SessionTemplate" x:DataType="models:Session">
+                <Border
+                    Padding="10"
+                    Stroke="Black"
+                    StrokeShape="RoundRectangle 20"
+                    StrokeThickness="1">
+
+                    <Grid ColumnSpacing="16">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:ScheduleViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:ScheduleViewModel}}, Path=GoToSessionDetailsCommand}" CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+
+                        <toolkit:AvatarView
+                            Grid.RowSpan="3"
+                            Grid.Column="0"
+                            CornerRadius="40"
+                            HeightRequest="80"
+                            HorizontalOptions="Center"
+                            ImageSource="{Binding SpeakerProfilePicture}"
+                            VerticalOptions="Start"
+                            WidthRequest="80" />
+
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            FontFamily="PoppinsSemibold"
+                            FontSize="20"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2"
+                            Text="{Binding Title}" />
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="3"
+                            Text="{Binding Description}"
+                            TextColor="{StaticResource Gray400}" />
+
+                        <Label Grid.Row="2" Grid.Column="1">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Room}" TextColor="{StaticResource Primary}" />
+
+                                    <Span
+                                        FontAttributes="Bold"
+                                        Text=" · "
+                                        TextColor="{StaticResource Gray400}" />
+
+                                    <Span Text="{Binding StartsAt, StringFormat='{0:HH:mm}'}" TextColor="{StaticResource Gray200}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <Grid>
-        <CollectionView Margin="10" ItemsSource="{Binding Sessions}">
+        <!-- Show TabView only if there are multiple days -->
+        <syncfusion:SfTabView 
+            x:Name="tabView"
+            EnableSwiping="True"
+            IsVisible="{Binding ShowTabs}"
+            BackgroundColor="{StaticResource White}">
+        </syncfusion:SfTabView>
+
+        <!-- Show regular CollectionView if there's only one day -->
+        <CollectionView 
+            Margin="10" 
+            ItemsSource="{Binding Sessions}"
+            ItemTemplate="{StaticResource SessionTemplate}"
+            IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
-
             </CollectionView.ItemsLayout>
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Session">
-                    <Border
-                        Padding="10"
-                        Stroke="Black"
-                        StrokeShape="RoundRectangle 20"
-                        StrokeThickness="1">
-
-
-                        <Grid ColumnSpacing="16">
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:ScheduleViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:ScheduleViewModel}}, Path=GoToSessionDetailsCommand}" CommandParameter="{Binding .}" />
-                            </Grid.GestureRecognizers>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="60" />
-                                <RowDefinition Height="60" />
-                                <RowDefinition Height="20" />
-                            </Grid.RowDefinitions>
-
-                            <toolkit:AvatarView
-                                Grid.RowSpan="3"
-                                Grid.Column="0"
-                                CornerRadius="40"
-                                HeightRequest="80"
-                                HorizontalOptions="Center"
-                                ImageSource="{Binding SpeakerProfilePicture}"
-                                VerticalOptions="Start"
-                                WidthRequest="80" />
-
-                            <Label
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                FontFamily="PoppinsSemibold"
-                                FontSize="20"
-                                LineBreakMode="TailTruncation"
-                                MaxLines="2"
-                                Text="{Binding Title}" />
-
-                            <Label
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                LineBreakMode="TailTruncation"
-                                MaxLines="3"
-                                Text="{Binding Description}"
-                                TextColor="{StaticResource Gray400}" />
-
-                            <Label Grid.Row="2" Grid.Column="1">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="{Binding Room}" TextColor="{StaticResource Primary}" />
-
-                                        <Span
-                                            FontAttributes="Bold"
-                                            Text=" · "
-                                            TextColor="{StaticResource Gray400}" />
-
-                                        <Span Text="{Binding StartsAt, StringFormat='{0:dddd, HH:mm}'}" TextColor="{StaticResource Gray200}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
         </CollectionView>
 
         <controls:FloatingButton

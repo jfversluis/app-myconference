@@ -12,6 +12,10 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
     private readonly IEventDataService _eventService = eventDataService;
 
     public ObservableCollection<Session> Sessions { get; set; } = [];
+    public ObservableCollection<DaySchedule> ScheduleDays { get; set; } = [];
+
+    [ObservableProperty]
+    private bool showTabs;
 
     public async Task LoadEventData()
     {
@@ -21,6 +25,32 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
         foreach (var session in sessions)
         {
             Sessions.Add(session);
+        }
+
+        // Group sessions by day
+        GroupSessionsByDay();
+    }
+
+    private void GroupSessionsByDay()
+    {
+        ScheduleDays.Clear();
+        
+        var groupedSessions = Sessions
+            .GroupBy(s => s.StartsAt.Date)
+            .OrderBy(g => g.Key)
+            .ToList();
+
+        ShowTabs = groupedSessions.Count > 1;
+
+        foreach (var group in groupedSessions)
+        {
+            var daySchedule = new DaySchedule
+            {
+                Date = group.Key,
+                TabTitle = $"{group.Key:dddd}, {group.Key:MMM dd}",
+                Sessions = new ObservableCollection<Session>(group.OrderBy(s => s.StartsAt))
+            };
+            ScheduleDays.Add(daySchedule);
         }
     }
 
