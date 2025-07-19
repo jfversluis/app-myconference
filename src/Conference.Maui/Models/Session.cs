@@ -48,6 +48,9 @@ public class Session
 
         public string Room { get; set; } = string.Empty;
 
+        [JsonIgnore]
+        public Room? RoomObject { get; set; }
+
         [JsonPropertyName("liveUrl")]
         public string LiveUrl { get; set; } = string.Empty;
 

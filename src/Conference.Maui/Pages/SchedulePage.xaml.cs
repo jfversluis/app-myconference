@@ -39,7 +39,7 @@ public partial class SchedulePage : ContentPage
                 var tabItem = new SfTabItem
                 {
                     Header = daySchedule.TabTitle,
-                    Content = CreateTabContent(daySchedule.Sessions)
+                    Content = CreateTabContent(daySchedule.TimeSlots)
                 };
 
                 tabView.Items.Add(tabItem);
@@ -47,13 +47,13 @@ public partial class SchedulePage : ContentPage
         }
     }
 
-    private View CreateTabContent(ObservableCollection<Session> sessions)
+    private View CreateTabContent(ObservableCollection<TimeSlot> timeSlots)
     {
         CollectionView collectionView = new()
         {
             Margin = new Thickness(10),
-            ItemsSource = sessions,
-            ItemTemplate = (DataTemplate)Resources["SessionTemplate"],
+            ItemsSource = timeSlots,
+            ItemTemplate = (DataTemplate)Resources["TimeSlotTemplate"],
             ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
             {
                 ItemSpacing = 5

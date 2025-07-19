@@ -13,6 +13,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
 
     public ObservableCollection<Session> Sessions { get; set; } = [];
     public ObservableCollection<DaySchedule> ScheduleDays { get; set; } = [];
+    public ObservableCollection<TimeSlot> TimeSlots { get; set; } = [];
 
     [ObservableProperty]
     private bool showTabs;
@@ -34,6 +35,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
     private void GroupSessionsByDay()
     {
         ScheduleDays.Clear();
+        TimeSlots.Clear();
         
         var groupedSessions = Sessions
             .GroupBy(s => s.StartsAt.Date)
@@ -50,7 +52,34 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
                 TabTitle = $"{group.Key:dddd}, {group.Key:MMM dd}",
                 Sessions = new ObservableCollection<Session>(group.OrderBy(s => s.StartsAt))
             };
+
+            // Group sessions by start time within this day
+            var timeGroups = group
+                .GroupBy(s => s.StartsAt.TimeOfDay)
+                .OrderBy(g => g.Key)
+                .ToList();
+
+            foreach (var timeGroup in timeGroups)
+            {
+                var timeSlot = new TimeSlot
+                {
+                    StartTime = group.Key.Add(timeGroup.Key),
+                    TimeDisplayText = group.Key.Add(timeGroup.Key).ToString("HH:mm"),
+                    Sessions = new ObservableCollection<Session>(timeGroup.OrderBy(s => s.RoomObject?.Sort ?? int.MaxValue).ThenBy(s => s.Title))
+                };
+                daySchedule.TimeSlots.Add(timeSlot);
+            }
+
             ScheduleDays.Add(daySchedule);
+        }
+
+        // If there's only one day, also populate the direct TimeSlots collection
+        if (ScheduleDays.Count == 1)
+        {
+            foreach (var timeSlot in ScheduleDays[0].TimeSlots)
+            {
+                TimeSlots.Add(timeSlot);
+            }
         }
     }
 
