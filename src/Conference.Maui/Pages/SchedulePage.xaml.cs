@@ -1,3 +1,4 @@
+using Conference.Maui.Helpers;
 using Conference.Maui.ViewModels;
 using Conference.Maui.Models;
 using Syncfusion.Maui.Toolkit.TabView;
@@ -36,10 +37,10 @@ public partial class SchedulePage : ContentPage
 
             foreach (var daySchedule in _viewModel.ScheduleDays)
             {
-                var tabItem = new SfTabItem
+                SfTabItem tabItem = new()
                 {
                     Header = daySchedule.TabTitle,
-                    Content = CreateTabContent(daySchedule.TimeSlots)
+                    Content = CreateTabContent(daySchedule.TimeSlots),
                 };
 
                 tabView.Items.Add(tabItem);
@@ -49,11 +50,14 @@ public partial class SchedulePage : ContentPage
 
     private View CreateTabContent(ObservableCollection<TimeSlot> timeSlots)
     {
+        // Create flattened items for this tab using the shared helper
+        var flattenedItems = ScheduleHelper.FlattenTimeSlots(timeSlots);
+
         CollectionView collectionView = new()
         {
             Margin = new Thickness(10),
-            ItemsSource = timeSlots,
-            ItemTemplate = (DataTemplate)Resources["TimeSlotTemplate"],
+            ItemsSource = flattenedItems,
+            ItemTemplate = (DataTemplateSelector)Resources["ScheduleTemplateSelector"],
             ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
             {
                 ItemSpacing = 5

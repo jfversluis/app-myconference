@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Conference.Maui.Helpers;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Conference.Maui.Pages;
@@ -13,7 +14,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
 
     public ObservableCollection<Session> Sessions { get; set; } = [];
     public ObservableCollection<DaySchedule> ScheduleDays { get; set; } = [];
-    public ObservableCollection<TimeSlot> TimeSlots { get; set; } = [];
+    public ObservableCollection<object> FlattenedItems { get; set; } = [];
 
     [ObservableProperty]
     private bool showTabs;
@@ -35,7 +36,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
     private void GroupSessionsByDay()
     {
         ScheduleDays.Clear();
-        TimeSlots.Clear();
+        FlattenedItems.Clear();
         
         var groupedSessions = Sessions
             .GroupBy(s => s.StartsAt.Date)
@@ -44,13 +45,18 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
 
         ShowTabs = groupedSessions.Count > 1;
 
+        // Use short day notation if more than 2 days
+        bool useShortDayNotation = groupedSessions.Count > 2;
+
         foreach (var group in groupedSessions)
         {
-            var daySchedule = new DaySchedule
+            DaySchedule daySchedule = new()
             {
                 Date = group.Key,
-                TabTitle = $"{group.Key:dddd}, {group.Key:MMM dd}",
-                Sessions = new ObservableCollection<Session>(group.OrderBy(s => s.StartsAt))
+                TabTitle = useShortDayNotation ? 
+                    $"{group.Key:ddd}, {group.Key:MMM dd}" :  // Short format: "Mon, Sep 10"
+                    $"{group.Key:dddd}, {group.Key:MMM dd}",  // Long format: "Monday, Sep 10"
+                Sessions = new ObservableCollection<Session>(group.OrderBy(s => s.RoomObject?.Sort ?? 99).ThenBy(s => s.Title))
             };
 
             // Group sessions by start time within this day
@@ -61,11 +67,11 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
 
             foreach (var timeGroup in timeGroups)
             {
-                var timeSlot = new TimeSlot
+                TimeSlot timeSlot = new()
                 {
                     StartTime = group.Key.Add(timeGroup.Key),
                     TimeDisplayText = group.Key.Add(timeGroup.Key).ToString("HH:mm"),
-                    Sessions = new ObservableCollection<Session>(timeGroup.OrderBy(s => s.RoomObject?.Sort ?? int.MaxValue).ThenBy(s => s.Title))
+                    Sessions = new ObservableCollection<Session>(timeGroup.OrderBy(s => s.RoomObject?.Sort ?? 99).ThenBy(s => s.Title))
                 };
                 daySchedule.TimeSlots.Add(timeSlot);
             }
@@ -73,12 +79,13 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
             ScheduleDays.Add(daySchedule);
         }
 
-        // If there's only one day, also populate the direct TimeSlots collection
+        // If there's only one day, populate the flattened items collection
         if (ScheduleDays.Count == 1)
         {
-            foreach (var timeSlot in ScheduleDays[0].TimeSlots)
+            var flattenedItems = ScheduleHelper.FlattenTimeSlots(ScheduleDays[0].TimeSlots);
+            foreach (var item in flattenedItems)
             {
-                TimeSlots.Add(timeSlot);
+                FlattenedItems.Add(item);
             }
         }
     }
@@ -89,6 +96,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
         await Shell.Current.GoToAsync(nameof(SessionDetailsPage),
             new Dictionary<string, object> { { "SelectedSession", selectedSession } });
     }
+
     [RelayCommand]
     private async Task GoToPickFavoriteSessionsPage()
     {

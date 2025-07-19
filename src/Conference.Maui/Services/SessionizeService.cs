@@ -14,7 +14,7 @@ public class SessionizeService : IEventDataService
     private async Task GetAllData()
     {
         var remoteAllData = await _httpClient.GetFromJsonAsync<AllData>(
-            $"https://sessionize.com/api/v2/jl4ktls0/view/All");
+            $"https://sessionize.com/api/v2/5g27052o/view/All");
 
         _speakers = remoteAllData?.Speakers?.Select(speaker => new Speaker
         {
