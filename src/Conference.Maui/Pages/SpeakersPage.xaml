@@ -59,7 +59,7 @@
                                    Text="{Binding FullName}"
                                    FontFamily="PoppinsSemibold"
                                    FontSize="20"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}"
                                    MaxLines="1" />
 
                             <!-- Speaker TagLine -->
@@ -78,7 +78,7 @@
                                    Text="{Binding Bio}"
                                    FontFamily="OpenSansRegular"
                                    FontSize="15"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
                                    LineBreakMode="TailTruncation"
                                    MaxLines="2"
                                    Margin="0,4,0,0" />
@@ -93,7 +93,7 @@
         <CollectionView 
             ItemsSource="{Binding Speakers}"
             ItemTemplate="{StaticResource SpeakerTemplate}"
-            BackgroundColor="{StaticResource Background}">
+            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
             </CollectionView.ItemsLayout>

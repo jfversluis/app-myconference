@@ -86,12 +86,12 @@
                                        VerticalOptions="Center" />
                                 <Label Text="•"
                                        FontSize="12"
-                                       TextColor="{StaticResource Gray400}"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray400}}"
                                        VerticalOptions="Center" />
                                 <Label Text="{Binding DurationInMinutes, StringFormat='{0}min'}"
                                        FontSize="12"
                                        FontFamily="OpenSansRegular"
-                                       TextColor="{StaticResource TextSecondary}"
+                                       TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
                                        VerticalOptions="Center" />
                             </StackLayout>
                         </Grid>
@@ -123,7 +123,7 @@
                                Text="{Binding SessionCount, Converter={StaticResource PluralConverter}}"
                                FontFamily="OpenSansRegular"
                                FontSize="11"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
                                VerticalOptions="Center"
                                HorizontalOptions="End" />
                     </Grid>
@@ -142,9 +142,10 @@
             x:Name="tabView"
             EnableSwiping="True"
             IsVisible="{Binding ShowTabs}"
-            BackgroundColor="{StaticResource Background}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
             IndicatorBackground="{StaticResource Primary}"
             IndicatorWidthMode="Fit"
+            TabWidthMode="SizeToContent"
             >
         </syncfusion:SfTabView>
 
@@ -153,7 +154,7 @@
             ItemsSource="{Binding FlattenedItems}"
             ItemTemplate="{StaticResource ScheduleTemplateSelector}"
             IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}"
-            BackgroundColor="{StaticResource Background}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
             Margin="10">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />

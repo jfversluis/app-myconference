@@ -22,6 +22,38 @@ public partial class SchedulePage : ContentPage
     {
         await _viewModel.LoadEventData();
         CreateTabs();
+        
+        // Subscribe to theme changes
+        if (Application.Current != null)
+            Application.Current.RequestedThemeChanged += OnThemeChanged;
+    }
+
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    {
+        // Unsubscribe from theme changes
+        if (Application.Current != null)
+            Application.Current.RequestedThemeChanged -= OnThemeChanged;
+        base.OnNavigatedFrom(args);
+    }
+
+    private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
+    {
+        // Update tab colors when theme changes
+        UpdateTabColors();
+    }
+
+    private void UpdateTabColors()
+    {
+        if (tabView?.Items == null) return;
+
+        Color textColor = Application.Current?.RequestedTheme == AppTheme.Dark
+            ? Color.FromArgb("#F9FAFB") // DarkTextPrimary
+            : Color.FromArgb("#1A1A1A"); // LightTextPrimary
+
+        foreach (SfTabItem tabItem in tabView.Items)
+        {
+            tabItem.TextColor = textColor;
+        }
     }
 
     private void CreateTabs()
@@ -45,6 +77,9 @@ public partial class SchedulePage : ContentPage
 
                 tabView.Items.Add(tabItem);
             }
+
+            // Set initial tab colors
+            UpdateTabColors();
         }
     }
 

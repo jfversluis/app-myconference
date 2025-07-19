@@ -8,15 +8,15 @@
              x:DataType="viewmodels:SpeakerDetailsViewModel"
              x:Class="Conference.Maui.Pages.SpeakerDetailsPage"
              Title="{Binding SelectedSpeaker.FullName}"
-             BackgroundColor="{StaticResource Gray100}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightSurfaceVariant}, Dark={StaticResource DarkSurfaceVariant}}">
 
     <ScrollView>
         <StackLayout Spacing="0">
             
             <!-- Hero Section with Speaker Info -->
-            <Border BackgroundColor="{StaticResource White}"
+            <Border BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                     Margin="16,16,16,8"
-                    Stroke="{StaticResource Gray200}"
+                    Stroke="{AppThemeBinding Light={StaticResource LightBorderColor}, Dark={StaticResource DarkBorderColor}}"
                     StrokeShape="RoundRectangle 16"
                     StrokeThickness="1">
                 
@@ -48,7 +48,7 @@
                            FontFamily="PoppinsSemibold"
                            FontSize="24"
                            HorizontalTextAlignment="Center"
-                           TextColor="{StaticResource Gray900}" />
+                           TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}" />
 
                     <!-- Speaker TagLine -->
                     <Label Text="{Binding SelectedSpeaker.TagLine}"
@@ -63,15 +63,15 @@
                            FontSize="14"
                            LineHeight="1.3"
                            HorizontalTextAlignment="Center"
-                           TextColor="{StaticResource Gray600}"
+                           TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
                            Margin="0,4,0,0" />
                 </StackLayout>
             </Border>
 
             <!-- Sessions Section -->
-            <Border BackgroundColor="{StaticResource White}"
+            <Border BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                     Margin="16,8,16,16"
-                    Stroke="{StaticResource Gray200}"
+                    Stroke="{AppThemeBinding Light={StaticResource LightBorderColor}, Dark={StaticResource DarkBorderColor}}"
                     StrokeShape="RoundRectangle 16"
                     StrokeThickness="1">
                 
@@ -98,8 +98,8 @@
                     <StackLayout BindableLayout.ItemsSource="{Binding SelectedSpeaker.Sessions}" Spacing="8">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:Session">
-                                <Border BackgroundColor="{StaticResource Gray100}"
-                                        Stroke="{StaticResource Gray200}"
+                                <Border BackgroundColor="{AppThemeBinding Light={StaticResource LightSurfaceVariant}, Dark={StaticResource DarkSurfaceVariant}}"
+                                        Stroke="{AppThemeBinding Light={StaticResource LightBorderColor}, Dark={StaticResource DarkBorderColor}}"
                                         StrokeShape="RoundRectangle 12"
                                         StrokeThickness="1"
                                         Padding="12">
@@ -126,7 +126,7 @@
                                                    HorizontalTextAlignment="Center" />
                                             <Label Text="{Binding DurationInMinutes, StringFormat='{0}min'}"
                                                    FontSize="11"
-                                                   TextColor="{StaticResource Gray500}"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                    HorizontalTextAlignment="Center" />
                                         </StackLayout>
                                         
@@ -137,13 +137,13 @@
                                                    FontSize="15"
                                                    LineBreakMode="TailTruncation"
                                                    MaxLines="2"
-                                                   TextColor="{StaticResource Gray900}" />
+                                                   TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}" />
                                             
                                             <Label Text="{Binding Description}"
                                                    FontSize="13"
                                                    LineBreakMode="TailTruncation"
                                                    MaxLines="2"
-                                                   TextColor="{StaticResource Gray600}" />
+                                                   TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}" />
                                             
                                             <Label Margin="0,2,0,0">
                                                 <Label.FormattedText>

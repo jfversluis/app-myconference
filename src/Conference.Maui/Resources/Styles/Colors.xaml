@@ -25,10 +25,32 @@
     <Color x:Key="Success">#107C10</Color><!-- Azure Green -->
     <Color x:Key="Warning">#FFB900</Color><!-- Azure Yellow -->
     <Color x:Key="Error">#D13438</Color><!-- Azure Red -->
+    
+    <!-- Interactive Colors -->
+    <Color x:Key="LikeColor">#63DD99</Color><!-- Green for like/approve -->
+    <Color x:Key="DislikeColor">#FF6A4F</Color><!-- Red for dislike/reject -->
 
     <!-- Neutral Colors -->
     <Color x:Key="White">#FFFFFF</Color>
     <Color x:Key="Black">#000000</Color>
+    
+    <!-- Light Theme Colors -->
+    <Color x:Key="LightBackground">#F8F9FA</Color>
+    <Color x:Key="LightSurface">#FFFFFF</Color>
+    <Color x:Key="LightSurfaceVariant">#F3F4F6</Color>
+    <Color x:Key="LightTextPrimary">#1A1A1A</Color>
+    <Color x:Key="LightTextSecondary">#6B7280</Color>
+    <Color x:Key="LightBorderColor">#E5E7EB</Color>
+    
+    <!-- Dark Theme Colors -->
+    <Color x:Key="DarkBackground">#1F2937</Color>
+    <Color x:Key="DarkSurface">#374151</Color>
+    <Color x:Key="DarkSurfaceVariant">#4B5563</Color>
+    <Color x:Key="DarkTextPrimary">#F9FAFB</Color>
+    <Color x:Key="DarkTextSecondary">#E5E7EB</Color><!-- Lighter for better contrast -->
+    <Color x:Key="DarkBorderColor">#4B5563</Color>
+    
+    <!-- Legacy static colors for fallback -->
     <Color x:Key="Background">#F8F9FA</Color><!-- Light Background -->
     <Color x:Key="Surface">#FFFFFF</Color><!-- Card/Surface Background -->
     <Color x:Key="SurfaceVariant">#F3F4F6</Color><!-- Alternative Surface -->
