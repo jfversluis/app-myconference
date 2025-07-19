@@ -354,6 +354,22 @@
         </Setter>
     </Style>
 
+    <!-- Time Slot Header Specific Styles -->
+    <Style x:Key="TimeSlotHeaderStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Gray200}" />
+        <Setter Property="Stroke" Value="{StaticResource BorderLight}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="Margin" Value="0,5" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="Shadow">
+            <Shadow Brush="{StaticResource Gray300}"
+                    Offset="0,2"
+                    Radius="8"
+                    Opacity="0.08" />
+        </Setter>
+    </Style>
+
     <Style x:Key="SessionTitleStyle" TargetType="Label">
         <Setter Property="FontFamily" Value="PoppinsSemibold" />
         <Setter Property="FontSize" Value="18" />

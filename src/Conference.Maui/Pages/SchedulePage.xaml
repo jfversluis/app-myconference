@@ -14,8 +14,8 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <!-- Session Data Template for reuse -->
-            <DataTemplate x:Key="SessionTemplate" x:DataType="models:Session">
+            <!-- Grouped Session Template (without time column) -->
+            <DataTemplate x:Key="GroupedSessionTemplate" x:DataType="models:Session">
                 <Border Style="{StaticResource SessionCardStyle}">
 
                     <Grid ColumnSpacing="12" 
@@ -25,7 +25,6 @@
                         </Grid.GestureRecognizers>
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="90" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         
@@ -35,53 +34,28 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <!-- Time -->
-                        <Label Grid.Row="0" Grid.Column="0"
-                               Text="{Binding StartsAt, StringFormat='{0:HH:mm}'}" 
-                               Style="{StaticResource TimeStyle}"
-                               HorizontalTextAlignment="Center"
-                               VerticalOptions="End" />
-                        
-                        <!-- Duration -->
-                        <Label Grid.Row="1" Grid.Column="0"
-                               Text="{Binding DurationInMinutes, StringFormat='{0}min'}" 
-                               Style="{StaticResource DurationStyle}"
-                               HorizontalTextAlignment="Center"
-                               VerticalOptions="Center" />
-
-                        <!-- Room -->
-                        <Label Grid.Row="2" Grid.Column="0"
-                               Text="{Binding Room}"
-                               FontSize="11"
-                               FontFamily="OpenSansRegular"
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource Primary}"
-                               LineBreakMode="TailTruncation"
-                               MaxLines="1"
-                               VerticalOptions="Start"
-                               HorizontalTextAlignment="Center" />
-
                         <!-- Session Title -->
-                        <Label Grid.Row="0" Grid.Column="1"
+                        <Label Grid.Row="0" Grid.Column="0"
                                Text="{Binding Title}"
                                Style="{StaticResource SessionTitleStyle}" />
 
                         <!-- Session Description -->
-                        <Label Grid.Row="1" Grid.Column="1"
+                        <Label Grid.Row="1" Grid.Column="0"
                                Text="{Binding Description}"
                                Style="{StaticResource SessionDescriptionStyle}" />
 
-                        <!-- Speaker Info with Avatar -->
-                        <Grid Grid.Row="2" Grid.Column="1" 
+                        <!-- Speaker and Room Info -->
+                        <Grid Grid.Row="2" Grid.Column="0" 
                               ColumnSpacing="8"
                               Margin="0,4,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
                             <!-- Speaker Avatar -->
-                            <toolkit:AvatarView Grid.Row="0" Grid.Column="0"
+                            <toolkit:AvatarView Grid.Column="0"
                                               CornerRadius="16"
                                               HeightRequest="32"
                                               WidthRequest="32"
@@ -89,14 +63,78 @@
                                               ImageSource="{Binding SpeakerProfilePicture}" />
 
                             <!-- Speaker Name -->
-                            <Label Grid.Row="0" Grid.Column="1"
+                            <Label Grid.Column="1"
                                    Text="{Binding Speakers[0].FullName, FallbackValue='Speaker TBA'}"
                                    Style="{StaticResource SpeakerNameStyle}"
                                    VerticalOptions="Center" />
+
+                            <!-- Room and Duration -->
+                            <StackLayout Grid.Column="2" 
+                                       Orientation="Horizontal" 
+                                       Spacing="8"
+                                       VerticalOptions="Center">
+                                <Label Text="{Binding Room}"
+                                       FontSize="12"
+                                       FontFamily="OpenSansRegular"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       VerticalOptions="Center" />
+                                <Label Text="•"
+                                       FontSize="12"
+                                       TextColor="{StaticResource Gray400}"
+                                       VerticalOptions="Center" />
+                                <Label Text="{Binding DurationInMinutes, StringFormat='{0}min'}"
+                                       FontSize="12"
+                                       FontFamily="OpenSansRegular"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       VerticalOptions="Center" />
+                            </StackLayout>
                         </Grid>
 
                     </Grid>
                 </Border>
+            </DataTemplate>
+
+            <!-- Time Slot Template -->
+            <DataTemplate x:Key="TimeSlotTemplate" x:DataType="models:TimeSlot">
+                <StackLayout Spacing="0">
+                    <!-- Time Header - custom style for exact width match -->
+                    <Border Style="{StaticResource TimeSlotHeaderStyle}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Time Display -->
+                            <Label Grid.Column="0"
+                                   Text="{Binding TimeDisplayText}"
+                                   FontFamily="PoppinsSemibold"
+                                   FontSize="14"
+                                   TextColor="{StaticResource Primary}"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start" />
+
+                            <!-- Session Count -->
+                            <Label Grid.Column="1"
+                                   Text="{Binding Sessions.Count, StringFormat='{0} session(s)'}"
+                                   FontFamily="OpenSansRegular"
+                                   FontSize="11"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Sessions for this time -->
+                    <CollectionView ItemsSource="{Binding Sessions}"
+                                    ItemTemplate="{StaticResource GroupedSessionTemplate}">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
+                        </CollectionView.ItemsLayout>
+                    </CollectionView>
+                </StackLayout>
             </DataTemplate>
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -111,8 +149,8 @@
 
         <!-- Show regular CollectionView if there's only one day -->
         <CollectionView 
-            ItemsSource="{Binding Sessions}"
-            ItemTemplate="{StaticResource SessionTemplate}"
+            ItemsSource="{Binding TimeSlots}"
+            ItemTemplate="{StaticResource TimeSlotTemplate}"
             IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}"
             BackgroundColor="{StaticResource Background}">
             <CollectionView.ItemsLayout>
