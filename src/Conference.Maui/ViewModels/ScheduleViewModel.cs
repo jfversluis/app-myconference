@@ -56,7 +56,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
                 TabTitle = useShortDayNotation ? 
                     $"{group.Key:ddd}, {group.Key:MMM dd}" :  // Short format: "Mon, Sep 10"
                     $"{group.Key:dddd}, {group.Key:MMM dd}",  // Long format: "Monday, Sep 10"
-                Sessions = new ObservableCollection<Session>(group.OrderBy(s => s.RoomObject?.Sort ?? int.MaxValue).ThenBy(s => s.Title))
+                Sessions = new ObservableCollection<Session>(group.OrderBy(s => s.RoomObject?.Sort ?? 99).ThenBy(s => s.Title))
             };
 
             // Group sessions by start time within this day
@@ -71,7 +71,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
                 {
                     StartTime = group.Key.Add(timeGroup.Key),
                     TimeDisplayText = group.Key.Add(timeGroup.Key).ToString("HH:mm"),
-                    Sessions = new ObservableCollection<Session>(timeGroup.OrderBy(s => s.RoomObject?.Sort ?? int.MaxValue).ThenBy(s => s.Title))
+                    Sessions = new ObservableCollection<Session>(timeGroup.OrderBy(s => s.RoomObject?.Sort ?? 99).ThenBy(s => s.Title))
                 };
                 daySchedule.TimeSlots.Add(timeSlot);
             }
