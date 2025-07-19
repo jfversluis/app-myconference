@@ -10,6 +10,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
     xmlns:converters="clr-namespace:Conference.Maui.Converters"
+    xmlns:selectors="clr-namespace:Conference.Maui.Selectors"
     Title="{x:Static localization:Strings.SchedulePageTitle}"
     x:DataType="viewmodels:ScheduleViewModel">
 
@@ -98,48 +99,41 @@
                     </Grid>
                 </Border>
             </DataTemplate>
+            
+            <!-- Time Header Template for flattened view -->
+            <DataTemplate x:Key="TimeHeaderTemplate" x:DataType="models:TimeHeader">
+                <Border Style="{StaticResource TimeSlotHeaderStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-            <!-- Time Slot Template -->
-            <DataTemplate x:Key="TimeSlotTemplate" x:DataType="models:TimeSlot">
-                <StackLayout Spacing="0">
-                    <!-- Time Header - custom style for exact width match -->
-                    <Border Style="{StaticResource TimeSlotHeaderStyle}">
+                        <!-- Time Display -->
+                        <Label Grid.Column="0"
+                               Text="{Binding TimeDisplayText}"
+                               FontFamily="PoppinsSemibold"
+                               FontSize="14"
+                               TextColor="{StaticResource Primary}"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Start" />
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Time Display -->
-                            <Label Grid.Column="0"
-                                   Text="{Binding TimeDisplayText}"
-                                   FontFamily="PoppinsSemibold"
-                                   FontSize="14"
-                                   TextColor="{StaticResource Primary}"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="Start" />
-
-                            <!-- Session Count -->
-                            <Label Grid.Column="1"
-                                   Text="{Binding Sessions.Count, Converter={StaticResource PluralConverter}}"
-                                   FontFamily="OpenSansRegular"
-                                   FontSize="11"
-                                   TextColor="{StaticResource TextSecondary}"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="End" />
-                        </Grid>
-                    </Border>
-
-                    <!-- Sessions for this time -->
-                    <CollectionView ItemsSource="{Binding Sessions}"
-                                    ItemTemplate="{StaticResource GroupedSessionTemplate}">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
-                        </CollectionView.ItemsLayout>
-                    </CollectionView>
-                </StackLayout>
+                        <!-- Session Count -->
+                        <Label Grid.Column="1"
+                               Text="{Binding SessionCount, Converter={StaticResource PluralConverter}}"
+                               FontFamily="OpenSansRegular"
+                               FontSize="11"
+                               TextColor="{StaticResource TextSecondary}"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End" />
+                    </Grid>
+                </Border>
             </DataTemplate>
+            
+            <!-- Template Selector -->
+            <selectors:ScheduleTemplateSelector x:Key="ScheduleTemplateSelector"
+                                               TimeHeaderTemplate="{StaticResource TimeHeaderTemplate}"
+                                               SessionTemplate="{StaticResource GroupedSessionTemplate}" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <Grid Style="{StaticResource PageBackgroundStyle}">
@@ -148,17 +142,21 @@
             x:Name="tabView"
             EnableSwiping="True"
             IsVisible="{Binding ShowTabs}"
-            BackgroundColor="{StaticResource Background}">
+            BackgroundColor="{StaticResource Background}"
+            IndicatorBackground="{StaticResource Primary}"
+            IndicatorWidthMode="Fit"
+            >
         </syncfusion:SfTabView>
 
         <!-- Show regular CollectionView if there's only one day -->
         <CollectionView 
-            ItemsSource="{Binding TimeSlots}"
-            ItemTemplate="{StaticResource TimeSlotTemplate}"
+            ItemsSource="{Binding FlattenedItems}"
+            ItemTemplate="{StaticResource ScheduleTemplateSelector}"
             IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}"
-            BackgroundColor="{StaticResource Background}">
+            BackgroundColor="{StaticResource Background}"
+            Margin="10">
             <CollectionView.ItemsLayout>
-                <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
+                <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
             </CollectionView.ItemsLayout>
             <CollectionView.Header>
                 <BoxView HeightRequest="8" BackgroundColor="Transparent" />

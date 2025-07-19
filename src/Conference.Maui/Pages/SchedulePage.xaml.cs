@@ -36,10 +36,10 @@ public partial class SchedulePage : ContentPage
 
             foreach (var daySchedule in _viewModel.ScheduleDays)
             {
-                var tabItem = new SfTabItem
+                SfTabItem tabItem = new()
                 {
                     Header = daySchedule.TabTitle,
-                    Content = CreateTabContent(daySchedule.TimeSlots)
+                    Content = CreateTabContent(daySchedule.TimeSlots),
                 };
 
                 tabView.Items.Add(tabItem);
@@ -49,11 +49,30 @@ public partial class SchedulePage : ContentPage
 
     private View CreateTabContent(ObservableCollection<TimeSlot> timeSlots)
     {
+        // Create flattened items for this tab
+        var flattenedItems = new List<object>();
+        
+        foreach (var timeSlot in timeSlots)
+        {
+            // Add time header
+            flattenedItems.Add(new TimeHeader 
+            { 
+                TimeDisplayText = timeSlot.TimeDisplayText, 
+                SessionCount = timeSlot.Sessions.Count 
+            });
+            
+            // Add all sessions for this time slot
+            foreach (var session in timeSlot.Sessions)
+            {
+                flattenedItems.Add(session);
+            }
+        }
+
         CollectionView collectionView = new()
         {
             Margin = new Thickness(10),
-            ItemsSource = timeSlots,
-            ItemTemplate = (DataTemplate)Resources["TimeSlotTemplate"],
+            ItemsSource = flattenedItems,
+            ItemTemplate = (DataTemplateSelector)Resources["ScheduleTemplateSelector"],
             ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
             {
                 ItemSpacing = 5
