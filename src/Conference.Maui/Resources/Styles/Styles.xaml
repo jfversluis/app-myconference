@@ -360,7 +360,7 @@
         <Setter Property="Stroke" Value="{StaticResource BorderLight}" />
         <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="StrokeShape" Value="RoundRectangle 12" />
-        <Setter Property="Margin" Value="0,5" />
+        <Setter Property="Margin" Value="0,0,0,5" />
         <Setter Property="Padding" Value="12,6" />
         <Setter Property="Shadow">
             <Shadow Brush="{StaticResource Gray300}"

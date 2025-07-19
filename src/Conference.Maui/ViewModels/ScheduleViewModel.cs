@@ -65,7 +65,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
                 {
                     StartTime = group.Key.Add(timeGroup.Key),
                     TimeDisplayText = group.Key.Add(timeGroup.Key).ToString("HH:mm"),
-                    Sessions = new ObservableCollection<Session>(timeGroup.OrderBy(s => s.Title))
+                    Sessions = new ObservableCollection<Session>(timeGroup.OrderBy(s => s.RoomObject?.Sort ?? int.MaxValue).ThenBy(s => s.Title))
                 };
                 daySchedule.TimeSlots.Add(timeSlot);
             }

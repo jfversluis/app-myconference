@@ -45,6 +45,7 @@ public class SessionizeService : IEventDataService
             IsServiceSession = session.IsServiceSession,
             RoomId = session.RoomId,
             Room = remoteAllData.Rooms?.FirstOrDefault(room => session.RoomId == room.Id)?.Name ?? string.Empty,
+            RoomObject = remoteAllData.Rooms?.FirstOrDefault(room => session.RoomId == room.Id),
             SpeakerIds = session.SpeakerIds,
             Speakers = _speakers.Where(s => session.SpeakerIds.Contains(s.Id)).ToList(),
             StartsAt = session.StartsAt,
