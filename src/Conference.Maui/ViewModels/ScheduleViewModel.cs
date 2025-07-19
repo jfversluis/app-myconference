@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Conference.Maui.Helpers;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Conference.Maui.Pages;
@@ -81,20 +82,10 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
         // If there's only one day, populate the flattened items collection
         if (ScheduleDays.Count == 1)
         {
-            foreach (var timeSlot in ScheduleDays[0].TimeSlots)
+            var flattenedItems = ScheduleHelper.FlattenTimeSlots(ScheduleDays[0].TimeSlots);
+            foreach (var item in flattenedItems)
             {
-                // Add time header
-                FlattenedItems.Add(new TimeHeader 
-                { 
-                    TimeDisplayText = timeSlot.TimeDisplayText, 
-                    SessionCount = timeSlot.Sessions.Count 
-                });
-                
-                // Add all sessions for this time slot
-                foreach (var session in timeSlot.Sessions)
-                {
-                    FlattenedItems.Add(session);
-                }
+                FlattenedItems.Add(item);
             }
         }
     }

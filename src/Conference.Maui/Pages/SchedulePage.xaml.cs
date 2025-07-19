@@ -1,3 +1,4 @@
+using Conference.Maui.Helpers;
 using Conference.Maui.ViewModels;
 using Conference.Maui.Models;
 using Syncfusion.Maui.Toolkit.TabView;
@@ -49,24 +50,8 @@ public partial class SchedulePage : ContentPage
 
     private View CreateTabContent(ObservableCollection<TimeSlot> timeSlots)
     {
-        // Create flattened items for this tab
-        var flattenedItems = new List<object>();
-        
-        foreach (var timeSlot in timeSlots)
-        {
-            // Add time header
-            flattenedItems.Add(new TimeHeader 
-            { 
-                TimeDisplayText = timeSlot.TimeDisplayText, 
-                SessionCount = timeSlot.Sessions.Count 
-            });
-            
-            // Add all sessions for this time slot
-            foreach (var session in timeSlot.Sessions)
-            {
-                flattenedItems.Add(session);
-            }
-        }
+        // Create flattened items for this tab using the shared helper
+        var flattenedItems = ScheduleHelper.FlattenTimeSlots(timeSlots);
 
         CollectionView collectionView = new()
         {
