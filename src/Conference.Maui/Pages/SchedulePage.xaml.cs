@@ -25,10 +25,15 @@ public partial class SchedulePage : ContentPage
 
     private void CreateTabs()
     {
+        if (tabView is null)
+        {
+            return;
+        }
+        
         if (_viewModel.ShowTabs)
         {
             tabView.Items.Clear();
-            
+
             foreach (var daySchedule in _viewModel.ScheduleDays)
             {
                 var tabItem = new SfTabItem
@@ -36,7 +41,7 @@ public partial class SchedulePage : ContentPage
                     Header = daySchedule.TabTitle,
                     Content = CreateTabContent(daySchedule.Sessions)
                 };
-                
+
                 tabView.Items.Add(tabItem);
             }
         }
@@ -44,16 +49,15 @@ public partial class SchedulePage : ContentPage
 
     private View CreateTabContent(ObservableCollection<Session> sessions)
     {
-        var collectionView = new CollectionView
+        CollectionView collectionView = new()
         {
             Margin = new Thickness(10),
             ItemsSource = sessions,
-            ItemTemplate = (DataTemplate)Resources["SessionTemplate"]
-        };
-
-        collectionView.ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
-        {
-            ItemSpacing = 5
+            ItemTemplate = (DataTemplate)Resources["SessionTemplate"],
+            ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
+            {
+                ItemSpacing = 5
+            }
         };
 
         return collectionView;
