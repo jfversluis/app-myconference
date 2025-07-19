@@ -9,11 +9,15 @@
     xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+    xmlns:converters="clr-namespace:Conference.Maui.Converters"
     Title="{x:Static localization:Strings.SchedulePageTitle}"
     x:DataType="viewmodels:ScheduleViewModel">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <!-- Converters -->
+            <converters:PluralConverter x:Key="PluralConverter" />
+            
             <!-- Grouped Session Template (without time column) -->
             <DataTemplate x:Key="GroupedSessionTemplate" x:DataType="models:Session">
                 <Border Style="{StaticResource SessionCardStyle}">
@@ -118,7 +122,7 @@
 
                             <!-- Session Count -->
                             <Label Grid.Column="1"
-                                   Text="{Binding Sessions.Count, StringFormat='{0} session(s)'}"
+                                   Text="{Binding Sessions.Count, Converter={StaticResource PluralConverter}}"
                                    FontFamily="OpenSansRegular"
                                    FontSize="11"
                                    TextColor="{StaticResource TextSecondary}"
