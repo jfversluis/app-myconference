@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
+using Conference.Maui.Pages;
 using System.Collections.ObjectModel;
 
 namespace Conference.Maui.ViewModels;
@@ -26,7 +27,7 @@ public partial class SpeakersViewModel(IEventDataService eventDataService) : Obs
     [RelayCommand]
     private async Task GoToSpeakerDetails(Speaker selectedSpeaker)
     {
-        await Shell.Current.GoToAsync("SpeakerDetails",
+        await Shell.Current.GoToAsync(nameof(SpeakerDetailsPage),
             new Dictionary<string, object> { { "SelectedSpeaker", selectedSpeaker } });
     }
 }

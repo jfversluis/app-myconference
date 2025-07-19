@@ -2,55 +2,107 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
              xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
              xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
              x:DataType="viewmodels:SpeakersViewModel"
              x:Class="Conference.Maui.Pages.SpeakersPage"
              Title="{x:Static localization:Strings.SpeakersPageTitle}">
-    <Grid>
-        <CollectionView ItemsSource="{Binding Speakers}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Speaker">
-                    <Grid ColumnSpacing="16" Margin="10">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Speaker Data Template -->
+            <DataTemplate x:Key="SpeakerTemplate" x:DataType="models:Speaker">
+                <Border Style="{StaticResource SpeakerCardStyle}">
+                    <Grid ColumnSpacing="16">
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SpeakersViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
                         </Grid.GestureRecognizers>
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="60"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
 
-                        <toolkit:AvatarView Grid.Column="0" Grid.RowSpan="3"
-                            HorizontalOptions="Center" CornerRadius="40"
-                            WidthRequest="80" HeightRequest="80"
-                            ImageSource="{Binding ProfilePicture}" />
+                        <!-- Speaker Avatar Column -->
+                        <Grid Grid.Column="0" 
+                              VerticalOptions="Start"
+                              HorizontalOptions="Center"
+                              WidthRequest="80">
+                            <toolkit:AvatarView
+                                CornerRadius="36"
+                                HeightRequest="72"
+                                WidthRequest="72"
+                                ImageSource="{Binding ProfilePicture}">
+                                <toolkit:AvatarView.Shadow>
+                                    <Shadow Brush="{StaticResource Primary}" 
+                                            Offset="0,3" 
+                                            Radius="8" 
+                                            Opacity="0.2" />
+                                </toolkit:AvatarView.Shadow>
+                            </toolkit:AvatarView>
+                        </Grid>
 
-                        <Label Text="{Binding FullName}"
-                            Grid.Row="0" Grid.Column="1"
-                            MaxLines="1" FontFamily="PoppinsSemibold"
-                            FontSize="20" LineBreakMode="TailTruncation"/>
+                        <!-- Main Content Column -->
+                        <Grid Grid.Column="1" 
+                              RowSpacing="12"
+                              VerticalOptions="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                        
+                            <!-- Speaker Name -->
+                            <Label Grid.Row="0"
+                                   Text="{Binding FullName}"
+                                   FontFamily="PoppinsSemibold"
+                                   FontSize="20"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   MaxLines="1" />
 
-                        <Label Text="{Binding TagLine}"
-                            Grid.Row="1" Grid.Column="1"
-                            MaxLines="1" LineBreakMode="TailTruncation"
-                            TextColor="{StaticResource Primary}"/>
+                            <!-- Speaker TagLine -->
+                            <Label Grid.Row="1"
+                                   Text="{Binding TagLine}"
+                                   FontSize="16"
+                                   FontFamily="OpenSansRegular"
+                                   FontAttributes="Bold"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="1"
+                                   TextColor="{StaticResource Primary}"
+                                   Margin="0,-4,0,0" />
 
-                        <Label Text="{Binding Bio}"
-                            TextColor="{StaticResource Gray400}"
-                            MaxLines="3" Grid.Row="2" Grid.Column="1"
-                            LineBreakMode="TailTruncation"/>
-
+                            <!-- Speaker Bio -->
+                            <Label Grid.Row="2"
+                                   Text="{Binding Bio}"
+                                   FontFamily="OpenSansRegular"
+                                   FontSize="15"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="2"
+                                   Margin="0,4,0,0" />
+                        </Grid>
                     </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+                </Border>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid Style="{StaticResource PageBackgroundStyle}">
+        <CollectionView 
+            ItemsSource="{Binding Speakers}"
+            ItemTemplate="{StaticResource SpeakerTemplate}"
+            BackgroundColor="{StaticResource Background}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.Header>
+                <BoxView HeightRequest="16" BackgroundColor="Transparent" />
+            </CollectionView.Header>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="24" BackgroundColor="Transparent" />
+            </CollectionView.Footer>
         </CollectionView>
     </Grid>
 </ContentPage>

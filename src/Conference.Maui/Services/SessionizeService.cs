@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 
@@ -22,6 +21,7 @@ public class SessionizeService : IEventDataService
             Id = speaker.Id,
             FirstName = speaker.FirstName ?? string.Empty,
             LastName = speaker.LastName ?? string.Empty,
+            FullName = speaker.FullName ?? string.Empty,
             ProfilePicture = speaker.ProfilePicture ?? string.Empty,
             TagLine = speaker.TagLine ?? string.Empty,
             Bio = speaker.Bio ?? string.Empty,
