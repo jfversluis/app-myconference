@@ -18,7 +18,7 @@ public partial class SpeakerDetailsViewModel : ObservableObject
         {
             // Check if we're coming from SessionDetailsPage to avoid circular navigation
             var navigationStack = Shell.Current.Navigation.NavigationStack;
-            
+
             // Check if the previous page in the stack is SessionDetailsPage
             if (navigationStack.Count >= 2)
             {
@@ -32,17 +32,21 @@ public partial class SpeakerDetailsViewModel : ObservableObject
             }
 
             // Navigate forward to SessionDetailsPage if we didn't come from there
-            await Shell.Current.GoToAsync(nameof(SessionDetailsPage),
-                new Dictionary<string, object> { { "SelectedSession", selectedSession } });
+            await NavigateToSessionDetails(selectedSession);
         }
         catch (Exception ex)
         {
             // Log error or handle gracefully
             System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
-            
+
             // Fallback: just try to navigate normally
-            await Shell.Current.GoToAsync(nameof(SessionDetailsPage),
-                new Dictionary<string, object> { { "SelectedSession", selectedSession } });
+            await NavigateToSessionDetails(selectedSession);
         }
+    }
+    
+    private async Task NavigateToSessionDetails(Session selectedSession)
+    {
+        await Shell.Current.GoToAsync(nameof(SessionDetailsPage),
+            new Dictionary<string, object> { { "SelectedSession", selectedSession } });
     }
 }

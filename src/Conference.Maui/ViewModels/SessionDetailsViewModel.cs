@@ -32,8 +32,7 @@ public partial class SessionDetailsViewModel : ObservableObject
             }
 
             // Navigate forward to SpeakerDetailsPage if we didn't come from there
-            await Shell.Current.GoToAsync(nameof(SpeakerDetailsPage),
-                new Dictionary<string, object> { { "SelectedSpeaker", selectedSpeaker } });
+            await NavigateToSpeakerDetails(selectedSpeaker);
         }
         catch (Exception ex)
         {
@@ -41,8 +40,13 @@ public partial class SessionDetailsViewModel : ObservableObject
             System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
             
             // Fallback: just try to navigate normally
-            await Shell.Current.GoToAsync(nameof(SpeakerDetailsPage),
-                new Dictionary<string, object> { { "SelectedSpeaker", selectedSpeaker } });
+            await NavigateToSpeakerDetails(selectedSpeaker);
         }
+    }
+
+    private async Task NavigateToSpeakerDetails(Speaker selectedSpeaker)
+    {
+        await Shell.Current.GoToAsync(nameof(SpeakerDetailsPage),
+            new Dictionary<string, object> { { "SelectedSpeaker", selectedSpeaker } });
     }
 }
