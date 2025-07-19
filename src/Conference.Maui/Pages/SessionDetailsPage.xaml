@@ -6,44 +6,182 @@
              xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
              x:DataType="viewmodels:SessionDetailsViewModel"
              x:Class="Conference.Maui.Pages.SessionDetailsPage"
-             Title="{Binding SelectedSession.Title}">
+             Title="{Binding SelectedSession.Title}"
+             BackgroundColor="{StaticResource Gray100}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IntToBoolConverter x:Key="IntToBoolConverter" />
+            <toolkit:IsNotNullConverter x:Key="StringIsNotNullOrEmptyConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ScrollView>
-        <VerticalStackLayout Margin="10" Spacing="10">
-            <HorizontalStackLayout BindableLayout.ItemsSource="{Binding SelectedSession.Speakers}"
-                                HorizontalOptions="Center">
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate x:DataType="models:Speaker">
-                        <VerticalStackLayout>
-                            <VerticalStackLayout.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SessionDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SessionDetailsViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
-                            </VerticalStackLayout.GestureRecognizers>
-                            
-                            <toolkit:AvatarView ImageSource="{Binding ProfilePictureUrl}"
-                                                WidthRequest="80" HeightRequest="80" CornerRadius="40" />
+        <StackLayout Spacing="0">
+            
+            <!-- Session Hero Section -->
+            <Border BackgroundColor="{StaticResource White}"
+                    Margin="16,16,16,8"
+                    Stroke="{StaticResource Gray200}"
+                    StrokeShape="RoundRectangle 16"
+                    StrokeThickness="1">
+                
+                <Border.Shadow>
+                    <Shadow Brush="{StaticResource Gray300}" 
+                            Offset="0,4" 
+                            Radius="12" 
+                            Opacity="0.15" />
+                </Border.Shadow>
 
-                            <Label Text="{Binding FullName}" HorizontalOptions="Center" MaximumWidthRequest="150" HorizontalTextAlignment="Center" FontAttributes="Bold" />
-                            <Label Text="{Binding TagLine}" HorizontalOptions="Center" TextColor="{StaticResource Gray400}" MaximumWidthRequest="150" HorizontalTextAlignment="Center" />
-                        </VerticalStackLayout>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </HorizontalStackLayout>
+                <StackLayout Padding="20" Spacing="12">
+                    
+                    <!-- Session Title -->
+                    <Label Text="{Binding SelectedSession.Title}"
+                           Style="{StaticResource H2Style}"
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="WordWrap" />
 
-            <Label Text="{Binding SelectedSession.Room}" FontAttributes="Bold"
-                HorizontalOptions="Center" TextColor="{StaticResource Primary}" />
+                    <!-- Day and Date -->
+                    <Label HorizontalTextAlignment="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding SelectedSession.StartsAt, StringFormat='{0:dddd}'}"
+                                      FontFamily="PoppinsSemibold"
+                                      FontSize="18"
+                                      TextColor="{StaticResource Primary}" />
+                                <Span Text="{Binding SelectedSession.StartsAt, StringFormat=', {0:MMMM d}'}"
+                                      FontSize="18"
+                                      TextColor="{StaticResource TextSecondary}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
 
-            <Label HorizontalOptions="Center">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="{Binding SelectedSession.StartsAt, StringFormat='{0:dddd, d MMMM HH:mm }'}" />
-                        <Span Text="{Binding SelectedSession.DurationInMinutes, StringFormat='({0} minutes)'}" />
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
+                    <!-- Quick Info Bar -->
+                    <Label HorizontalTextAlignment="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding SelectedSession.StartsAt, StringFormat='{0:HH:mm}'}"
+                                      FontFamily="PoppinsSemibold"
+                                      FontSize="17"
+                                      TextColor="{StaticResource TextPrimary}" />
+                                <Span Text=" • " 
+                                      FontSize="17"
+                                      TextColor="{StaticResource Gray400}" />
+                                <Span Text="{Binding SelectedSession.Room}"
+                                      FontSize="17"
+                                      FontAttributes="Bold"
+                                      TextColor="{StaticResource Primary}" />
+                                <Span Text=" • " 
+                                      FontSize="17"
+                                      TextColor="{StaticResource Gray400}" />
+                                <Span Text="{Binding SelectedSession.DurationInMinutes, StringFormat='{0} minutes'}"
+                                      FontSize="17"
+                                      TextColor="{StaticResource TextSecondary}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
 
-            <Label 
-                Text="{Binding SelectedSession.Description}"
-                VerticalOptions="Center" HorizontalOptions="Center"
-                TextColor="{StaticResource Gray600}"/>
-        </VerticalStackLayout>
+                    <!-- Session Description -->
+                    <Label Text="{Binding SelectedSession.Description}"
+                           Style="{StaticResource BodyStyle}"
+                           HorizontalTextAlignment="Center"
+                           LineHeight="1.6"
+                           Margin="0,8,0,0" />
+                </StackLayout>
+            </Border>
+
+            <!-- Speakers Section -->
+            <Border BackgroundColor="{StaticResource White}"
+                    Margin="16,8,16,16"
+                    Stroke="{StaticResource Gray200}"
+                    StrokeShape="RoundRectangle 16"
+                    StrokeThickness="1"
+                    IsVisible="{Binding SelectedSession.Speakers.Count, Converter={StaticResource IntToBoolConverter}}">
+                
+                <Border.Shadow>
+                    <Shadow Brush="{StaticResource Gray300}" 
+                            Offset="0,4" 
+                            Radius="12" 
+                            Opacity="0.15" />
+                </Border.Shadow>
+
+                <StackLayout Padding="20" Spacing="12">
+                    
+                    <!-- Section Header -->
+                    <StackLayout Orientation="Horizontal" Spacing="8" HorizontalOptions="Start">
+                        <Label Text="🎤" FontSize="18" VerticalOptions="Center" />
+                        <Label Text="Presented by"
+                               Style="{StaticResource H4Style}"
+                               VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <!-- Speakers List -->
+                    <StackLayout BindableLayout.ItemsSource="{Binding SelectedSession.Speakers}" Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:Speaker">
+                                <Border BackgroundColor="{StaticResource Gray100}"
+                                        Stroke="{StaticResource Gray200}"
+                                        StrokeShape="RoundRectangle 12"
+                                        StrokeThickness="1"
+                                        Padding="16">
+                                    
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SessionDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SessionDetailsViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Speaker Avatar -->
+                                        <toolkit:AvatarView Grid.Column="0"
+                                                          ImageSource="{Binding ProfilePicture}"
+                                                          WidthRequest="60" 
+                                                          HeightRequest="60" 
+                                                          CornerRadius="30"
+                                                          VerticalOptions="Start">
+                                            <toolkit:AvatarView.Shadow>
+                                                <Shadow Brush="{StaticResource Gray400}" 
+                                                        Offset="0,2" 
+                                                        Radius="6" 
+                                                        Opacity="0.15" />
+                                            </toolkit:AvatarView.Shadow>
+                                        </toolkit:AvatarView>
+
+                                        <!-- Speaker Details -->
+                                        <StackLayout Grid.Column="1" Spacing="4" VerticalOptions="Start">
+                                            <Label Text="{Binding FullName}"
+                                                   FontFamily="PoppinsSemibold"
+                                                   FontSize="18"
+                                                   TextColor="{StaticResource TextPrimary}" />
+                                            
+                                            <Label Text="{Binding TagLine}"
+                                                   FontSize="15"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{StaticResource Primary}"
+                                                   LineBreakMode="WordWrap"
+                                                   IsVisible="{Binding TagLine, Converter={StaticResource StringIsNotNullOrEmptyConverter}}" />
+                                            
+                                            <Label Text="{Binding Bio}"
+                                                   FontSize="14"
+                                                   LineHeight="1.4"
+                                                   LineBreakMode="WordWrap"
+                                                   TextColor="{StaticResource TextSecondary}"
+                                                   MaxLines="3"
+                                                   Margin="0,2,0,0" />
+                                        </StackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </StackLayout>
+            </Border>
+
+            <!-- Bottom Spacing -->
+            <BoxView HeightRequest="20" BackgroundColor="Transparent" />
+        </StackLayout>
     </ScrollView>
 </ContentPage>

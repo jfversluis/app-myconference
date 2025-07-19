@@ -7,27 +7,163 @@
              xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
              x:DataType="viewmodels:SpeakerDetailsViewModel"
              x:Class="Conference.Maui.Pages.SpeakerDetailsPage"
-             Title="{Binding SelectedSpeaker.FullName}">
-    <VerticalStackLayout Margin="10" Spacing="10">
-        <toolkit:AvatarView ImageSource="{Binding SelectedSpeaker.ProfilePicture}"
-                            WidthRequest="80" HeightRequest="80" CornerRadius="40"/>
+             Title="{Binding SelectedSpeaker.FullName}"
+             BackgroundColor="{StaticResource Gray100}">
 
-        <Label Text="{Binding SelectedSpeaker.TagLine}" HorizontalOptions="Center" TextColor="{StaticResource Gray400}" />
+    <ScrollView>
+        <StackLayout Spacing="0">
+            
+            <!-- Hero Section with Speaker Info -->
+            <Border BackgroundColor="{StaticResource White}"
+                    Margin="16,16,16,8"
+                    Stroke="{StaticResource Gray200}"
+                    StrokeShape="RoundRectangle 16"
+                    StrokeThickness="1">
+                
+                <Border.Shadow>
+                    <Shadow Brush="{StaticResource Gray300}" 
+                            Offset="0,4" 
+                            Radius="12" 
+                            Opacity="0.15" />
+                </Border.Shadow>
 
-        <Label 
-            Text="{Binding SelectedSpeaker.Bio}"
-            HorizontalOptions="Center" TextColor="{StaticResource Gray600}" />
+                <StackLayout Padding="20" Spacing="12">
+                    
+                    <!-- Speaker Avatar -->
+                    <toolkit:AvatarView ImageSource="{Binding SelectedSpeaker.ProfilePicture}"
+                                        WidthRequest="80" 
+                                        HeightRequest="80" 
+                                        CornerRadius="40"
+                                        HorizontalOptions="Center">
+                        <toolkit:AvatarView.Shadow>
+                            <Shadow Brush="{StaticResource Gray400}" 
+                                    Offset="0,2" 
+                                    Radius="8" 
+                                    Opacity="0.2" />
+                        </toolkit:AvatarView.Shadow>
+                    </toolkit:AvatarView>
 
-        <Label Text="{x:Static localization:Strings.SessionsAtThisEventHeader}"
-               TextColor="{StaticResource Primary}" FontAttributes="Bold" />
-        
-        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding SelectedSpeaker.Sessions}">
-            <BindableLayout.ItemTemplate>
-                <DataTemplate x:DataType="models:Session">
-                    <!-- TODO make pretty -->
-                    <Label Text="{Binding Title}" />
-                </DataTemplate>
-            </BindableLayout.ItemTemplate>
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+                    <!-- Speaker Name -->
+                    <Label Text="{Binding SelectedSpeaker.FullName}"
+                           FontFamily="PoppinsSemibold"
+                           FontSize="24"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource Gray900}" />
+
+                    <!-- Speaker TagLine -->
+                    <Label Text="{Binding SelectedSpeaker.TagLine}"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource Primary}"
+                           Margin="0,-6,0,0" />
+
+                    <!-- Speaker Bio -->
+                    <Label Text="{Binding SelectedSpeaker.Bio}"
+                           FontSize="14"
+                           LineHeight="1.3"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource Gray600}"
+                           Margin="0,4,0,0" />
+                </StackLayout>
+            </Border>
+
+            <!-- Sessions Section -->
+            <Border BackgroundColor="{StaticResource White}"
+                    Margin="16,8,16,16"
+                    Stroke="{StaticResource Gray200}"
+                    StrokeShape="RoundRectangle 16"
+                    StrokeThickness="1">
+                
+                <Border.Shadow>
+                    <Shadow Brush="{StaticResource Gray300}" 
+                            Offset="0,4" 
+                            Radius="12" 
+                            Opacity="0.15" />
+                </Border.Shadow>
+
+                <StackLayout Padding="20" Spacing="12">
+                    
+                    <!-- Section Header -->
+                    <StackLayout Orientation="Horizontal" Spacing="8" HorizontalOptions="Start">
+                        <Label Text="🎤" FontSize="18" VerticalOptions="Center" />
+                        <Label Text="{x:Static localization:Strings.SessionsAtThisEventHeader}"
+                               FontFamily="PoppinsSemibold"
+                               FontSize="18"
+                               TextColor="{StaticResource Gray900}"
+                               VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <!-- Sessions List -->
+                    <StackLayout BindableLayout.ItemsSource="{Binding SelectedSpeaker.Sessions}" Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:Session">
+                                <Border BackgroundColor="{StaticResource Gray100}"
+                                        Stroke="{StaticResource Gray200}"
+                                        StrokeShape="RoundRectangle 12"
+                                        StrokeThickness="1"
+                                        Padding="12">
+                                    
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SpeakerDetailsViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SpeakerDetailsViewModel}}, Path=GoToSessionDetailsCommand}" CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!-- Time Column -->
+                                        <StackLayout Grid.Column="0" 
+                                                   VerticalOptions="Start"
+                                                   Spacing="1"
+                                                   WidthRequest="60">
+                                            <Label Text="{Binding StartsAt, StringFormat='{0:HH:mm}'}"
+                                                   FontFamily="PoppinsSemibold"
+                                                   FontSize="14"
+                                                   TextColor="{StaticResource Primary}"
+                                                   HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding DurationInMinutes, StringFormat='{0}min'}"
+                                                   FontSize="11"
+                                                   TextColor="{StaticResource Gray500}"
+                                                   HorizontalTextAlignment="Center" />
+                                        </StackLayout>
+                                        
+                                        <!-- Session Content -->
+                                        <StackLayout Grid.Column="1" Spacing="4">
+                                            <Label Text="{Binding Title}"
+                                                   FontFamily="PoppinsSemibold"
+                                                   FontSize="15"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="2"
+                                                   TextColor="{StaticResource Gray900}" />
+                                            
+                                            <Label Text="{Binding Description}"
+                                                   FontSize="13"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="2"
+                                                   TextColor="{StaticResource Gray600}" />
+                                            
+                                            <Label Margin="0,2,0,0">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="📍 " FontSize="11" />
+                                                        <Span Text="{Binding Room}" 
+                                                              FontSize="12"
+                                                              FontAttributes="Bold"
+                                                              TextColor="{StaticResource Primary}" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </StackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </StackLayout>
+            </Border>
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

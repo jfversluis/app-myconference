@@ -57,7 +57,7 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
     [RelayCommand]
     private async Task GoToSessionDetails(Session selectedSession)
     {
-        await Shell.Current.GoToAsync("SessionDetails",
+        await Shell.Current.GoToAsync(nameof(SessionDetailsPage),
             new Dictionary<string, object> { { "SelectedSession", selectedSession } });
     }
     [RelayCommand]
