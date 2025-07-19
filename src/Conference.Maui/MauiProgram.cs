@@ -5,6 +5,7 @@ using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.SwipeCardView;
+using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace Conference.Maui;
 
@@ -22,7 +23,8 @@ public static class MauiProgram
                 fonts.AddFont("Poppins-SemiBold.ttf", "PoppinsSemibold");
             })
             .UseMauiCommunityToolkit()
-            .UseSwipeCardView(); // Add SwipeCardView initialization
+            .UseSwipeCardView() // Add SwipeCardView initialization
+            .ConfigureSyncfusionToolkit();
 
         // Register services
         builder.Services.AddSingleton<IEventDataService, SessionizeService>();
