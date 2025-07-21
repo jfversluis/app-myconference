@@ -82,7 +82,7 @@
                                        FontSize="12"
                                        FontFamily="OpenSansRegular"
                                        FontAttributes="Bold"
-                                       TextColor="{StaticResource Primary}"
+                                       TextColor="{toolkit:AppThemeResource ThemePrimary}"
                                        VerticalOptions="Center" />
                                 <Label Text="•"
                                        FontSize="12"
@@ -114,7 +114,7 @@
                                Text="{Binding TimeDisplayText}"
                                FontFamily="PoppinsSemibold"
                                FontSize="14"
-                               TextColor="{StaticResource Primary}"
+                               TextColor="{toolkit:AppThemeResource ThemePrimary}"
                                VerticalOptions="Center"
                                HorizontalOptions="Start" />
 
@@ -143,7 +143,7 @@
             EnableSwiping="True"
             IsVisible="{Binding ShowTabs}"
             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
-            IndicatorBackground="{StaticResource Primary}"
+            IndicatorBackground="{toolkit:AppThemeResource ThemePrimary}"
             IndicatorWidthMode="Fit"
             TabWidthMode="SizeToContent"
             >

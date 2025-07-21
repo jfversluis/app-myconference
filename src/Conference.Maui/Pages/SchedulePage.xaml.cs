@@ -23,7 +23,7 @@ public partial class SchedulePage : ContentPage
         await _viewModel.LoadEventData();
         CreateTabs();
         
-        // Subscribe to theme changes
+        // Subscribe to theme changes to update tab colors
         if (Application.Current != null)
             Application.Current.RequestedThemeChanged += OnThemeChanged;
     }
@@ -38,18 +38,15 @@ public partial class SchedulePage : ContentPage
 
     private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
     {
-        // Update tab colors when theme changes
-        UpdateTabColors();
+        // Update tab text colors when theme changes
+        UpdateTabTextColors();
     }
 
-    private void UpdateTabColors()
+    private void UpdateTabTextColors()
     {
         if (tabView?.Items == null) return;
 
-        Color textColor = Application.Current?.RequestedTheme == AppTheme.Dark
-            ? Color.FromArgb("#F9FAFB") // DarkTextPrimary
-            : Color.FromArgb("#1A1A1A"); // LightTextPrimary
-
+        var textColor = GetThemeAwareTextColor();
         foreach (SfTabItem tabItem in tabView.Items)
         {
             tabItem.TextColor = textColor;
@@ -73,13 +70,11 @@ public partial class SchedulePage : ContentPage
                 {
                     Header = daySchedule.TabTitle,
                     Content = CreateTabContent(daySchedule.TimeSlots),
+                    TextColor = GetThemeAwareTextColor()
                 };
 
                 tabView.Items.Add(tabItem);
             }
-
-            // Set initial tab colors
-            UpdateTabColors();
         }
     }
 
@@ -100,5 +95,30 @@ public partial class SchedulePage : ContentPage
         };
 
         return collectionView;
+    }
+
+    private Color GetThemeAwareTextColor()
+    {
+        // Get the appropriate color based on current theme
+        var currentTheme = Application.Current?.RequestedTheme ?? AppTheme.Light;
+        
+        if (currentTheme == AppTheme.Dark)
+        {
+            // Try to get DarkTextPrimary from resources
+            if (Application.Current?.Resources.TryGetValue("DarkTextPrimary", out var darkColor) == true && darkColor is Color darkTextColor)
+            {
+                return darkTextColor;
+            }
+            return Color.FromArgb("#F9FAFB"); // Fallback light text for dark theme
+        }
+        else
+        {
+            // Try to get LightTextPrimary from resources
+            if (Application.Current?.Resources.TryGetValue("LightTextPrimary", out var lightColor) == true && lightColor is Color lightTextColor)
+            {
+                return lightTextColor;
+            }
+            return Color.FromArgb("#1A1A1A"); // Fallback dark text for light theme
+        }
     }
 }

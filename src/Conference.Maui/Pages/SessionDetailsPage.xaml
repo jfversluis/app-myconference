@@ -48,10 +48,10 @@
                                 <Span Text="{Binding SelectedSession.StartsAt, StringFormat='{0:dddd}'}"
                                       FontFamily="PoppinsSemibold"
                                       FontSize="16"
-                                      TextColor="{StaticResource Primary}" />
+                                      TextColor="{toolkit:AppThemeResource ThemePrimary}" />
                                 <Span Text="{Binding SelectedSession.StartsAt, StringFormat=', {0:MMMM d}'}"
                                       FontSize="16"
-                                      TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}" />
+                                      TextColor="{toolkit:AppThemeResource ThemeTextSecondary}" />
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
@@ -63,14 +63,14 @@
                                 <Span Text="{Binding SelectedSession.StartsAt, StringFormat='{0:HH:mm}'}"
                                       FontFamily="PoppinsSemibold"
                                       FontSize="15"
-                                      TextColor="{StaticResource Primary}" />
+                                      TextColor="{toolkit:AppThemeResource ThemePrimary}" />
                                 <Span Text=" • " 
                                       FontSize="15"
                                       TextColor="{StaticResource Gray400}" />
                                 <Span Text="{Binding SelectedSession.Room}"
                                       FontSize="15"
                                       FontAttributes="Bold"
-                                      TextColor="{StaticResource Primary}" />
+                                      TextColor="{toolkit:AppThemeResource ThemePrimary}" />
                                 <Span Text=" • " 
                                       FontSize="15"
                                       TextColor="{StaticResource Gray400}" />
@@ -85,7 +85,7 @@
                     <Label Text="{Binding SelectedSession.Description}"
                            FontFamily="OpenSansRegular"
                            FontSize="14"
-                           TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                           TextColor="{toolkit:AppThemeResource ThemeTextPrimary}"
                            HorizontalTextAlignment="Center"
                            LineHeight="1.5"
                            Margin="0,4,0,0" />
@@ -157,12 +157,12 @@
                                             <Label Text="{Binding FullName}"
                                                    FontFamily="PoppinsSemibold"
                                                    FontSize="18"
-                                                   TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}" />
+                                                   TextColor="{toolkit:AppThemeResource ThemeTextPrimary}" />
                                             
                                             <Label Text="{Binding TagLine}"
                                                    FontSize="15"
                                                    FontAttributes="Bold"
-                                                   TextColor="{StaticResource Primary}"
+                                                   TextColor="{toolkit:AppThemeResource ThemePrimary}"
                                                    LineBreakMode="WordWrap"
                                                    IsVisible="{Binding TagLine, Converter={StaticResource StringIsNotNullOrEmptyConverter}}" />
                                             

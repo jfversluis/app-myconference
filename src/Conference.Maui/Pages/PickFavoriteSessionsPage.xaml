@@ -52,7 +52,7 @@
                                     <Label>
                                         <Label.FormattedText>
                                             <FormattedString>
-                                                <Span Text="{Binding Room}" TextColor="{StaticResource Primary}" />
+                                                <Span Text="{Binding Room}" TextColor="{toolkit:AppThemeResource ThemePrimary}" />
 
                                                 <Span
                                                     FontAttributes="Bold"

@@ -48,14 +48,14 @@
                            FontFamily="PoppinsSemibold"
                            FontSize="24"
                            HorizontalTextAlignment="Center"
-                           TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}" />
+                           TextColor="{toolkit:AppThemeResource ThemeTextPrimary}" />
 
                     <!-- Speaker TagLine -->
                     <Label Text="{Binding SelectedSpeaker.TagLine}"
                            FontSize="16"
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"
-                           TextColor="{StaticResource Primary}"
+                           TextColor="{toolkit:AppThemeResource ThemePrimary}"
                            Margin="0,-6,0,0" />
 
                     <!-- Speaker Bio -->
@@ -122,7 +122,7 @@
                                             <Label Text="{Binding StartsAt, StringFormat='{0:HH:mm}'}"
                                                    FontFamily="PoppinsSemibold"
                                                    FontSize="14"
-                                                   TextColor="{StaticResource Primary}"
+                                                   TextColor="{toolkit:AppThemeResource ThemePrimary}"
                                                    HorizontalTextAlignment="Center" />
                                             <Label Text="{Binding DurationInMinutes, StringFormat='{0}min'}"
                                                    FontSize="11"
@@ -137,7 +137,7 @@
                                                    FontSize="15"
                                                    LineBreakMode="TailTruncation"
                                                    MaxLines="2"
-                                                   TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}" />
+                                                   TextColor="{toolkit:AppThemeResource ThemeTextPrimary}" />
                                             
                                             <Label Text="{Binding Description}"
                                                    FontSize="13"
@@ -152,7 +152,7 @@
                                                         <Span Text="{Binding Room}" 
                                                               FontSize="12"
                                                               FontAttributes="Bold"
-                                                              TextColor="{StaticResource Primary}" />
+                                                              TextColor="{toolkit:AppThemeResource ThemePrimary}" />
                                                     </FormattedString>
                                                 </Label.FormattedText>
                                             </Label>
