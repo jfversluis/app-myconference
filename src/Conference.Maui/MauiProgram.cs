@@ -27,9 +27,9 @@ public static class MauiProgram
             .ConfigureSyncfusionToolkit();
 
         // Register services
+        builder.Services.AddSingleton<IDatabaseService, DatabaseService>(); // Move this before SessionizeService
         builder.Services.AddSingleton<IEventDataService, SessionizeService>();
         builder.Services.AddSingleton<ISponsorService, SponsorService>();
-        builder.Services.AddSingleton<IDatabaseService, DatabaseService>(); // Add DatabaseService
 
         // Register view models and pages
         builder.Services.AddTransient<ScheduleViewModel>();

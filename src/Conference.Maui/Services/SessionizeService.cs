@@ -8,13 +8,84 @@ public class SessionizeService : IEventDataService
 {
     private List<Speaker> _speakers = [];
     private List<Session> _sessions = [];
+    private List<Room> _rooms = [];
 
     private readonly HttpClient _httpClient = new();
+    private readonly IDatabaseService _databaseService;
+    private bool _isRefreshing = false;
+    
+    private const string API_BASE_URL = "https://sessionize.com/api/v2/5g27052o";
+    private const string CACHE_KEY = "event_data";
 
-    private async Task GetAllData()
+    public event EventHandler<EventArgs>? DataRefreshed;
+    public event EventHandler<bool>? RefreshStateChanged;
+
+    public SessionizeService(IDatabaseService databaseService)
+    {
+        _databaseService = databaseService;
+    }
+
+    public async Task<bool> IsRefreshingAsync()
+    {
+        return _isRefreshing;
+    }
+
+    private void SetRefreshingState(bool isRefreshing)
+    {
+        if (_isRefreshing != isRefreshing)
+        {
+            _isRefreshing = isRefreshing;
+            RefreshStateChanged?.Invoke(this, isRefreshing);
+        }
+    }
+
+    private async Task<string> GetRemoteHashAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetStringAsync($"{API_BASE_URL}/view/All?hashOnly=true");
+            return response.Trim().Trim('"');
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
+
+    private async Task<bool> ShouldRefreshDataAsync(bool forceRefresh)
+    {
+        if (forceRefresh)
+            return true;
+
+        var cacheInfo = await _databaseService.GetDataCacheInfoAsync(CACHE_KEY);
+        if (cacheInfo == null)
+            return true;
+
+        // Check if we should check for updates (every 5 minutes)
+        if (DateTime.Now - cacheInfo.LastChecked < TimeSpan.FromMinutes(5))
+            return false;
+
+        var remoteHash = await GetRemoteHashAsync();
+        if (string.IsNullOrEmpty(remoteHash))
+            return false;
+
+        // Update last checked time
+        cacheInfo.LastChecked = DateTime.Now;
+        await _databaseService.SaveDataCacheInfoAsync(cacheInfo);
+
+        return cacheInfo.Hash != remoteHash;
+    }
+
+    private async Task GetAllDataFromRemote()
     {
         var remoteAllData = await _httpClient.GetFromJsonAsync<AllData>(
-            $"https://sessionize.com/api/v2/5g27052o/view/All");
+            $"{API_BASE_URL}/view/All");
+
+        if (remoteAllData == null)
+            return;
+
+        // Store rooms first
+        _rooms = remoteAllData.Rooms ?? [];
 
         _speakers = remoteAllData?.Speakers?.Select(speaker => new Speaker
         {
@@ -44,8 +115,8 @@ public class SessionizeService : IEventDataService
             IsPlenumSession = session.IsPlenumSession,
             IsServiceSession = session.IsServiceSession,
             RoomId = session.RoomId,
-            Room = remoteAllData.Rooms?.FirstOrDefault(room => session.RoomId == room.Id)?.Name ?? string.Empty,
-            RoomObject = remoteAllData.Rooms?.FirstOrDefault(room => session.RoomId == room.Id),
+            Room = _rooms.FirstOrDefault(room => session.RoomId == room.Id)?.Name ?? string.Empty,
+            RoomObject = _rooms.FirstOrDefault(room => session.RoomId == room.Id),
             SpeakerIds = session.SpeakerIds,
             Speakers = _speakers.Where(s => session.SpeakerIds.Contains(s.Id)).ToList(),
             StartsAt = session.StartsAt,
@@ -57,26 +128,143 @@ public class SessionizeService : IEventDataService
         {
             speaker.Sessions = _sessions.Where(session => session.SpeakerIds.Contains(speaker.Id)).ToList();
         }
+
+        // Cache the data
+        await CacheDataAsync();
+
+        // Update cache info with new hash
+        var remoteHash = await GetRemoteHashAsync();
+        var cacheInfo = new DataCacheInfo
+        {
+            Key = CACHE_KEY,
+            Hash = remoteHash,
+            LastUpdated = DateTime.Now,
+            LastChecked = DateTime.Now,
+            IsRefreshing = false
+        };
+        await _databaseService.SaveDataCacheInfoAsync(cacheInfo);
+    }
+
+    private async Task CacheDataAsync()
+    {
+        // Convert and cache sessions
+        var cachedSessions = _sessions.Select(CachedSession.FromSession).ToList();
+        await _databaseService.SaveCachedSessionsAsync(cachedSessions);
+
+        // Convert and cache speakers
+        var cachedSpeakers = _speakers.Select(CachedSpeaker.FromSpeaker).ToList();
+        await _databaseService.SaveCachedSpeakersAsync(cachedSpeakers);
+
+        // Convert and cache rooms
+        var cachedRooms = _rooms.Select(CachedRoom.FromRoom).ToList();
+        await _databaseService.SaveCachedRoomsAsync(cachedRooms);
+    }
+
+    public async Task<bool> HasCachedDataAsync()
+    {
+        return await _databaseService.HasCachedDataAsync();
+    }
+
+    public async Task<List<Session>> GetCachedSessionsAsync()
+    {
+        var cachedSessions = await _databaseService.GetAllCachedSessionsAsync();
+        var cachedSpeakers = await _databaseService.GetAllCachedSpeakersAsync();
+        var cachedRooms = await _databaseService.GetAllCachedRoomsAsync();
+
+        // Convert cached data back to models
+        var speakers = cachedSpeakers.Select(cs => cs.ToSpeaker()).ToList();
+        var rooms = cachedRooms.Select(cr => cr.ToRoom()).ToList();
+        var sessions = cachedSessions.Select(cs =>
+        {
+            var session = cs.ToSession();
+            session.RoomObject = rooms.FirstOrDefault(r => r.Id == session.RoomId);
+            session.Speakers = speakers.Where(s => session.SpeakerIds.Contains(s.Id)).ToList();
+            return session;
+        }).ToList();
+
+        // Update speaker sessions
+        foreach (var speaker in speakers)
+        {
+            speaker.Sessions = sessions.Where(s => s.SpeakerIds.Contains(speaker.Id)).ToList();
+        }
+
+        return sessions;
+    }
+
+    public async Task<List<Speaker>> GetCachedSpeakersAsync()
+    {
+        var cachedSpeakers = await _databaseService.GetAllCachedSpeakersAsync();
+        var cachedSessions = await _databaseService.GetAllCachedSessionsAsync();
+
+        var speakers = cachedSpeakers.Select(cs => cs.ToSpeaker()).ToList();
+        var sessions = cachedSessions.Select(cs => cs.ToSession()).ToList();
+
+        // Update speaker sessions
+        foreach (var speaker in speakers)
+        {
+            speaker.Sessions = sessions.Where(s => s.SpeakerIds.Contains(speaker.Id)).ToList();
+        }
+
+        return speakers;
+    }
+
+    public async Task RefreshDataAsync(bool forceRefresh = false)
+    {
+        if (_isRefreshing)
+            return;
+
+        try
+        {
+            SetRefreshingState(true);
+
+            if (await ShouldRefreshDataAsync(forceRefresh))
+            {
+                await GetAllDataFromRemote();
+                DataRefreshed?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        finally
+        {
+            SetRefreshingState(false);
+        }
     }
 
     public async Task<List<Speaker>> GetAllSpeakers()
     {
-        // TODO add way to refresh data/hard refresh
+        // If we have cached data and haven't loaded it yet, load from cache first
+        if (_speakers.Count == 0 && await HasCachedDataAsync())
+        {
+            _speakers = await GetCachedSpeakersAsync();
+        }
+
+        // If still no data, refresh from remote
         if (_speakers.Count == 0)
         {
-            await GetAllData();
+            await RefreshDataAsync(forceRefresh: true);
         }
+
+        // Start background refresh if we haven't checked recently
+        _ = Task.Run(async () => await RefreshDataAsync(forceRefresh: false));
 
         return _speakers;
     }
 
     public async Task<List<Session>> GetAllSessions()
     {
-        // TODO add way to refresh data/hard refresh
+        // If we have cached data and haven't loaded it yet, load from cache first
+        if (_sessions.Count == 0 && await HasCachedDataAsync())
+        {
+            _sessions = await GetCachedSessionsAsync();
+        }
+
+        // If still no data, refresh from remote
         if (_sessions.Count == 0)
         {
-            await GetAllData();
+            await RefreshDataAsync(forceRefresh: true);
         }
+
+        // Start background refresh if we haven't checked recently
+        _ = Task.Run(async () => await RefreshDataAsync(forceRefresh: false));
 
         return _sessions;
     }
