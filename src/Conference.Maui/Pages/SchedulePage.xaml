@@ -144,9 +144,7 @@
             IsVisible="{Binding ShowTabs}"
             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
             IndicatorBackground="{toolkit:AppThemeResource ThemePrimary}"
-            IndicatorWidthMode="Fit"
-            TabWidthMode="SizeToContent"
-            >
+            IndicatorWidthMode="Stretch">
         </syncfusion:SfTabView>
 
         <!-- Show regular CollectionView if there's only one day -->
