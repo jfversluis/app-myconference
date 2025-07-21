@@ -25,9 +25,6 @@ public partial class ScheduleViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool isRefreshing;
 
-    [ObservableProperty]
-    private string lastRefreshText = string.Empty;
-
     public ScheduleViewModel(IEventDataService eventDataService)
     {
         _eventService = eventDataService;
@@ -42,9 +39,6 @@ public partial class ScheduleViewModel : ObservableObject, IDisposable
         // Ensure UI updates happen on the main thread
         await MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            // Update last refresh text
-            await UpdateLastRefreshText();
-            
             // Reload data when it's refreshed in background
             var sessions = await _eventService.GetAllSessions();
             
@@ -78,7 +72,14 @@ public partial class ScheduleViewModel : ObservableObject, IDisposable
 
         try
         {
-            IsLoading = true;
+            // Check if we have cached data first
+            bool hasCachedData = await _eventService.HasCachedDataAsync();
+            
+            // Only show loading indicator if no cached data is available
+            if (!hasCachedData)
+            {
+                IsLoading = true;
+            }
 
             var sessions = await _eventService.GetAllSessions();
 
@@ -90,26 +91,10 @@ public partial class ScheduleViewModel : ObservableObject, IDisposable
 
             // Group sessions by day
             GroupSessionsByDay();
-            
-            // Update last refresh text
-            await UpdateLastRefreshText();
         }
         finally
         {
             IsLoading = false;
-        }
-    }
-
-    private async Task UpdateLastRefreshText()
-    {
-        var lastRefresh = await _eventService.GetLastRefreshTimeAsync();
-        if (lastRefresh.HasValue)
-        {
-            LastRefreshText = $"Last updated: {lastRefresh.Value:MMM dd, HH:mm}";
-        }
-        else
-        {
-            LastRefreshText = string.Empty;
         }
     }
 
@@ -137,9 +122,6 @@ public partial class ScheduleViewModel : ObservableObject, IDisposable
 
             // Group sessions by day
             GroupSessionsByDay();
-            
-            // Update last refresh text
-            await UpdateLastRefreshText();
         }
         finally
         {

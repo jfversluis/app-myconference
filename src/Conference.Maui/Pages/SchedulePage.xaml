@@ -18,7 +18,6 @@
         <ResourceDictionary>
             <!-- Converters -->
             <converters:PluralConverter x:Key="PluralConverter" />
-            <converters:StringIsNotNullOrEmptyConverter x:Key="StringIsNotNullOrEmptyConverter" />
             
             <!-- Grouped Session Template (without time column) -->
             <DataTemplate x:Key="GroupedSessionTemplate" x:DataType="models:Session">
@@ -158,12 +157,6 @@
                        FontSize="16"
                        TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
                        HorizontalOptions="Center" />
-                <Label Text="{Binding LastRefreshText}"
-                       FontFamily="OpenSansRegular"
-                       FontSize="12"
-                       TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
-                       HorizontalOptions="Center"
-                       IsVisible="{Binding LastRefreshText, Converter={StaticResource StringIsNotNullOrEmptyConverter}}" />
             </StackLayout>
         </Frame>
 
