@@ -36,7 +36,7 @@
                                 WidthRequest="72"
                                 ImageSource="{Binding ProfilePicture}">
                                 <toolkit:AvatarView.Shadow>
-                                    <Shadow Brush="{StaticResource Primary}" 
+                                    <Shadow Brush="{toolkit:AppThemeResource ThemePrimary}" 
                                             Offset="0,3" 
                                             Radius="8" 
                                             Opacity="0.2" />
@@ -59,7 +59,7 @@
                                    Text="{Binding FullName}"
                                    FontFamily="PoppinsSemibold"
                                    FontSize="20"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{toolkit:AppThemeResource ThemeTextPrimary}"
                                    MaxLines="1" />
 
                             <!-- Speaker TagLine -->
@@ -70,7 +70,7 @@
                                    FontAttributes="Bold"
                                    LineBreakMode="TailTruncation"
                                    MaxLines="1"
-                                   TextColor="{StaticResource Primary}"
+                                   TextColor="{toolkit:AppThemeResource ThemePrimary}"
                                    Margin="0,-4,0,0" />
 
                             <!-- Speaker Bio -->
@@ -78,7 +78,7 @@
                                    Text="{Binding Bio}"
                                    FontFamily="OpenSansRegular"
                                    FontSize="15"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
                                    LineBreakMode="TailTruncation"
                                    MaxLines="2"
                                    Margin="0,4,0,0" />
@@ -93,7 +93,7 @@
         <CollectionView 
             ItemsSource="{Binding Speakers}"
             ItemTemplate="{StaticResource SpeakerTemplate}"
-            BackgroundColor="{StaticResource Background}">
+            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
             </CollectionView.ItemsLayout>

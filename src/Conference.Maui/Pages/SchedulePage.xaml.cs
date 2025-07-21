@@ -9,6 +9,7 @@ namespace Conference.Maui.Pages;
 public partial class SchedulePage : ContentPage
 {
 	private readonly ScheduleViewModel _viewModel;
+	private AppTheme _currentTheme;
 
 	public SchedulePage(ScheduleViewModel scheduleViewModel)
 	{
@@ -22,6 +23,51 @@ public partial class SchedulePage : ContentPage
     {
         await _viewModel.LoadEventData();
         CreateTabs();
+        
+        // Initialize current theme
+        _currentTheme = Application.Current?.RequestedTheme ?? AppTheme.Light;
+        
+        // Subscribe to theme changes to update tab colors
+        if (Application.Current is not null)
+        {
+            Application.Current.RequestedThemeChanged += OnThemeChanged;
+        }
+    }
+
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    {
+        // Unsubscribe from theme changes
+        if (Application.Current is not null)
+        {
+            Application.Current.RequestedThemeChanged -= OnThemeChanged;
+        }
+        
+        base.OnNavigatedFrom(args);
+    }
+
+    private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
+    {
+        // Only update if the theme actually changed
+        if (e.RequestedTheme != _currentTheme)
+        {
+            _currentTheme = e.RequestedTheme;
+            // Update tab text colors when theme changes
+            UpdateTabTextColors();
+        }
+    }
+
+    private void UpdateTabTextColors()
+    {
+        if (tabView?.Items is null || tabView.Items.Count == 0)
+        {
+            return;
+        }
+
+        var textColor = GetThemeAwareTextColor();
+        foreach (SfTabItem tabItem in tabView.Items)
+        {
+            tabItem.TextColor = textColor;
+        }
     }
 
     private void CreateTabs()
@@ -41,6 +87,7 @@ public partial class SchedulePage : ContentPage
                 {
                     Header = daySchedule.TabTitle,
                     Content = CreateTabContent(daySchedule.TimeSlots),
+                    TextColor = GetThemeAwareTextColor()
                 };
 
                 tabView.Items.Add(tabItem);
@@ -65,5 +112,30 @@ public partial class SchedulePage : ContentPage
         };
 
         return collectionView;
+    }
+
+    private Color GetThemeAwareTextColor()
+    {
+        // Get the appropriate color based on current theme
+        var currentTheme = Application.Current?.RequestedTheme ?? AppTheme.Light;
+        
+        if (currentTheme == AppTheme.Dark)
+        {
+            // Try to get DarkTextPrimary from resources
+            if (Application.Current?.Resources.TryGetValue("DarkTextPrimary", out var darkColor) == true && darkColor is Color darkTextColor)
+            {
+                return darkTextColor;
+            }
+            return Color.FromArgb("#F9FAFB"); // Fallback light text for dark theme
+        }
+        else
+        {
+            // Try to get LightTextPrimary from resources
+            if (Application.Current?.Resources.TryGetValue("LightTextPrimary", out var lightColor) == true && lightColor is Color lightTextColor)
+            {
+                return lightTextColor;
+            }
+            return Color.FromArgb("#1A1A1A"); // Fallback dark text for light theme
+        }
     }
 }

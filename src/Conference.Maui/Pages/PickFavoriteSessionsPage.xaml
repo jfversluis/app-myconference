@@ -27,9 +27,9 @@
                     <Grid>
                         <Border
                             Padding="10,20"
-                            Background="White"
+                            Background="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                             InputTransparent="True"
-                            Stroke="Gray"
+                            Stroke="{AppThemeBinding Light={StaticResource LightBorderColor}, Dark={StaticResource DarkBorderColor}}"
                             StrokeShape="RoundRectangle 10">
                             <AbsoluteLayout>
                                 <VerticalStackLayout
@@ -52,7 +52,7 @@
                                     <Label>
                                         <Label.FormattedText>
                                             <FormattedString>
-                                                <Span Text="{Binding Room}" TextColor="{StaticResource Primary}" />
+                                                <Span Text="{Binding Room}" TextColor="{toolkit:AppThemeResource ThemePrimary}" />
 
                                                 <Span
                                                     FontAttributes="Bold"
@@ -76,7 +76,7 @@
                                     BackgroundColor="Transparent"
                                     Opacity="0"
                                     Rotation="-20"
-                                    Stroke="#63DD99"
+                                    Stroke="{StaticResource LikeColor}"
                                     StrokeShape="RoundRectangle 20">
                                     <Label
                                         x:Name="LikeText"
@@ -84,7 +84,7 @@
                                         FontSize="32"
                                         HorizontalTextAlignment="Center"
                                         Text="LIKE"
-                                        TextColor="#63DD99"
+                                        TextColor="{StaticResource LikeColor}"
                                         VerticalTextAlignment="Center" />
                                 </Border>
                                 <Border
@@ -95,14 +95,14 @@
                                     BackgroundColor="Transparent"
                                     Opacity="0"
                                     Rotation="20"
-                                    Stroke="#FF6A4F"
+                                    Stroke="{StaticResource DislikeColor}"
                                     StrokeShape="RoundRectangle 20">
                                     <Label
                                         BackgroundColor="Transparent"
                                         FontSize="32"
                                         HorizontalTextAlignment="Center"
                                         Text="NOPE"
-                                        TextColor="#FF6A4F"
+                                        TextColor="{StaticResource DislikeColor}"
                                         VerticalTextAlignment="Center" />
                                 </Border>
 
@@ -122,7 +122,7 @@
                 <Button
                     x:Name="nopeButton"
                     Background="Red"
-                    BackgroundColor="White"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                     Clicked="OnDislikeClicked"
                     CornerRadius="30"
                     HeightRequest="60"
@@ -134,7 +134,7 @@
                 <Button
                     x:Name="likeButton"
                     Background="Green"
-                    BackgroundColor="White"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                     Clicked="OnLikeClicked"
                     CornerRadius="30"
                     HeightRequest="60"
