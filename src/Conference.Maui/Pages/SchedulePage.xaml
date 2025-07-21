@@ -137,6 +137,29 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <Grid Style="{StaticResource PageBackgroundStyle}">
+        <!-- Loading indicator overlay -->
+        <Frame IsVisible="{Binding IsLoading}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+               HasShadow="False"
+               BorderColor="Transparent"
+               HorizontalOptions="FillAndExpand"
+               VerticalOptions="FillAndExpand"
+               ZIndex="1000">
+            <StackLayout VerticalOptions="Center" 
+                        HorizontalOptions="Center"
+                        Spacing="20">
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                 Color="{toolkit:AppThemeResource ThemePrimary}"
+                                 WidthRequest="40"
+                                 HeightRequest="40" />
+                <Label Text="Loading schedule..."
+                       FontFamily="OpenSansRegular"
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
+                       HorizontalOptions="Center" />
+            </StackLayout>
+        </Frame>
+
         <!-- Show TabView only if there are multiple days -->
         <syncfusion:SfTabView 
             x:Name="tabView"
@@ -148,26 +171,30 @@
         </syncfusion:SfTabView>
 
         <!-- Show regular CollectionView if there's only one day -->
-        <CollectionView 
-            ItemsSource="{Binding FlattenedItems}"
-            ItemTemplate="{StaticResource ScheduleTemplateSelector}"
-            IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}"
-            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
-            Margin="10">
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
-            </CollectionView.ItemsLayout>
-            <CollectionView.Header>
-                <BoxView HeightRequest="8" BackgroundColor="Transparent" />
-            </CollectionView.Header>
-            <CollectionView.Footer>
-                <BoxView HeightRequest="80" BackgroundColor="Transparent" />
-            </CollectionView.Footer>
-        </CollectionView>
+        <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshDataCommand}"
+                     IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}">
+            <CollectionView 
+                ItemsSource="{Binding FlattenedItems}"
+                ItemTemplate="{StaticResource ScheduleTemplateSelector}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                Margin="10">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.Header>
+                    <BoxView HeightRequest="8" BackgroundColor="Transparent" />
+                </CollectionView.Header>
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="80" BackgroundColor="Transparent" />
+                </CollectionView.Footer>
+            </CollectionView>
+        </RefreshView>
 
         <controls:FloatingButton
             Command="{Binding GoToPickFavoriteSessionsPageCommand}"
             ImageSource="icon_myagenda.png"
-            SemanticProperties.Description="Select favorite sessions" />
+            SemanticProperties.Description="Select favorite sessions"
+            IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}" />
     </Grid>
 </ContentPage>

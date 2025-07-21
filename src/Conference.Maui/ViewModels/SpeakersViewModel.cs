@@ -7,20 +7,96 @@ using System.Collections.ObjectModel;
 
 namespace Conference.Maui.ViewModels;
 
-public partial class SpeakersViewModel(IEventDataService eventDataService) : ObservableObject
+public partial class SpeakersViewModel : ObservableObject
 {
-    private readonly IEventDataService _eventService = eventDataService;
+    private readonly IEventDataService _eventService;
 
     public ObservableCollection<Speaker> Speakers { get; set; } = [];
 
-    public async Task LoadSpeakersData()
-    {
-        var speakers = await _eventService.GetAllSpeakers();
+    [ObservableProperty]
+    private bool isLoading;
 
+    [ObservableProperty]
+    private bool isRefreshing;
+
+    public SpeakersViewModel(IEventDataService eventDataService)
+    {
+        _eventService = eventDataService;
+        
+        // Subscribe to data refresh events
+        _eventService.DataRefreshed += OnDataRefreshed;
+        _eventService.RefreshStateChanged += OnRefreshStateChanged;
+    }
+
+    private async void OnDataRefreshed(object? sender, EventArgs e)
+    {
+        // Reload data when it's refreshed in background
+        var speakers = await _eventService.GetAllSpeakers();
+        
         Speakers.Clear();
         foreach (var speaker in speakers)
         {
             Speakers.Add(speaker);
+        }
+    }
+
+    private void OnRefreshStateChanged(object? sender, bool isRefreshing)
+    {
+        // Update UI when background refresh state changes
+        if (!IsLoading) // Don't override manual refresh
+        {
+            IsRefreshing = isRefreshing;
+        }
+    }
+
+    public async Task LoadSpeakersData()
+    {
+        if (IsLoading || IsRefreshing)
+            return;
+
+        try
+        {
+            IsLoading = true;
+
+            var speakers = await _eventService.GetAllSpeakers();
+
+            Speakers.Clear();
+            foreach (var speaker in speakers)
+            {
+                Speakers.Add(speaker);
+            }
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task RefreshData()
+    {
+        if (IsLoading || IsRefreshing)
+            return;
+
+        try
+        {
+            IsRefreshing = true;
+
+            // Force refresh from remote
+            await _eventService.RefreshDataAsync(forceRefresh: true);
+
+            // Reload the data
+            var speakers = await _eventService.GetAllSpeakers();
+
+            Speakers.Clear();
+            foreach (var speaker in speakers)
+            {
+                Speakers.Add(speaker);
+            }
+        }
+        finally
+        {
+            IsRefreshing = false;
         }
     }
 

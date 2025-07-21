@@ -111,7 +111,17 @@ public partial class SchedulePage : ContentPage
             }
         };
 
-        return collectionView;
+        // Wrap CollectionView in RefreshView for pull-to-refresh
+        RefreshView refreshView = new()
+        {
+            Content = collectionView
+        };
+
+        // Bind RefreshView to ViewModel's refresh properties
+        refreshView.SetBinding(RefreshView.IsRefreshingProperty, new Binding("IsRefreshing"));
+        refreshView.SetBinding(RefreshView.CommandProperty, new Binding("RefreshDataCommand"));
+
+        return refreshView;
     }
 
     private Color GetThemeAwareTextColor()

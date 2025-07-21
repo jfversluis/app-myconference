@@ -8,9 +8,9 @@ using System.Collections.ObjectModel;
 
 namespace Conference.Maui.ViewModels;
 
-public partial class ScheduleViewModel(IEventDataService eventDataService) : ObservableObject
+public partial class ScheduleViewModel : ObservableObject
 {
-    private readonly IEventDataService _eventService = eventDataService;
+    private readonly IEventDataService _eventService;
 
     public ObservableCollection<Session> Sessions { get; set; } = [];
     public ObservableCollection<DaySchedule> ScheduleDays { get; set; } = [];
@@ -19,18 +19,99 @@ public partial class ScheduleViewModel(IEventDataService eventDataService) : Obs
     [ObservableProperty]
     private bool showTabs;
 
-    public async Task LoadEventData()
-    {
-        var sessions = await _eventService.GetAllSessions();
+    [ObservableProperty]
+    private bool isLoading;
 
+    [ObservableProperty]
+    private bool isRefreshing;
+
+    public ScheduleViewModel(IEventDataService eventDataService)
+    {
+        _eventService = eventDataService;
+        
+        // Subscribe to data refresh events
+        _eventService.DataRefreshed += OnDataRefreshed;
+        _eventService.RefreshStateChanged += OnRefreshStateChanged;
+    }
+
+    private async void OnDataRefreshed(object? sender, EventArgs e)
+    {
+        // Reload data when it's refreshed in background
+        var sessions = await _eventService.GetAllSessions();
+        
         Sessions.Clear();
         foreach (var session in sessions)
         {
             Sessions.Add(session);
         }
-
-        // Group sessions by day
+        
         GroupSessionsByDay();
+    }
+
+    private void OnRefreshStateChanged(object? sender, bool isRefreshing)
+    {
+        // Update UI when background refresh state changes
+        if (!IsLoading) // Don't override manual refresh
+        {
+            IsRefreshing = isRefreshing;
+        }
+    }
+
+    public async Task LoadEventData()
+    {
+        if (IsLoading || IsRefreshing)
+            return;
+
+        try
+        {
+            IsLoading = true;
+
+            var sessions = await _eventService.GetAllSessions();
+
+            Sessions.Clear();
+            foreach (var session in sessions)
+            {
+                Sessions.Add(session);
+            }
+
+            // Group sessions by day
+            GroupSessionsByDay();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task RefreshData()
+    {
+        if (IsLoading || IsRefreshing)
+            return;
+
+        try
+        {
+            IsRefreshing = true;
+
+            // Force refresh from remote
+            await _eventService.RefreshDataAsync(forceRefresh: true);
+
+            // Reload the data
+            var sessions = await _eventService.GetAllSessions();
+
+            Sessions.Clear();
+            foreach (var session in sessions)
+            {
+                Sessions.Add(session);
+            }
+
+            // Group sessions by day
+            GroupSessionsByDay();
+        }
+        finally
+        {
+            IsRefreshing = false;
+        }
     }
 
     private void GroupSessionsByDay()

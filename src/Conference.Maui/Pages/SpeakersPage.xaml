@@ -90,19 +90,46 @@
     </ContentPage.Resources>
 
     <Grid Style="{StaticResource PageBackgroundStyle}">
-        <CollectionView 
-            ItemsSource="{Binding Speakers}"
-            ItemTemplate="{StaticResource SpeakerTemplate}"
-            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
-            </CollectionView.ItemsLayout>
-            <CollectionView.Header>
-                <BoxView HeightRequest="16" BackgroundColor="Transparent" />
-            </CollectionView.Header>
-            <CollectionView.Footer>
-                <BoxView HeightRequest="24" BackgroundColor="Transparent" />
-            </CollectionView.Footer>
-        </CollectionView>
+        <!-- Loading indicator overlay -->
+        <Frame IsVisible="{Binding IsLoading}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+               HasShadow="False"
+               BorderColor="Transparent"
+               HorizontalOptions="FillAndExpand"
+               VerticalOptions="FillAndExpand"
+               ZIndex="1000">
+            <StackLayout VerticalOptions="Center" 
+                        HorizontalOptions="Center"
+                        Spacing="20">
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                 Color="{toolkit:AppThemeResource ThemePrimary}"
+                                 WidthRequest="40"
+                                 HeightRequest="40" />
+                <Label Text="Loading speakers..."
+                       FontFamily="OpenSansRegular"
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
+                       HorizontalOptions="Center" />
+            </StackLayout>
+        </Frame>
+
+        <!-- Speakers List with Pull-to-Refresh -->
+        <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshDataCommand}">
+            <CollectionView 
+                ItemsSource="{Binding Speakers}"
+                ItemTemplate="{StaticResource SpeakerTemplate}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.Header>
+                    <BoxView HeightRequest="16" BackgroundColor="Transparent" />
+                </CollectionView.Header>
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="24" BackgroundColor="Transparent" />
+                </CollectionView.Footer>
+            </CollectionView>
+        </RefreshView>
     </Grid>
 </ContentPage>
