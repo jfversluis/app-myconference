@@ -32,7 +32,7 @@ public class CachedSpeaker
     // Convert to Speaker model
     public Speaker ToSpeaker()
     {
-        return new Speaker
+        var speaker = new Speaker
         {
             Id = Id,
             FirstName = FirstName,
@@ -41,16 +41,38 @@ public class CachedSpeaker
             TagLine = TagLine,
             ProfilePicture = ProfilePicture,
             IsTopSpeaker = IsTopSpeaker,
-            Links = string.IsNullOrEmpty(Links) ? [] : JsonSerializer.Deserialize<List<Link>>(Links) ?? [],
-            SessionIds = string.IsNullOrEmpty(SessionIds) ? [] : JsonSerializer.Deserialize<List<int>>(SessionIds) ?? [],
             FullName = FullName
         };
+
+        // Safely deserialize Links
+        try
+        {
+            speaker.Links = string.IsNullOrEmpty(Links) ? [] : JsonSerializer.Deserialize<List<Link>>(Links) ?? [];
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error deserializing Links: {ex.Message}");
+            speaker.Links = [];
+        }
+
+        // Safely deserialize SessionIds
+        try
+        {
+            speaker.SessionIds = string.IsNullOrEmpty(SessionIds) ? [] : JsonSerializer.Deserialize<List<int>>(SessionIds) ?? [];
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error deserializing SessionIds: {ex.Message}");
+            speaker.SessionIds = [];
+        }
+
+        return speaker;
     }
 
     // Create from Speaker model
     public static CachedSpeaker FromSpeaker(Speaker speaker)
     {
-        return new CachedSpeaker
+        var cachedSpeaker = new CachedSpeaker
         {
             Id = speaker.Id,
             FirstName = speaker.FirstName,
@@ -59,10 +81,32 @@ public class CachedSpeaker
             TagLine = speaker.TagLine,
             ProfilePicture = speaker.ProfilePicture,
             IsTopSpeaker = speaker.IsTopSpeaker,
-            Links = JsonSerializer.Serialize(speaker.Links),
-            SessionIds = JsonSerializer.Serialize(speaker.SessionIds),
             FullName = speaker.FullName,
             CachedAt = DateTime.Now
         };
+
+        // Safely serialize Links
+        try
+        {
+            cachedSpeaker.Links = JsonSerializer.Serialize(speaker.Links);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error serializing Links: {ex.Message}");
+            cachedSpeaker.Links = "[]";
+        }
+
+        // Safely serialize SessionIds
+        try
+        {
+            cachedSpeaker.SessionIds = JsonSerializer.Serialize(speaker.SessionIds);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error serializing SessionIds: {ex.Message}");
+            cachedSpeaker.SessionIds = "[]";
+        }
+
+        return cachedSpeaker;
     }
 }

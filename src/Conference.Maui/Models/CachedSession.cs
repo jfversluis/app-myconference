@@ -42,7 +42,7 @@ public class CachedSession
     // Convert to Session model
     public Session ToSession()
     {
-        return new Session
+        var session = new Session
         {
             Id = Id,
             Title = Title,
@@ -51,7 +51,6 @@ public class CachedSession
             EndsAt = EndsAt,
             IsServiceSession = IsServiceSession,
             IsPlenumSession = IsPlenumSession,
-            SpeakerIds = string.IsNullOrEmpty(SpeakerIds) ? [] : JsonSerializer.Deserialize<List<string>>(SpeakerIds) ?? [],
             RoomId = RoomId,
             Room = Room,
             LiveUrl = LiveUrl,
@@ -60,12 +59,25 @@ public class CachedSession
             IsInformed = IsInformed,
             IsConfirmed = IsConfirmed
         };
+
+        // Safely deserialize SpeakerIds
+        try
+        {
+            session.SpeakerIds = string.IsNullOrEmpty(SpeakerIds) ? [] : JsonSerializer.Deserialize<List<string>>(SpeakerIds) ?? [];
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error deserializing SpeakerIds: {ex.Message}");
+            session.SpeakerIds = [];
+        }
+
+        return session;
     }
 
     // Create from Session model
     public static CachedSession FromSession(Session session)
     {
-        return new CachedSession
+        var cachedSession = new CachedSession
         {
             Id = session.Id,
             Title = session.Title,
@@ -74,7 +86,6 @@ public class CachedSession
             EndsAt = session.EndsAt,
             IsServiceSession = session.IsServiceSession,
             IsPlenumSession = session.IsPlenumSession,
-            SpeakerIds = JsonSerializer.Serialize(session.SpeakerIds),
             RoomId = session.RoomId,
             Room = session.Room,
             LiveUrl = session.LiveUrl,
@@ -84,5 +95,18 @@ public class CachedSession
             IsConfirmed = session.IsConfirmed,
             CachedAt = DateTime.Now
         };
+
+        // Safely serialize SpeakerIds
+        try
+        {
+            cachedSession.SpeakerIds = JsonSerializer.Serialize(session.SpeakerIds);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error serializing SpeakerIds: {ex.Message}");
+            cachedSession.SpeakerIds = "[]";
+        }
+
+        return cachedSession;
     }
 }

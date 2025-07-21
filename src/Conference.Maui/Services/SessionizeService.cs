@@ -78,86 +78,105 @@ public class SessionizeService : IEventDataService
 
     private async Task GetAllDataFromRemote()
     {
-        var remoteAllData = await _httpClient.GetFromJsonAsync<AllData>(
-            $"{API_BASE_URL}/view/All");
-
-        if (remoteAllData == null)
-            return;
-
-        // Store rooms first
-        _rooms = remoteAllData.Rooms ?? [];
-
-        _speakers = remoteAllData?.Speakers?.Select(speaker => new Speaker
+        try
         {
-            Id = speaker.Id,
-            FirstName = speaker.FirstName ?? string.Empty,
-            LastName = speaker.LastName ?? string.Empty,
-            FullName = speaker.FullName ?? string.Empty,
-            ProfilePicture = speaker.ProfilePicture ?? string.Empty,
-            TagLine = speaker.TagLine ?? string.Empty,
-            Bio = speaker.Bio ?? string.Empty,
-            Links = speaker.Links?.Select(link => new Link
+            var remoteAllData = await _httpClient.GetFromJsonAsync<AllData>(
+                $"{API_BASE_URL}/view/All");
+
+            if (remoteAllData == null)
             {
-                Title = link.Title ?? string.Empty,
-                Url = link.Url ?? string.Empty,
-                LinkType = link.LinkType ?? string.Empty
-            }).ToList() ?? [],
-            SessionIds = speaker.SessionIds,
-        }).ToList() ?? [];
+                System.Diagnostics.Debug.WriteLine("Failed to retrieve data from remote API");
+                return;
+            }
 
-        _sessions = remoteAllData?.Sessions?.Select(session => new Session
-        {
-            Description = session.Description ?? string.Empty,
-            EndsAt = session.EndsAt,
-            Id = session.Id,
-            IsConfirmed = session.IsConfirmed,
-            IsInformed = session.IsInformed,
-            IsPlenumSession = session.IsPlenumSession,
-            IsServiceSession = session.IsServiceSession,
-            RoomId = session.RoomId,
-            Room = _rooms.FirstOrDefault(room => session.RoomId == room.Id)?.Name ?? string.Empty,
-            RoomObject = _rooms.FirstOrDefault(room => session.RoomId == room.Id),
-            SpeakerIds = session.SpeakerIds,
-            Speakers = _speakers.Where(s => session.SpeakerIds.Contains(s.Id)).ToList(),
-            StartsAt = session.StartsAt,
-            Status = session.Status,
-            Title = session.Title,
-        }).ToList() ?? [];
+            // Store rooms first
+            _rooms = remoteAllData.Rooms ?? [];
 
-        foreach (var speaker in _speakers)
-        {
-            speaker.Sessions = _sessions.Where(session => session.SpeakerIds.Contains(speaker.Id)).ToList();
+            _speakers = remoteAllData?.Speakers?.Select(speaker => new Speaker
+            {
+                Id = speaker.Id,
+                FirstName = speaker.FirstName ?? string.Empty,
+                LastName = speaker.LastName ?? string.Empty,
+                FullName = speaker.FullName ?? string.Empty,
+                ProfilePicture = speaker.ProfilePicture ?? string.Empty,
+                TagLine = speaker.TagLine ?? string.Empty,
+                Bio = speaker.Bio ?? string.Empty,
+                Links = speaker.Links?.Select(link => new Link
+                {
+                    Title = link.Title ?? string.Empty,
+                    Url = link.Url ?? string.Empty,
+                    LinkType = link.LinkType ?? string.Empty
+                }).ToList() ?? [],
+                SessionIds = speaker.SessionIds,
+            }).ToList() ?? [];
+
+            _sessions = remoteAllData?.Sessions?.Select(session => new Session
+            {
+                Description = session.Description ?? string.Empty,
+                EndsAt = session.EndsAt,
+                Id = session.Id,
+                IsConfirmed = session.IsConfirmed,
+                IsInformed = session.IsInformed,
+                IsPlenumSession = session.IsPlenumSession,
+                IsServiceSession = session.IsServiceSession,
+                RoomId = session.RoomId,
+                Room = _rooms.FirstOrDefault(room => session.RoomId == room.Id)?.Name ?? string.Empty,
+                RoomObject = _rooms.FirstOrDefault(room => session.RoomId == room.Id),
+                SpeakerIds = session.SpeakerIds,
+                Speakers = _speakers.Where(s => session.SpeakerIds.Contains(s.Id)).ToList(),
+                StartsAt = session.StartsAt,
+                Status = session.Status,
+                Title = session.Title,
+            }).ToList() ?? [];
+
+            foreach (var speaker in _speakers)
+            {
+                speaker.Sessions = _sessions.Where(session => session.SpeakerIds.Contains(speaker.Id)).ToList();
+            }
+
+            // Cache the data
+            await CacheDataAsync();
+
+            // Update cache info with new hash
+            var remoteHash = await GetRemoteHashAsync();
+            var cacheInfo = new DataCacheInfo
+            {
+                Key = CACHE_KEY,
+                Hash = remoteHash,
+                LastUpdated = DateTime.Now,
+                LastChecked = DateTime.Now,
+                IsRefreshing = false
+            };
+            await _databaseService.SaveDataCacheInfoAsync(cacheInfo);
         }
-
-        // Cache the data
-        await CacheDataAsync();
-
-        // Update cache info with new hash
-        var remoteHash = await GetRemoteHashAsync();
-        var cacheInfo = new DataCacheInfo
+        catch (Exception ex)
         {
-            Key = CACHE_KEY,
-            Hash = remoteHash,
-            LastUpdated = DateTime.Now,
-            LastChecked = DateTime.Now,
-            IsRefreshing = false
-        };
-        await _databaseService.SaveDataCacheInfoAsync(cacheInfo);
+            System.Diagnostics.Debug.WriteLine($"Error loading data from remote: {ex.Message}");
+            // Don't rethrow - let the app continue with cached data if available
+        }
     }
 
     private async Task CacheDataAsync()
     {
-        // Convert and cache sessions
-        var cachedSessions = _sessions.Select(CachedSession.FromSession).ToList();
-        await _databaseService.SaveCachedSessionsAsync(cachedSessions);
+        try
+        {
+            // Convert and cache sessions
+            var cachedSessions = _sessions.Select(CachedSession.FromSession).ToList();
+            await _databaseService.SaveCachedSessionsAsync(cachedSessions);
 
-        // Convert and cache speakers
-        var cachedSpeakers = _speakers.Select(CachedSpeaker.FromSpeaker).ToList();
-        await _databaseService.SaveCachedSpeakersAsync(cachedSpeakers);
+            // Convert and cache speakers
+            var cachedSpeakers = _speakers.Select(CachedSpeaker.FromSpeaker).ToList();
+            await _databaseService.SaveCachedSpeakersAsync(cachedSpeakers);
 
-        // Convert and cache rooms
-        var cachedRooms = _rooms.Select(CachedRoom.FromRoom).ToList();
-        await _databaseService.SaveCachedRoomsAsync(cachedRooms);
+            // Convert and cache rooms
+            var cachedRooms = _rooms.Select(CachedRoom.FromRoom).ToList();
+            await _databaseService.SaveCachedRoomsAsync(cachedRooms);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error caching data: {ex.Message}");
+            // Don't rethrow - caching failure shouldn't break the app
+        }
     }
 
     public async Task<bool> HasCachedDataAsync()
@@ -167,45 +186,61 @@ public class SessionizeService : IEventDataService
 
     public async Task<List<Session>> GetCachedSessionsAsync()
     {
-        var cachedSessions = await _databaseService.GetAllCachedSessionsAsync();
-        var cachedSpeakers = await _databaseService.GetAllCachedSpeakersAsync();
-        var cachedRooms = await _databaseService.GetAllCachedRoomsAsync();
-
-        // Convert cached data back to models
-        var speakers = cachedSpeakers.Select(cs => cs.ToSpeaker()).ToList();
-        var rooms = cachedRooms.Select(cr => cr.ToRoom()).ToList();
-        var sessions = cachedSessions.Select(cs =>
+        try
         {
-            var session = cs.ToSession();
-            session.RoomObject = rooms.FirstOrDefault(r => r.Id == session.RoomId);
-            session.Speakers = speakers.Where(s => session.SpeakerIds.Contains(s.Id)).ToList();
-            return session;
-        }).ToList();
+            var cachedSessions = await _databaseService.GetAllCachedSessionsAsync();
+            var cachedSpeakers = await _databaseService.GetAllCachedSpeakersAsync();
+            var cachedRooms = await _databaseService.GetAllCachedRoomsAsync();
 
-        // Update speaker sessions
-        foreach (var speaker in speakers)
-        {
-            speaker.Sessions = sessions.Where(s => s.SpeakerIds.Contains(speaker.Id)).ToList();
+            // Convert cached data back to models
+            var speakers = cachedSpeakers.Select(cs => cs.ToSpeaker()).ToList();
+            var rooms = cachedRooms.Select(cr => cr.ToRoom()).ToList();
+            var sessions = cachedSessions.Select(cs =>
+            {
+                var session = cs.ToSession();
+                session.RoomObject = rooms.FirstOrDefault(r => r.Id == session.RoomId);
+                session.Speakers = speakers.Where(s => session.SpeakerIds.Contains(s.Id)).ToList();
+                return session;
+            }).ToList();
+
+            // Update speaker sessions
+            foreach (var speaker in speakers)
+            {
+                speaker.Sessions = sessions.Where(s => s.SpeakerIds.Contains(speaker.Id)).ToList();
+            }
+
+            return sessions;
         }
-
-        return sessions;
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error retrieving cached sessions: {ex.Message}");
+            return [];
+        }
     }
 
     public async Task<List<Speaker>> GetCachedSpeakersAsync()
     {
-        var cachedSpeakers = await _databaseService.GetAllCachedSpeakersAsync();
-        var cachedSessions = await _databaseService.GetAllCachedSessionsAsync();
-
-        var speakers = cachedSpeakers.Select(cs => cs.ToSpeaker()).ToList();
-        var sessions = cachedSessions.Select(cs => cs.ToSession()).ToList();
-
-        // Update speaker sessions
-        foreach (var speaker in speakers)
+        try
         {
-            speaker.Sessions = sessions.Where(s => s.SpeakerIds.Contains(speaker.Id)).ToList();
-        }
+            var cachedSpeakers = await _databaseService.GetAllCachedSpeakersAsync();
+            var cachedSessions = await _databaseService.GetAllCachedSessionsAsync();
 
-        return speakers;
+            var speakers = cachedSpeakers.Select(cs => cs.ToSpeaker()).ToList();
+            var sessions = cachedSessions.Select(cs => cs.ToSession()).ToList();
+
+            // Update speaker sessions
+            foreach (var speaker in speakers)
+            {
+                speaker.Sessions = sessions.Where(s => s.SpeakerIds.Contains(speaker.Id)).ToList();
+            }
+
+            return speakers;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error retrieving cached speakers: {ex.Message}");
+            return [];
+        }
     }
 
     public async Task RefreshDataAsync(bool forceRefresh = false)

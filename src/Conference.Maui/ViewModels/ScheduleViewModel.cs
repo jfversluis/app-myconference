@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace Conference.Maui.ViewModels;
 
-public partial class ScheduleViewModel : ObservableObject
+public partial class ScheduleViewModel : ObservableObject, IDisposable
 {
     private readonly IEventDataService _eventService;
 
@@ -36,25 +36,33 @@ public partial class ScheduleViewModel : ObservableObject
 
     private async void OnDataRefreshed(object? sender, EventArgs e)
     {
-        // Reload data when it's refreshed in background
-        var sessions = await _eventService.GetAllSessions();
-        
-        Sessions.Clear();
-        foreach (var session in sessions)
+        // Ensure UI updates happen on the main thread
+        await MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            Sessions.Add(session);
-        }
-        
-        GroupSessionsByDay();
+            // Reload data when it's refreshed in background
+            var sessions = await _eventService.GetAllSessions();
+            
+            Sessions.Clear();
+            foreach (var session in sessions)
+            {
+                Sessions.Add(session);
+            }
+            
+            GroupSessionsByDay();
+        });
     }
 
     private void OnRefreshStateChanged(object? sender, bool isRefreshing)
     {
-        // Update UI when background refresh state changes
-        if (!IsLoading) // Don't override manual refresh
+        // Ensure UI updates happen on the main thread
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            IsRefreshing = isRefreshing;
-        }
+            // Update UI when background refresh state changes
+            if (!IsLoading) // Don't override manual refresh
+            {
+                IsRefreshing = isRefreshing;
+            }
+        });
     }
 
     public async Task LoadEventData()
@@ -185,5 +193,15 @@ public partial class ScheduleViewModel : ObservableObject
         {
             { "AllSessions", Sessions.ToList()   }
         });
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe from events to prevent memory leaks
+        if (_eventService != null)
+        {
+            _eventService.DataRefreshed -= OnDataRefreshed;
+            _eventService.RefreshStateChanged -= OnRefreshStateChanged;
+        }
     }
 }
