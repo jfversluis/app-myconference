@@ -13,6 +13,7 @@ public interface IEventDataService
     Task<List<Speaker>> GetCachedSpeakersAsync();
     Task RefreshDataAsync(bool forceRefresh = false);
     Task<bool> IsRefreshingAsync();
+    Task<DateTime?> GetLastRefreshTimeAsync();
     
     // Events for data updates
     event EventHandler<EventArgs>? DataRefreshed;

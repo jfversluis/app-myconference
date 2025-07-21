@@ -30,6 +30,12 @@ public class SessionizeService : IEventDataService
         return _isRefreshing;
     }
 
+    public async Task<DateTime?> GetLastRefreshTimeAsync()
+    {
+        var cacheInfo = await _databaseService.GetDataCacheInfoAsync(CACHE_KEY);
+        return cacheInfo?.LastChecked;
+    }
+
     private void SetRefreshingState(bool isRefreshing)
     {
         if (_isRefreshing != isRefreshing)
@@ -61,15 +67,11 @@ public class SessionizeService : IEventDataService
         if (cacheInfo == null)
             return true;
 
-        // Check if we should check for updates (every 5 minutes)
-        if (DateTime.Now - cacheInfo.LastChecked < TimeSpan.FromMinutes(5))
-            return false;
-
         var remoteHash = await GetRemoteHashAsync();
         if (string.IsNullOrEmpty(remoteHash))
             return false;
 
-        // Update last checked time
+        // Always update last checked time, even if hash hasn't changed
         cacheInfo.LastChecked = DateTime.Now;
         await _databaseService.SaveDataCacheInfoAsync(cacheInfo);
 
@@ -257,6 +259,18 @@ public class SessionizeService : IEventDataService
                 await GetAllDataFromRemote();
                 DataRefreshed?.Invoke(this, EventArgs.Empty);
             }
+            else if (forceRefresh)
+            {
+                // Even when hash doesn't change during manual refresh, 
+                // we should update the LastChecked time and notify UI
+                var cacheInfo = await _databaseService.GetDataCacheInfoAsync(CACHE_KEY);
+                if (cacheInfo != null)
+                {
+                    cacheInfo.LastChecked = DateTime.Now;
+                    await _databaseService.SaveDataCacheInfoAsync(cacheInfo);
+                }
+                DataRefreshed?.Invoke(this, EventArgs.Empty);
+            }
         }
         finally
         {
@@ -278,9 +292,6 @@ public class SessionizeService : IEventDataService
             await RefreshDataAsync(forceRefresh: true);
         }
 
-        // Start background refresh if we haven't checked recently
-        _ = Task.Run(async () => await RefreshDataAsync(forceRefresh: false));
-
         return _speakers;
     }
 
@@ -297,9 +308,6 @@ public class SessionizeService : IEventDataService
         {
             await RefreshDataAsync(forceRefresh: true);
         }
-
-        // Start background refresh if we haven't checked recently
-        _ = Task.Run(async () => await RefreshDataAsync(forceRefresh: false));
 
         return _sessions;
     }

@@ -12,6 +12,9 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <!-- Converters -->
+            <converters:StringIsNotNullOrEmptyConverter x:Key="StringIsNotNullOrEmptyConverter" />
+            
             <!-- Speaker Data Template -->
             <DataTemplate x:Key="SpeakerTemplate" x:DataType="models:Speaker">
                 <Border Style="{StaticResource SpeakerCardStyle}">
@@ -110,6 +113,12 @@
                        FontSize="16"
                        TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
                        HorizontalOptions="Center" />
+                <Label Text="{Binding LastRefreshText}"
+                       FontFamily="OpenSansRegular"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
+                       HorizontalOptions="Center"
+                       IsVisible="{Binding LastRefreshText, Converter={StaticResource StringIsNotNullOrEmptyConverter}}" />
             </StackLayout>
         </Frame>
 
