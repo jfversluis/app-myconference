@@ -9,6 +9,7 @@ namespace Conference.Maui.Pages;
 public partial class SchedulePage : ContentPage
 {
 	private readonly ScheduleViewModel _viewModel;
+	private AppTheme _currentTheme;
 
 	public SchedulePage(ScheduleViewModel scheduleViewModel)
 	{
@@ -23,28 +24,44 @@ public partial class SchedulePage : ContentPage
         await _viewModel.LoadEventData();
         CreateTabs();
         
+        // Initialize current theme
+        _currentTheme = Application.Current?.RequestedTheme ?? AppTheme.Light;
+        
         // Subscribe to theme changes to update tab colors
-        if (Application.Current != null)
+        if (Application.Current is not null)
+        {
             Application.Current.RequestedThemeChanged += OnThemeChanged;
+        }
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         // Unsubscribe from theme changes
-        if (Application.Current != null)
+        if (Application.Current is not null)
+        {
             Application.Current.RequestedThemeChanged -= OnThemeChanged;
+        }
+        
         base.OnNavigatedFrom(args);
     }
 
     private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
     {
-        // Update tab text colors when theme changes
-        UpdateTabTextColors();
+        // Only update if the theme actually changed
+        if (e.RequestedTheme != _currentTheme)
+        {
+            _currentTheme = e.RequestedTheme;
+            // Update tab text colors when theme changes
+            UpdateTabTextColors();
+        }
     }
 
     private void UpdateTabTextColors()
     {
-        if (tabView?.Items == null) return;
+        if (tabView?.Items is null || tabView.Items.Count == 0)
+        {
+            return;
+        }
 
         var textColor = GetThemeAwareTextColor();
         foreach (SfTabItem tabItem in tabView.Items)
