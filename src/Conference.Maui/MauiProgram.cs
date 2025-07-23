@@ -22,6 +22,12 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("Poppins-SemiBold.ttf", "PoppinsSemibold");
             })
+#if IOS
+            .ConfigureMauiHandlers(handlers =>
+            {
+                handlers.AddHandler<CollectionView, Microsoft.Maui.Controls.Handlers.Items2.CollectionViewHandler2>();
+            })
+#endif
             .UseMauiCommunityToolkit()
             .UseSwipeCardView() // Add SwipeCardView initialization
             .ConfigureSyncfusionToolkit();
