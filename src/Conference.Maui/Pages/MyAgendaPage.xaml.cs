@@ -14,5 +14,9 @@ public partial class MyAgendaPage : ContentPage
         BindingContext = viewModel;
     }
 
-   
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        await _viewModel.InitializeAsync();
+    }
 }

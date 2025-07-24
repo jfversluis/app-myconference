@@ -10,12 +10,25 @@ namespace Conference.Maui.ViewModels;
 public partial class SponsorsViewModel : ObservableObject
 {
     private readonly ISponsorService _sponsorService;
+    private bool _isInitialized = false;
 
     public ObservableCollection<Sponsor> Sponsors { get; set; } = new ObservableCollection<Sponsor>();
 
     public SponsorsViewModel(ISponsorService sponsorService)
     {
         _sponsorService = sponsorService;
+    }
+
+    public async Task InitializeAsync()
+    {
+        // If already initialized and we have data, just return instantly
+        if (_isInitialized && Sponsors.Count > 0)
+        {
+            return;
+        }
+
+        await LoadSponsorsData();
+        _isInitialized = true;
     }
 
     public async Task LoadSponsorsData()

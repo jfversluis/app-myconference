@@ -5,7 +5,7 @@ namespace Conference.Maui.Models;
 public class FavoriteSession
 {
     [PrimaryKey]
-    public string SessionId { get; set; }
+    public string SessionId { get; set; } = string.Empty;
     
     public bool IsFavorite { get; set; }
     

@@ -41,15 +41,35 @@ namespace Conference.Maui.ViewModels
             if (args.Direction == SwipeCardDirection.Right)
             {
                 // Like - add to favorites
-               
+                // We need to get the current session from the top of the deck
+                if (Sessions.Count > 0)
+                {
+                    var session = Sessions.First();
+                    var favoriteSession = new FavoriteSession
+                    {
+                        SessionId = session.Id,
+                        IsFavorite = true,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    
+                    await _databaseService.SaveFavoriteSessionAsync(favoriteSession);
+                    session.IsFavorite = true;
+                }
             }
             else if (args.Direction == SwipeCardDirection.Left)
             {
-                // Nope - remove from list
-                // Do nothing with the database for non-favorites
+                // Nope - just remove from consideration, don't mark as favorite
+                if (Sessions.Count > 0)
+                {
+                    var session = Sessions.First();
+                    // Ensure it's not marked as favorite
+                    await _databaseService.DeleteFavoriteSessionAsync(session.Id);
+                    session.IsFavorite = false;
+                }
             }
 
             // Check if we've swiped all cards
+            HasSwipedAllCards = Sessions.Count <= 1; // Account for the current card being swiped
         }
 
         [RelayCommand]

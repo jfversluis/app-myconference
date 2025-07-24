@@ -1,8 +1,5 @@
-using Conference.Maui.Helpers;
 using Conference.Maui.ViewModels;
-using Conference.Maui.Models;
 using Syncfusion.Maui.Toolkit.TabView;
-using System.Collections.ObjectModel;
 
 namespace Conference.Maui.Pages;
 
@@ -21,17 +18,60 @@ public partial class SchedulePage : ContentPage
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        await _viewModel.LoadEventData();
-        CreateTabs();
+        base.OnNavigatedTo(args);
+
+        // Initialize data if needed (but don't recreate UI unnecessarily)
+        await _viewModel.InitializeAsync();
         
-        // Initialize current theme
+        // Only create tabs if they truly don't exist or if we absolutely need to recreate them
+        if (ShouldCreateOrRecreateTabs())
+        {
+            CreateTabs();
+        }
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        
+        // Do theme setup in OnAppearing instead of OnNavigatedTo
+        // This happens after navigation completes
+        UpdateThemeSubscription();
+    }
+
+    private void UpdateThemeSubscription()
+    {
+        // Full theme setup for slower paths
         _currentTheme = Application.Current?.RequestedTheme ?? AppTheme.Light;
         
-        // Subscribe to theme changes to update tab colors
+        // Subscribe to theme changes if not already subscribed
         if (Application.Current is not null)
         {
+            Application.Current.RequestedThemeChanged -= OnThemeChanged;
             Application.Current.RequestedThemeChanged += OnThemeChanged;
         }
+    }
+
+    private bool ShouldCreateOrRecreateTabs()
+    {
+        // Don't create tabs if we don't have data
+        if (!_viewModel.HasData)
+            return false;
+            
+        // Don't create tabs if we're not supposed to show tabs
+        if (!_viewModel.ShowTabs)
+            return false;
+            
+        // Create tabs if they don't exist at all
+        if (tabView?.Items == null || tabView.Items.Count == 0)
+            return true;
+            
+        // Only recreate if the number of days has actually changed
+        if (tabView.Items.Count != _viewModel.ScheduleDays.Count)
+            return true;
+            
+        // Otherwise, keep existing tabs to preserve scroll position
+        return false;
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
@@ -86,7 +126,7 @@ public partial class SchedulePage : ContentPage
                 SfTabItem tabItem = new()
                 {
                     Header = daySchedule.TabTitle,
-                    Content = CreateTabContent(daySchedule.TimeSlots),
+                    Content = CreateTabContent(daySchedule.FlattenedItems),
                     TextColor = GetThemeAwareTextColor()
                 };
 
@@ -95,23 +135,54 @@ public partial class SchedulePage : ContentPage
         }
     }
 
-    private View CreateTabContent(ObservableCollection<TimeSlot> timeSlots)
+    private View CreateTabContent(List<object> flattenedItems)
     {
-        // Create flattened items for this tab using the shared helper
-        var flattenedItems = ScheduleHelper.FlattenTimeSlots(timeSlots);
-
+        // Items are already pre-computed, just create the CollectionView
         CollectionView collectionView = new()
         {
-            Margin = new Thickness(10),
             ItemsSource = flattenedItems,
             ItemTemplate = (DataTemplateSelector)Resources["ScheduleTemplateSelector"],
             ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
             {
                 ItemSpacing = 5
+            },
+            // Add header and footer spacing like the single day view
+            Header = new BoxView { HeightRequest = 8, BackgroundColor = Colors.Transparent },
+            Footer = new BoxView { HeightRequest = 80, BackgroundColor = Colors.Transparent }
+        };
+
+        // Wrap the CollectionView in a RefreshView for pull-to-refresh functionality
+        RefreshView refreshView = new()
+        {
+            Content = collectionView,
+            BindingContext = _viewModel // Explicitly set the binding context
+        };
+
+        // Use event handler for manual control of refresh state
+        refreshView.Refreshing += async (sender, e) =>
+        {
+            if (sender is not RefreshView refView) return;
+
+            try
+            {
+                // Set to refreshing
+                refView.IsRefreshing = true;
+                
+                // Execute the refresh command
+                await _viewModel.RefreshCommand.ExecuteAsync(null);
+            }
+            catch (Exception)
+            {
+                // Silent handling - error message will be shown via ViewModel's ErrorMessage property
+            }
+            finally
+            {
+                // Ensure it stops refreshing
+                refView.IsRefreshing = false;
             }
         };
 
-        return collectionView;
+        return refreshView;
     }
 
     private Color GetThemeAwareTextColor()
