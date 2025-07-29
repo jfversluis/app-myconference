@@ -33,8 +33,8 @@ public class RefreshService
             {
                 RefreshResult.DataUpdated => Toast.Make($"{contentType} updated with new data", CommunityToolkit.Maui.Core.ToastDuration.Short),
                 RefreshResult.NoUpdateNeeded => Toast.Make($"{contentType} is already up to date", CommunityToolkit.Maui.Core.ToastDuration.Short),
-                RefreshResult.Failed => Toast.Make($"Failed to refresh {contentType.ToLower()}", CommunityToolkit.Maui.Core.ToastDuration.Short),
-                _ => Toast.Make($"Failed to refresh {contentType.ToLower()}", CommunityToolkit.Maui.Core.ToastDuration.Short)
+                RefreshResult.Failed => Toast.Make($"Failed to refresh {contentType.ToLower(CultureInfo.InvariantCulture)}", CommunityToolkit.Maui.Core.ToastDuration.Short),
+                _ => Toast.Make($"Failed to refresh {contentType.ToLower(CultureInfo.InvariantCulture)}", CommunityToolkit.Maui.Core.ToastDuration.Short)
             };
 
             await toast.Show();
