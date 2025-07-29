@@ -68,8 +68,14 @@ namespace Conference.Maui.ViewModels
                 }
             }
 
+            // Remove the current card from the collection
+            if (Sessions.Count > 0)
+            {
+                Sessions.RemoveAt(0);
+            }
+
             // Check if we've swiped all cards
-            HasSwipedAllCards = Sessions.Count <= 1; // Account for the current card being swiped
+            HasSwipedAllCards = Sessions.Count == 0;
         }
 
         [RelayCommand]
