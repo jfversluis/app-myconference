@@ -27,6 +27,7 @@ public class StickyHeaderBehavior : Behavior<CollectionView>
     private object? _currentStickyHeader;
     private List<object>? _cachedItems; // Cache the items list
     private bool _lastShouldShowSticky = false; // Track last state to avoid redundant updates
+    private bool _isAnimating = false; // Prevent overlapping animations
 
     protected override void OnAttachedTo(CollectionView bindable)
     {
@@ -116,9 +117,28 @@ public class StickyHeaderBehavior : Behavior<CollectionView>
         var newStickyHeader = shouldShowSticky ? currentHeader : null;
         if (newStickyHeader != _currentStickyHeader || shouldShowSticky != _lastShouldShowSticky)
         {
+            var oldHeader = _currentStickyHeader;
             _currentStickyHeader = newStickyHeader;
             _lastShouldShowSticky = shouldShowSticky;
-            UpdateStickyHeader();
+            
+            // Use animated update if both old and new headers exist (transition)
+            if (oldHeader != null && newStickyHeader != null && oldHeader != newStickyHeader)
+            {
+                _ = UpdateStickyHeaderWithAnimation(oldHeader, newStickyHeader);
+            }
+            // Use fade animation when showing/hiding headers
+            else if (oldHeader != null && newStickyHeader == null)
+            {
+                _ = FadeOutStickyHeader();
+            }
+            else if (oldHeader == null && newStickyHeader != null)
+            {
+                _ = FadeInStickyHeader();
+            }
+            else
+            {
+                UpdateStickyHeader();
+            }
         }
     }
 
@@ -135,12 +155,155 @@ public class StickyHeaderBehavior : Behavior<CollectionView>
                 headerContent.BindingContext = _currentStickyHeader;
                 HeaderContainer.Content = headerContent;
                 HeaderContainer.IsVisible = true;
+                
+                // Reset any transforms from animations
+                headerContent.TranslationY = 0;
+                headerContent.Opacity = 1;
             }
         }
         else
         {
             HeaderContainer.Content = null;
             HeaderContainer.IsVisible = false;
+        }
+    }
+
+    private async Task UpdateStickyHeaderWithAnimation(object oldHeader, object newHeader)
+    {
+        if (HeaderContainer == null || StickyHeaderTemplate == null || _isAnimating)
+            return;
+
+        _isAnimating = true;
+
+        try
+        {
+            var currentContent = HeaderContainer.Content as View;
+            
+            // Create the new header content
+            var newHeaderContent = StickyHeaderTemplate.CreateContent() as View;
+            if (newHeaderContent == null)
+            {
+                UpdateStickyHeader();
+                return;
+            }
+
+            newHeaderContent.BindingContext = newHeader;
+            
+            // Set up initial state for new header (positioned below, hidden)
+            newHeaderContent.TranslationY = HeaderContainer.Height > 0 ? HeaderContainer.Height : 50;
+            newHeaderContent.Opacity = 0;
+
+            // If we have existing content, animate it out
+            if (currentContent != null)
+            {
+                // Start the slide-out animation for the old header
+                var slideOutTask = currentContent.TranslateTo(0, -(HeaderContainer.Height > 0 ? HeaderContainer.Height : 50), 200, Easing.CubicInOut);
+                var fadeOutTask = currentContent.FadeTo(0, 150, Easing.CubicInOut);
+
+                // Set the new content while the old one animates out
+                HeaderContainer.Content = newHeaderContent;
+                HeaderContainer.IsVisible = true;
+
+                // Start the slide-in animation for the new header (slight delay for better effect)
+                await Task.Delay(50);
+                var slideInTask = newHeaderContent.TranslateTo(0, 0, 250, Easing.CubicOut);
+                var fadeInTask = newHeaderContent.FadeTo(1, 200, Easing.CubicOut);
+
+                // Wait for all animations to complete
+                await Task.WhenAll(slideOutTask, fadeOutTask, slideInTask, fadeInTask);
+            }
+            else
+            {
+                // No existing content, just slide in the new header
+                HeaderContainer.Content = newHeaderContent;
+                HeaderContainer.IsVisible = true;
+                
+                await Task.WhenAll(
+                    newHeaderContent.TranslateTo(0, 0, 300, Easing.CubicOut),
+                    newHeaderContent.FadeTo(1, 250, Easing.CubicOut)
+                );
+            }
+        }
+        catch (Exception)
+        {
+            // Fallback to non-animated update if animation fails
+            UpdateStickyHeader();
+        }
+        finally
+        {
+            _isAnimating = false;
+        }
+    }
+
+    private async Task FadeInStickyHeader()
+    {
+        if (HeaderContainer == null || StickyHeaderTemplate == null || _currentStickyHeader == null || _isAnimating)
+            return;
+
+        _isAnimating = true;
+
+        try
+        {
+            var headerContent = StickyHeaderTemplate.CreateContent() as View;
+            if (headerContent == null)
+            {
+                UpdateStickyHeader();
+                return;
+            }
+
+            headerContent.BindingContext = _currentStickyHeader;
+            headerContent.Opacity = 0;
+            headerContent.TranslationY = -20; // Start slightly above
+
+            HeaderContainer.Content = headerContent;
+            HeaderContainer.IsVisible = true;
+
+            // Fade in with a subtle slide down
+            await Task.WhenAll(
+                headerContent.FadeTo(1, 300, Easing.CubicOut),
+                headerContent.TranslateTo(0, 0, 300, Easing.CubicOut)
+            );
+        }
+        catch (Exception)
+        {
+            UpdateStickyHeader();
+        }
+        finally
+        {
+            _isAnimating = false;
+        }
+    }
+
+    private async Task FadeOutStickyHeader()
+    {
+        if (HeaderContainer == null || _isAnimating)
+            return;
+
+        _isAnimating = true;
+
+        try
+        {
+            var currentContent = HeaderContainer.Content as View;
+            if (currentContent != null)
+            {
+                // Fade out with a subtle slide up
+                await Task.WhenAll(
+                    currentContent.FadeTo(0, 250, Easing.CubicIn),
+                    currentContent.TranslateTo(0, -20, 250, Easing.CubicIn)
+                );
+            }
+
+            HeaderContainer.Content = null;
+            HeaderContainer.IsVisible = false;
+        }
+        catch (Exception)
+        {
+            HeaderContainer.Content = null;
+            HeaderContainer.IsVisible = false;
+        }
+        finally
+        {
+            _isAnimating = false;
         }
     }
 
