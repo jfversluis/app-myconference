@@ -65,4 +65,7 @@ public class Session
 
         [JsonPropertyName("isConfirmed")]
         public bool IsConfirmed { get; set; }
+
+        [JsonIgnore]
+        public bool IsFavorite { get; set; }
 }

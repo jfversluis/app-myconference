@@ -16,6 +16,6 @@ public partial class SponsorsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.LoadSponsorsData();
+        await _viewModel.InitializeAsync();
     }
 }

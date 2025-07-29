@@ -60,7 +60,8 @@
                                    FontFamily="PoppinsSemibold"
                                    FontSize="20"
                                    TextColor="{toolkit:AppThemeResource ThemeTextPrimary}"
-                                   MaxLines="1" />
+                                   MaxLines="1"
+                                   LineBreakMode="TailTruncation" />
 
                             <!-- Speaker TagLine -->
                             <Label Grid.Row="1"
@@ -90,19 +91,21 @@
     </ContentPage.Resources>
 
     <Grid Style="{StaticResource PageBackgroundStyle}">
-        <CollectionView 
-            ItemsSource="{Binding Speakers}"
-            ItemTemplate="{StaticResource SpeakerTemplate}"
-            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
-            </CollectionView.ItemsLayout>
-            <CollectionView.Header>
-                <BoxView HeightRequest="16" BackgroundColor="Transparent" />
-            </CollectionView.Header>
-            <CollectionView.Footer>
-                <BoxView HeightRequest="24" BackgroundColor="Transparent" />
-            </CollectionView.Footer>
-        </CollectionView>
+        <RefreshView x:Name="speakersRefreshView">
+            <CollectionView 
+                ItemsSource="{Binding Speakers}"
+                ItemTemplate="{StaticResource SpeakerTemplate}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.Header>
+                    <BoxView HeightRequest="16" BackgroundColor="Transparent" />
+                </CollectionView.Header>
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="24" BackgroundColor="Transparent" />
+                </CollectionView.Footer>
+            </CollectionView>
+        </RefreshView>
     </Grid>
 </ContentPage>

@@ -7,14 +7,166 @@
     xmlns:swipeCardView="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
+    xmlns:converters="clr-namespace:Conference.Maui.Converters"
     Title="My Agenda"
     x:DataType="viewmodels:MyAgendaViewModel">
-    <VerticalStackLayout>
-        <Label
-            HorizontalOptions="Center"
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" />
-    </VerticalStackLayout>
- 
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+            <converters:SpeakersToStringConverter x:Key="SpeakersToStringConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid Style="{StaticResource PageBackgroundStyle}">
+        <!-- Loading Overlay -->
+        <Grid IsVisible="{Binding IsLoading}" 
+              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+              ZIndex="999">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                 Color="{toolkit:AppThemeResource ThemePrimary}"
+                                 WidthRequest="50" 
+                                 HeightRequest="50" />
+                <Label Text="Loading favorite sessions..."
+                       FontFamily="OpenSansRegular"
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                       HorizontalOptions="Center"
+                       Margin="0,10,0,0" />
+            </StackLayout>
+        </Grid>
+
+        <!-- Error Message -->
+        <StackLayout IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}"
+                     VerticalOptions="Center"
+                     HorizontalOptions="Center"
+                     Margin="20"
+                     ZIndex="998">
+            <Label Text="{Binding ErrorMessage}"
+                   FontFamily="OpenSansRegular"
+                   FontSize="14"
+                   TextColor="Red"
+                   HorizontalTextAlignment="Center" />
+            <Button Text="Retry"
+                    Command="{Binding RefreshCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Margin="0,10,0,0" />
+        </StackLayout>
+
+        <!-- No Favorites Message -->
+        <StackLayout IsVisible="{Binding HasFavorites, Converter={StaticResource InvertedBoolConverter}}"
+                     VerticalOptions="Center"
+                     HorizontalOptions="Center"
+                     Margin="20">
+            <Label Text="🤔"
+                   FontSize="48"
+                   HorizontalOptions="Center" />
+            <Label Text="No favorite sessions yet"
+                   FontFamily="PoppinsSemibold"
+                   FontSize="18"
+                   TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,10,0,0" />
+            <Label Text="Go to the Schedule and use the floating button to pick your favorite sessions!"
+                   FontFamily="OpenSansRegular"
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,5,0,0" />
+        </StackLayout>
+
+        <!-- Favorite Sessions List -->
+        <RefreshView IsRefreshing="{Binding IsLoading}"
+                     Command="{Binding RefreshCommand}"
+                     IsVisible="{Binding HasFavorites}">
+            <CollectionView ItemsSource="{Binding FavoriteSessions}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                            Margin="10">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                
+                <CollectionView.Header>
+                    <Grid Margin="0,10,0,0">
+                        <Label Text="Your Favorite Sessions"
+                               FontFamily="PoppinsSemibold"
+                               FontSize="20"
+                               TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                               HorizontalOptions="Center" />
+                    </Grid>
+                </CollectionView.Header>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Session">
+                        <Border Style="{StaticResource SessionCardStyle}">
+                            <Grid ColumnSpacing="12" RowSpacing="6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Session Title -->
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding Title}"
+                                       Style="{StaticResource SessionTitleStyle}" />
+
+                                <!-- Session Time and Room -->
+                                <Label Grid.Row="1" Grid.Column="0"
+                                       FontFamily="OpenSansRegular"
+                                       FontSize="12"
+                                       TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}">
+                                    <Label.Text>
+                                        <MultiBinding StringFormat="{}{0:HH:mm} - {1:HH:mm} | {2}">
+                                            <Binding Path="StartsAt" />
+                                            <Binding Path="EndsAt" />
+                                            <Binding Path="Room" />
+                                        </MultiBinding>
+                                    </Label.Text>
+                                </Label>
+
+                                <!-- Session Description -->
+                                <Label Grid.Row="2" Grid.Column="0"
+                                       Text="{Binding Description}"
+                                       Style="{StaticResource SessionDescriptionStyle}"
+                                       MaxLines="3" />
+
+                                <!-- Speakers -->
+                                <Label Grid.Row="3" Grid.Column="0"
+                                       Text="{Binding Speakers, Converter={StaticResource SpeakersToStringConverter}}"
+                                       FontFamily="OpenSansRegular"
+                                       FontSize="12"
+                                       FontAttributes="Italic"
+                                       TextColor="{toolkit:AppThemeResource ThemePrimary}"
+                                       Margin="0,5,0,0" />
+
+                                <!-- Remove from favorites button -->
+                                <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="4"
+                                        Text="❤️"
+                                        FontSize="16"
+                                        BackgroundColor="Transparent"
+                                        TextColor="Red"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        VerticalOptions="Start"
+                                        Command="{Binding x:DataType='viewmodels:MyAgendaViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:MyAgendaViewModel}}, Path=RemoveFromFavoritesCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="80" BackgroundColor="Transparent" />
+                </CollectionView.Footer>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
 </ContentPage>

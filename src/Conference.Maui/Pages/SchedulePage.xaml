@@ -18,6 +18,7 @@
         <ResourceDictionary>
             <!-- Converters -->
             <converters:PluralConverter x:Key="PluralConverter" />
+            <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
             
             <!-- Grouped Session Template (without time column) -->
             <DataTemplate x:Key="GroupedSessionTemplate" x:DataType="models:Session">
@@ -137,37 +138,79 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <Grid Style="{StaticResource PageBackgroundStyle}">
-        <!-- Show TabView only if there are multiple days -->
-        <syncfusion:SfTabView 
-            x:Name="tabView"
-            EnableSwiping="True"
-            IsVisible="{Binding ShowTabs}"
-            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
-            IndicatorBackground="{toolkit:AppThemeResource ThemePrimary}"
-            IndicatorWidthMode="Stretch">
-        </syncfusion:SfTabView>
+        <!-- Loading Overlay -->
+        <Grid IsVisible="{Binding IsLoading}" 
+              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+              ZIndex="999">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                 Color="{toolkit:AppThemeResource ThemePrimary}"
+                                 WidthRequest="50" 
+                                 HeightRequest="50" />
+                <Label Text="{Binding LoadingMessage}"
+                       FontFamily="OpenSansRegular"
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                       HorizontalOptions="Center"
+                       Margin="0,10,0,0" />
+            </StackLayout>
+        </Grid>
 
-        <!-- Show regular CollectionView if there's only one day -->
-        <CollectionView 
-            ItemsSource="{Binding FlattenedItems}"
-            ItemTemplate="{StaticResource ScheduleTemplateSelector}"
-            IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}"
-            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
-            Margin="10">
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
-            </CollectionView.ItemsLayout>
-            <CollectionView.Header>
-                <BoxView HeightRequest="8" BackgroundColor="Transparent" />
-            </CollectionView.Header>
-            <CollectionView.Footer>
-                <BoxView HeightRequest="80" BackgroundColor="Transparent" />
-            </CollectionView.Footer>
-        </CollectionView>
+        <!-- Error Message -->
+        <StackLayout IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}"
+                     VerticalOptions="Center"
+                     HorizontalOptions="Center"
+                     Margin="20"
+                     ZIndex="998">
+            <Label Text="{Binding ErrorMessage}"
+                   FontFamily="OpenSansRegular"
+                   FontSize="14"
+                   TextColor="Red"
+                   HorizontalTextAlignment="Center" />
+            <Button Text="Retry"
+                    Command="{Binding RefreshCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Margin="0,10,0,0" />
+        </StackLayout>
 
-        <controls:FloatingButton
+        <!-- Main Content -->
+        <Grid IsVisible="{Binding HasData}">
+            <!-- Show TabView only if there are multiple days -->
+            <syncfusion:SfTabView 
+                x:Name="tabView"
+                EnableSwiping="False"
+                IsVisible="{Binding ShowTabs}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                IndicatorBackground="{toolkit:AppThemeResource ThemePrimary}"
+                IndicatorWidthMode="Stretch">
+            </syncfusion:SfTabView>
+
+            <!-- Show regular CollectionView with RefreshView if there's only one day -->
+            <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                         Command="{Binding RefreshCommand}"
+                         IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}">
+                <CollectionView 
+                    ItemsSource="{Binding FlattenedItems}"
+                    ItemTemplate="{StaticResource ScheduleTemplateSelector}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                    Margin="10">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.Header>
+                        <BoxView HeightRequest="8" BackgroundColor="Transparent" />
+                    </CollectionView.Header>
+                    <CollectionView.Footer>
+                        <BoxView HeightRequest="80" BackgroundColor="Transparent" />
+                    </CollectionView.Footer>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+
+        <!-- <controls:FloatingButton
             Command="{Binding GoToPickFavoriteSessionsPageCommand}"
             ImageSource="icon_myagenda.png"
-            SemanticProperties.Description="Select favorite sessions" />
+            SemanticProperties.Description="Select favorite sessions"
+            IsVisible="{Binding HasData}" /> -->
     </Grid>
 </ContentPage>
