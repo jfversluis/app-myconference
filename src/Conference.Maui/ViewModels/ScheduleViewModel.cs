@@ -137,7 +137,18 @@ public partial class ScheduleViewModel : ObservableObject
                 // But not during an explicit refresh operation
                 if (!IsRefreshing)
                 {
-                    _ = Task.Run(async () => { var _ = await _dataSyncService.RefreshDataAsync(); });
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _dataSyncService.RefreshDataAsync().ConfigureAwait(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log the exception or handle it as needed
+                            Console.WriteLine($"Background refresh failed: {ex.Message}");
+                        }
+                    });
                 }
             }
         }
