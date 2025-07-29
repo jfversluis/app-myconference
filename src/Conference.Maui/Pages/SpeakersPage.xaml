@@ -60,7 +60,8 @@
                                    FontFamily="PoppinsSemibold"
                                    FontSize="20"
                                    TextColor="{toolkit:AppThemeResource ThemeTextPrimary}"
-                                   MaxLines="1" />
+                                   MaxLines="1"
+                                   LineBreakMode="TailTruncation" />
 
                             <!-- Speaker TagLine -->
                             <Label Grid.Row="1"

@@ -146,7 +146,7 @@ public partial class ScheduleViewModel : ObservableObject
                         catch (Exception ex)
                         {
                             // Log the exception or handle it as needed
-                            Console.WriteLine($"Background refresh failed: {ex.Message}");
+                            ErrorMessage = $"Background refresh failed: {ex.Message}";
                         }
                     });
                 }
