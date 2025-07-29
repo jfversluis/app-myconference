@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using Conference.Maui.Controls;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Pages;
 using Conference.Maui.Services;

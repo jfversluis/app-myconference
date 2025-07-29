@@ -1,19 +1,56 @@
+using Conference.Maui.Controls;
+using Conference.Maui.Models;
+using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
+using CommunityToolkit.Maui.Alerts;
 
 namespace Conference.Maui.Pages;
 
 public partial class SchedulePage : ContentPage
 {
 	private readonly ScheduleViewModel _viewModel;
+	private readonly RefreshService _refreshService;
 	private AppTheme _currentTheme;
 
-	public SchedulePage(ScheduleViewModel scheduleViewModel)
+	public SchedulePage(ScheduleViewModel scheduleViewModel, RefreshService refreshService)
 	{
 		InitializeComponent();
 
         _viewModel = scheduleViewModel;
+        _refreshService = refreshService;
         BindingContext = _viewModel;
+        
+        // Setup manual refresh event handler for single-day view
+        scheduleRefreshView.Refreshing += async (sender, e) =>
+        {
+            if (sender is not RefreshView refView) return;
+
+            try
+            {
+                // Set to refreshing
+                refView.IsRefreshing = true;
+                
+                // Call RefreshService directly with toasts
+                var result = await _refreshService.RefreshWithFeedbackAsync("Schedule");
+                
+                // Update UI if data was refreshed
+                if (result == RefreshResult.DataUpdated)
+                {
+                    await _viewModel.LoadEventData();
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long);
+                await errorToast.Show();
+            }
+            finally
+            {
+                // Ensure it stops refreshing
+                refView.IsRefreshing = false;
+            }
+        };
 	}
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -137,7 +174,10 @@ public partial class SchedulePage : ContentPage
 
     private View CreateTabContent(List<object> flattenedItems)
     {
-        // Items are already pre-computed, just create the CollectionView
+        // Create a Grid to hold both the CollectionView and sticky header
+        Grid tabGrid = new();
+        
+        // Create the CollectionView
         CollectionView collectionView = new()
         {
             ItemsSource = flattenedItems,
@@ -151,11 +191,62 @@ public partial class SchedulePage : ContentPage
             Footer = new BoxView { HeightRequest = 80, BackgroundColor = Colors.Transparent }
         };
 
+        // Create sticky header container
+        ContentView stickyHeaderContainer = new()
+        {
+            VerticalOptions = LayoutOptions.Start,
+            HorizontalOptions = LayoutOptions.Fill,
+            IsVisible = false,
+            ZIndex = 999
+        };
+
+        // Add sticky header behavior
+        var stickyHeaderBehavior = new Controls.StickyHeaderBehavior
+        {
+            StickyHeaderTemplate = (DataTemplate)Resources["TimeHeaderTemplate"],
+            HeaderContainer = stickyHeaderContainer
+        };
+        collectionView.Behaviors.Add(stickyHeaderBehavior);
+
         // Wrap the CollectionView in a RefreshView for pull-to-refresh functionality
         RefreshView refreshView = new()
         {
             Content = collectionView,
             BindingContext = _viewModel // Explicitly set the binding context
+        };
+
+        // Set up the refresh binding for IsRefreshing only
+        refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(_viewModel.IsRefreshing));
+        
+        // Setup manual refresh event handler for tab content
+        refreshView.Refreshing += async (sender, e) =>
+        {
+            if (sender is not RefreshView refView) return;
+
+            try
+            {
+                // Set to refreshing
+                refView.IsRefreshing = true;
+                
+                // Call RefreshService directly with toasts
+                var result = await _refreshService.RefreshWithFeedbackAsync("Schedule");
+                
+                // Update UI if data was refreshed
+                if (result == RefreshResult.DataUpdated)
+                {
+                    await _viewModel.LoadEventData();
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long);
+                await errorToast.Show();
+            }
+            finally
+            {
+                // Ensure it stops refreshing
+                refView.IsRefreshing = false;
+            }
         };
 
         // Use event handler for manual control of refresh state
@@ -168,12 +259,19 @@ public partial class SchedulePage : ContentPage
                 // Set to refreshing
                 refView.IsRefreshing = true;
                 
-                // Execute the refresh command
-                await _viewModel.RefreshCommand.ExecuteAsync(null);
+                // Call RefreshService directly with toasts
+                var result = await _refreshService.RefreshWithFeedbackAsync("Schedule");
+                
+                // Update UI if data was refreshed
+                if (result == RefreshResult.DataUpdated)
+                {
+                    await _viewModel.LoadEventData();
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Silent handling - error message will be shown via ViewModel's ErrorMessage property
+                var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long);
+                await errorToast.Show();
             }
             finally
             {
@@ -182,7 +280,11 @@ public partial class SchedulePage : ContentPage
             }
         };
 
-        return refreshView;
+        // Add both the RefreshView and sticky header to the grid
+        tabGrid.Children.Add(refreshView);
+        tabGrid.Children.Add(stickyHeaderContainer);
+
+        return tabGrid;
     }
 
     private Color GetThemeAwareTextColor()
@@ -207,6 +309,19 @@ public partial class SchedulePage : ContentPage
                 return lightTextColor;
             }
             return Color.FromArgb("#1A1A1A"); // Fallback dark text for light theme
+        }
+    }
+
+    private async void OnRetryClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await _refreshService.RefreshWithFeedbackAsync("Schedule", forceRefresh: true);
+        }
+        catch (Exception ex)
+        {
+            // Error handling is done in RefreshService
+            System.Diagnostics.Debug.WriteLine($"Retry failed: {ex.Message}");
         }
     }
 }

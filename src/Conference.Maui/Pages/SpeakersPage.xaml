@@ -26,49 +26,33 @@
                         </Grid.GestureRecognizers>
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="64" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Speaker Avatar Column -->
-                        <Grid Grid.Column="0" 
-                              VerticalOptions="Start"
-                              HorizontalOptions="Center"
-                              WidthRequest="56">
-                            <toolkit:AvatarView
-                                CornerRadius="28"
-                                HeightRequest="56"
-                                WidthRequest="56"
-                                ImageSource="{Binding ProfilePicture}">
-                                <toolkit:AvatarView.Shadow>
-                                    <Shadow Brush="{toolkit:AppThemeResource ThemePrimary}" 
-                                            Offset="0,2" 
-                                            Radius="4" 
-                                            Opacity="0.15" />
-                                </toolkit:AvatarView.Shadow>
-                            </toolkit:AvatarView>
-                        </Grid>
+                        <!-- Speaker Avatar Column - Simplified for performance -->
+                        <toolkit:AvatarView
+                            Grid.Column="0"
+                            CornerRadius="28"
+                            HeightRequest="56"
+                            WidthRequest="56"
+                            VerticalOptions="Start"
+                            HorizontalOptions="Center"
+                            ImageSource="{Binding ProfilePicture}" />
 
                         <!-- Main Content Column -->
-                        <Grid Grid.Column="1" 
-                              RowSpacing="6"
-                              VerticalOptions="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Column="1" 
+                                   Spacing="4"
+                                   VerticalOptions="Center">
                         
                             <!-- Speaker Name -->
-                            <Label Grid.Row="0"
-                                   Text="{Binding FullName}"
+                            <Label Text="{Binding FullName}"
                                    Style="{StaticResource SessionTitleStyle}"
                                    MaxLines="1"
                                    LineBreakMode="TailTruncation" />
 
                             <!-- Speaker TagLine -->
-                            <Label Grid.Row="1"
-                                   Text="{Binding TagLine}"
+                            <Label Text="{Binding TagLine}"
                                    FontSize="14"
                                    FontFamily="OpenSansRegular"
                                    FontAttributes="Bold"
@@ -77,13 +61,11 @@
                                    TextColor="{toolkit:AppThemeResource ThemePrimary}" />
 
                             <!-- Speaker Bio -->
-                            <Label Grid.Row="2"
-                                   Text="{Binding Bio}"
+                            <Label Text="{Binding Bio}"
                                    Style="{StaticResource SessionDescriptionStyle}"
                                    LineBreakMode="TailTruncation"
-                                   MaxLines="2"
-                                   Margin="0,4,0,0" />
-                        </Grid>
+                                   MaxLines="2" />
+                        </StackLayout>
                     </Grid>
                 </Border>
             </DataTemplate>
@@ -121,19 +103,21 @@
                    TextColor="Red"
                    HorizontalTextAlignment="Center" />
             <Button Text="Retry"
-                    Command="{Binding RefreshCommand}"
+                    Clicked="OnRetryClicked"
                     Style="{StaticResource PrimaryButtonStyle}"
                     Margin="0,10,0,0" />
         </StackLayout>
 
         <!-- Main Content -->
         <Grid IsVisible="{Binding HasData}">
-            <RefreshView x:Name="speakersRefreshView">
+            <RefreshView x:Name="speakersRefreshView"
+                         IsRefreshing="{Binding IsRefreshing}">
                 <CollectionView 
                     ItemsSource="{Binding Speakers}"
                     ItemTemplate="{StaticResource SpeakerTemplate}"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
-                    Margin="0">
+                    Margin="0"
+                    ItemSizingStrategy="MeasureFirstItem">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout ItemSpacing="2" Orientation="Vertical" />
                     </CollectionView.ItemsLayout>

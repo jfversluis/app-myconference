@@ -53,4 +53,17 @@ public partial class SpeakersPage : ContentPage
     {
         await _viewModel.InitializeAsync();
     }
+
+    private async void OnRetryClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await _refreshService.RefreshWithFeedbackAsync("Speakers", forceRefresh: true);
+        }
+        catch (Exception ex)
+        {
+            // Error handling is done in RefreshService
+            System.Diagnostics.Debug.WriteLine($"Retry failed: {ex.Message}");
+        }
+    }
 }
