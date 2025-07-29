@@ -65,7 +65,7 @@ public partial class SpeakersViewModel : ObservableObject
             {
                 try
                 {
-                    await _dataSyncService.InitializeAsync();
+                    await _dataSyncService.InitializeAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
