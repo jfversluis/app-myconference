@@ -168,7 +168,7 @@
                    TextColor="Red"
                    HorizontalTextAlignment="Center" />
             <Button Text="Retry"
-                    Clicked="OnRetryClicked"
+                    Command="{Binding RefreshCommand}"
                     Style="{StaticResource PrimaryButtonStyle}"
                     Margin="0,10,0,0" />
         </StackLayout>
@@ -188,7 +188,8 @@
             <!-- Show regular CollectionView with RefreshView if there's only one day -->
             <Grid IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}">
                 <RefreshView x:Name="scheduleRefreshView"
-                             IsRefreshing="{Binding IsRefreshing}">
+                             IsRefreshing="{Binding IsRefreshing}"
+                             Command="{Binding RefreshCommand}">
                     <CollectionView 
                         x:Name="scheduleCollectionView"
                         ItemsSource="{Binding FlattenedItems}"

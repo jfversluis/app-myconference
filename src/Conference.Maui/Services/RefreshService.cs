@@ -1,5 +1,6 @@
 using System.Globalization;
 using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 using Conference.Maui.Models;
 
 namespace Conference.Maui.Services;
@@ -31,10 +32,10 @@ public class RefreshService
             // Show appropriate toast based on result
             var toast = result switch
             {
-                RefreshResult.DataUpdated => Toast.Make($"{contentType} updated with new data", CommunityToolkit.Maui.Core.ToastDuration.Short),
-                RefreshResult.NoUpdateNeeded => Toast.Make($"{contentType} is already up to date", CommunityToolkit.Maui.Core.ToastDuration.Short),
-                RefreshResult.Failed => Toast.Make($"Failed to refresh {contentType.ToLower(CultureInfo.InvariantCulture)}", CommunityToolkit.Maui.Core.ToastDuration.Short),
-                _ => Toast.Make($"Failed to refresh {contentType.ToLower(CultureInfo.InvariantCulture)}", CommunityToolkit.Maui.Core.ToastDuration.Short)
+                RefreshResult.DataUpdated => Toast.Make($"{contentType} updated with new data", ToastDuration.Short),
+                RefreshResult.NoUpdateNeeded => Toast.Make($"{contentType} already up to date", ToastDuration.Short),
+                RefreshResult.Failed => Toast.Make($"Failed to refresh {contentType.ToLower(CultureInfo.InvariantCulture)}", ToastDuration.Short),
+                _ => Toast.Make($"Failed to refresh {contentType.ToLower(CultureInfo.InvariantCulture)}", ToastDuration.Short)
             };
 
             await toast.Show();
@@ -42,7 +43,7 @@ public class RefreshService
         }
         catch (Exception ex)
         {
-            var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long);
+            var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", ToastDuration.Long);
             await errorToast.Show();
             return RefreshResult.Failed;
         }

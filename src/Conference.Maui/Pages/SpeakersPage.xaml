@@ -103,7 +103,7 @@
                    TextColor="Red"
                    HorizontalTextAlignment="Center" />
             <Button Text="Retry"
-                    Clicked="OnRetryClicked"
+                    Command="{Binding RefreshCommand}"
                     Style="{StaticResource PrimaryButtonStyle}"
                     Margin="0,10,0,0" />
         </StackLayout>
@@ -111,7 +111,8 @@
         <!-- Main Content -->
         <Grid IsVisible="{Binding HasData}">
             <RefreshView x:Name="speakersRefreshView"
-                         IsRefreshing="{Binding IsRefreshing}">
+                         IsRefreshing="{Binding IsRefreshing}"
+                         Command="{Binding RefreshCommand}">
                 <CollectionView 
                     ItemsSource="{Binding Speakers}"
                     ItemTemplate="{StaticResource SpeakerTemplate}"

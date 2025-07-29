@@ -177,6 +177,18 @@ public class StickyHeaderBehavior : Behavior<CollectionView>
 
         try
         {
+            // Add subtle haptic feedback when header changes
+            try
+            {
+#if ANDROID || IOS
+                HapticFeedback.Default.Perform(HapticFeedbackType.Click);
+#endif
+            }
+            catch
+            {
+                // Ignore haptic feedback errors - not critical
+            }
+
             var currentContent = HeaderContainer.Content as View;
             
             // Create the new header content

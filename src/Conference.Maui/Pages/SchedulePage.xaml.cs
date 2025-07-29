@@ -1,56 +1,21 @@
 using Conference.Maui.Controls;
 using Conference.Maui.Models;
-using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
-using CommunityToolkit.Maui.Alerts;
 
 namespace Conference.Maui.Pages;
 
 public partial class SchedulePage : ContentPage
 {
 	private readonly ScheduleViewModel _viewModel;
-	private readonly RefreshService _refreshService;
 	private AppTheme _currentTheme;
 
-	public SchedulePage(ScheduleViewModel scheduleViewModel, RefreshService refreshService)
+	public SchedulePage(ScheduleViewModel scheduleViewModel)
 	{
 		InitializeComponent();
 
         _viewModel = scheduleViewModel;
-        _refreshService = refreshService;
         BindingContext = _viewModel;
-        
-        // Setup manual refresh event handler for single-day view
-        scheduleRefreshView.Refreshing += async (sender, e) =>
-        {
-            if (sender is not RefreshView refView) return;
-
-            try
-            {
-                // Set to refreshing
-                refView.IsRefreshing = true;
-                
-                // Call RefreshService directly with toasts
-                var result = await _refreshService.RefreshWithFeedbackAsync("Schedule");
-                
-                // Update UI if data was refreshed
-                if (result == RefreshResult.DataUpdated)
-                {
-                    await _viewModel.LoadEventData();
-                }
-            }
-            catch (Exception ex)
-            {
-                var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long);
-                await errorToast.Show();
-            }
-            finally
-            {
-                // Ensure it stops refreshing
-                refView.IsRefreshing = false;
-            }
-        };
 	}
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -215,70 +180,9 @@ public partial class SchedulePage : ContentPage
             BindingContext = _viewModel // Explicitly set the binding context
         };
 
-        // Set up the refresh binding for IsRefreshing only
+        // Set up the refresh binding for IsRefreshing and Command
         refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(_viewModel.IsRefreshing));
-        
-        // Setup manual refresh event handler for tab content
-        refreshView.Refreshing += async (sender, e) =>
-        {
-            if (sender is not RefreshView refView) return;
-
-            try
-            {
-                // Set to refreshing
-                refView.IsRefreshing = true;
-                
-                // Call RefreshService directly with toasts
-                var result = await _refreshService.RefreshWithFeedbackAsync("Schedule");
-                
-                // Update UI if data was refreshed
-                if (result == RefreshResult.DataUpdated)
-                {
-                    await _viewModel.LoadEventData();
-                }
-            }
-            catch (Exception ex)
-            {
-                var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long);
-                await errorToast.Show();
-            }
-            finally
-            {
-                // Ensure it stops refreshing
-                refView.IsRefreshing = false;
-            }
-        };
-
-        // Use event handler for manual control of refresh state
-        refreshView.Refreshing += async (sender, e) =>
-        {
-            if (sender is not RefreshView refView) return;
-
-            try
-            {
-                // Set to refreshing
-                refView.IsRefreshing = true;
-                
-                // Call RefreshService directly with toasts
-                var result = await _refreshService.RefreshWithFeedbackAsync("Schedule");
-                
-                // Update UI if data was refreshed
-                if (result == RefreshResult.DataUpdated)
-                {
-                    await _viewModel.LoadEventData();
-                }
-            }
-            catch (Exception ex)
-            {
-                var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long);
-                await errorToast.Show();
-            }
-            finally
-            {
-                // Ensure it stops refreshing
-                refView.IsRefreshing = false;
-            }
-        };
+        refreshView.SetBinding(RefreshView.CommandProperty, nameof(_viewModel.RefreshCommand));
 
         // Add both the RefreshView and sticky header to the grid
         tabGrid.Children.Add(refreshView);
@@ -309,19 +213,6 @@ public partial class SchedulePage : ContentPage
                 return lightTextColor;
             }
             return Color.FromArgb("#1A1A1A"); // Fallback dark text for light theme
-        }
-    }
-
-    private async void OnRetryClicked(object sender, EventArgs e)
-    {
-        try
-        {
-            await _refreshService.RefreshWithFeedbackAsync("Schedule", forceRefresh: true);
-        }
-        catch (Exception ex)
-        {
-            // Error handling is done in RefreshService
-            System.Diagnostics.Debug.WriteLine($"Retry failed: {ex.Message}");
         }
     }
 }
