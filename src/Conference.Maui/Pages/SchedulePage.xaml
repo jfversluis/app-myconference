@@ -20,7 +20,7 @@
             <converters:PluralConverter x:Key="PluralConverter" />
             <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
             
-            <!-- Grouped Session Template (without time column) -->
+            <!-- Grouped Session Template -->
             <DataTemplate x:Key="GroupedSessionTemplate" x:DataType="models:Session">
                 <Border Style="{StaticResource SessionCardStyle}">
 
@@ -195,7 +195,7 @@
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
                     Margin="10">
                     <CollectionView.ItemsLayout>
-                        <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
+                        <LinearItemsLayout ItemSpacing="2" Orientation="Vertical" />
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <BoxView HeightRequest="8" BackgroundColor="Transparent" />
