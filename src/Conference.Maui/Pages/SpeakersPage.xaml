@@ -5,6 +5,7 @@
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
              xmlns:viewmodels="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:converters="clr-namespace:Conference.Maui.Converters"
              xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
              x:DataType="viewmodels:SpeakersViewModel"
              x:Class="Conference.Maui.Pages.SpeakersPage"
@@ -12,78 +13,59 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <!-- Converters -->
+            <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            
             <!-- Speaker Data Template -->
             <DataTemplate x:Key="SpeakerTemplate" x:DataType="models:Speaker">
                 <Border Style="{StaticResource SpeakerCardStyle}">
-                    <Grid ColumnSpacing="16">
+                    <Grid ColumnSpacing="12">
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding x:DataType='viewmodels:SpeakersViewModel', Source={RelativeSource AncestorType={x:Type viewmodels:SpeakersViewModel}}, Path=GoToSpeakerDetailsCommand}" CommandParameter="{Binding .}" />
                         </Grid.GestureRecognizers>
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="64" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Speaker Avatar Column -->
-                        <Grid Grid.Column="0" 
-                              VerticalOptions="Start"
-                              HorizontalOptions="Center"
-                              WidthRequest="80">
-                            <toolkit:AvatarView
-                                CornerRadius="36"
-                                HeightRequest="72"
-                                WidthRequest="72"
-                                ImageSource="{Binding ProfilePicture}">
-                                <toolkit:AvatarView.Shadow>
-                                    <Shadow Brush="{toolkit:AppThemeResource ThemePrimary}" 
-                                            Offset="0,3" 
-                                            Radius="8" 
-                                            Opacity="0.2" />
-                                </toolkit:AvatarView.Shadow>
-                            </toolkit:AvatarView>
-                        </Grid>
+                        <!-- Speaker Avatar Column - Simplified for performance -->
+                        <toolkit:AvatarView
+                            Grid.Column="0"
+                            CornerRadius="28"
+                            HeightRequest="56"
+                            WidthRequest="56"
+                            VerticalOptions="Start"
+                            HorizontalOptions="Center"
+                            ImageSource="{Binding ProfilePicture}" />
 
                         <!-- Main Content Column -->
-                        <Grid Grid.Column="1" 
-                              RowSpacing="12"
-                              VerticalOptions="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <StackLayout Grid.Column="1" 
+                                   Spacing="4"
+                                   VerticalOptions="Center">
                         
                             <!-- Speaker Name -->
-                            <Label Grid.Row="0"
-                                   Text="{Binding FullName}"
-                                   FontFamily="PoppinsSemibold"
-                                   FontSize="20"
-                                   TextColor="{toolkit:AppThemeResource ThemeTextPrimary}"
+                            <Label Text="{Binding FullName}"
+                                   Style="{StaticResource SessionTitleStyle}"
                                    MaxLines="1"
                                    LineBreakMode="TailTruncation" />
 
                             <!-- Speaker TagLine -->
-                            <Label Grid.Row="1"
-                                   Text="{Binding TagLine}"
-                                   FontSize="16"
+                            <Label Text="{Binding TagLine}"
+                                   FontSize="14"
                                    FontFamily="OpenSansRegular"
                                    FontAttributes="Bold"
                                    LineBreakMode="TailTruncation"
                                    MaxLines="1"
-                                   TextColor="{toolkit:AppThemeResource ThemePrimary}"
-                                   Margin="0,-4,0,0" />
+                                   TextColor="{toolkit:AppThemeResource ThemePrimary}" />
 
                             <!-- Speaker Bio -->
-                            <Label Grid.Row="2"
-                                   Text="{Binding Bio}"
-                                   FontFamily="OpenSansRegular"
-                                   FontSize="15"
-                                   TextColor="{AppThemeBinding Light={StaticResource LightTextSecondary}, Dark={StaticResource DarkTextSecondary}}"
+                            <Label Text="{Binding Bio}"
+                                   Style="{StaticResource SessionDescriptionStyle}"
                                    LineBreakMode="TailTruncation"
-                                   MaxLines="2"
-                                   Margin="0,4,0,0" />
-                        </Grid>
+                                   MaxLines="2" />
+                        </StackLayout>
                     </Grid>
                 </Border>
             </DataTemplate>
@@ -91,21 +73,63 @@
     </ContentPage.Resources>
 
     <Grid Style="{StaticResource PageBackgroundStyle}">
-        <RefreshView x:Name="speakersRefreshView">
-            <CollectionView 
-                ItemsSource="{Binding Speakers}"
-                ItemTemplate="{StaticResource SpeakerTemplate}"
-                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.Header>
-                    <BoxView HeightRequest="16" BackgroundColor="Transparent" />
-                </CollectionView.Header>
-                <CollectionView.Footer>
-                    <BoxView HeightRequest="24" BackgroundColor="Transparent" />
-                </CollectionView.Footer>
-            </CollectionView>
-        </RefreshView>
+        <!-- Loading Overlay -->
+        <Grid IsVisible="{Binding IsLoading}" 
+              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+              ZIndex="999">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                 Color="{toolkit:AppThemeResource ThemePrimary}"
+                                 WidthRequest="50" 
+                                 HeightRequest="50" />
+                <Label Text="Loading speakers..."
+                       FontFamily="OpenSansRegular"
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource LightTextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                       HorizontalOptions="Center"
+                       Margin="0,10,0,0" />
+            </StackLayout>
+        </Grid>
+
+        <!-- Error Message -->
+        <StackLayout IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}"
+                     VerticalOptions="Center"
+                     HorizontalOptions="Center"
+                     Margin="20"
+                     ZIndex="998">
+            <Label Text="{Binding ErrorMessage}"
+                   FontFamily="OpenSansRegular"
+                   FontSize="14"
+                   TextColor="Red"
+                   HorizontalTextAlignment="Center" />
+            <Button Text="Retry"
+                    Command="{Binding RefreshCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Margin="0,10,0,0" />
+        </StackLayout>
+
+        <!-- Main Content -->
+        <Grid IsVisible="{Binding HasData}">
+            <RefreshView x:Name="speakersRefreshView"
+                         IsRefreshing="{Binding IsRefreshing}"
+                         Command="{Binding RefreshCommand}">
+                <CollectionView 
+                    ItemsSource="{Binding Speakers}"
+                    ItemTemplate="{StaticResource SpeakerTemplate}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                    Margin="0"
+                    ItemSizingStrategy="MeasureFirstItem">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="2" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.Header>
+                        <BoxView HeightRequest="8" BackgroundColor="Transparent" />
+                    </CollectionView.Header>
+                    <CollectionView.Footer>
+                        <BoxView HeightRequest="80" BackgroundColor="Transparent" />
+                    </CollectionView.Footer>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
     </Grid>
 </ContentPage>

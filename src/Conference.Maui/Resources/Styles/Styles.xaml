@@ -330,7 +330,7 @@
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource LightBorderColor}, Dark={StaticResource DarkBorderColor}}" />
         <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="StrokeShape" Value="RoundRectangle 12" />
-        <Setter Property="Margin" Value="16,8" />
+        <Setter Property="Margin" Value="16,3" />
         <Setter Property="Padding" Value="16" />
         <Setter Property="Shadow">
             <Shadow Brush="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
@@ -345,14 +345,14 @@
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource LightBorderColor}, Dark={StaticResource DarkBorderColor}}" />
         <Setter Property="StrokeThickness" Value="1" />
-        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
-        <Setter Property="Margin" Value="16,8" />
-        <Setter Property="Padding" Value="20" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="Margin" Value="16,3" />
+        <Setter Property="Padding" Value="16" />
         <Setter Property="Shadow">
-            <Shadow Brush="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray700}}"
-                    Offset="0,4"
-                    Radius="12"
-                    Opacity="0.15" />
+            <Shadow Brush="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                    Offset="0,2"
+                    Radius="8"
+                    Opacity="0.08" />
         </Setter>
     </Style>
 
@@ -362,7 +362,7 @@
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource LightBorderColor}, Dark={StaticResource DarkBorderColor}}" />
         <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="StrokeShape" Value="RoundRectangle 12" />
-        <Setter Property="Margin" Value="0,0,0,5" />
+        <Setter Property="Margin" Value="16,0,16,5" />
         <Setter Property="Padding" Value="12,6" />
         <Setter Property="Shadow">
             <Shadow Brush="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"

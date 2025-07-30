@@ -1,3 +1,5 @@
+using Conference.Maui.Controls;
+using Conference.Maui.Models;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
 
@@ -137,7 +139,10 @@ public partial class SchedulePage : ContentPage
 
     private View CreateTabContent(List<object> flattenedItems)
     {
-        // Items are already pre-computed, just create the CollectionView
+        // Create a Grid to hold both the CollectionView and sticky header
+        Grid tabGrid = new();
+        
+        // Create the CollectionView
         CollectionView collectionView = new()
         {
             ItemsSource = flattenedItems,
@@ -151,6 +156,23 @@ public partial class SchedulePage : ContentPage
             Footer = new BoxView { HeightRequest = 80, BackgroundColor = Colors.Transparent }
         };
 
+        // Create sticky header container
+        ContentView stickyHeaderContainer = new()
+        {
+            VerticalOptions = LayoutOptions.Start,
+            HorizontalOptions = LayoutOptions.Fill,
+            IsVisible = false,
+            ZIndex = 999
+        };
+
+        // Add sticky header behavior
+        var stickyHeaderBehavior = new Controls.StickyHeaderBehavior
+        {
+            StickyHeaderTemplate = (DataTemplate)Resources["TimeHeaderTemplate"],
+            HeaderContainer = stickyHeaderContainer
+        };
+        collectionView.Behaviors.Add(stickyHeaderBehavior);
+
         // Wrap the CollectionView in a RefreshView for pull-to-refresh functionality
         RefreshView refreshView = new()
         {
@@ -158,31 +180,15 @@ public partial class SchedulePage : ContentPage
             BindingContext = _viewModel // Explicitly set the binding context
         };
 
-        // Use event handler for manual control of refresh state
-        refreshView.Refreshing += async (sender, e) =>
-        {
-            if (sender is not RefreshView refView) return;
+        // Set up the refresh binding for IsRefreshing and Command
+        refreshView.SetBinding(RefreshView.IsRefreshingProperty, nameof(_viewModel.IsRefreshing));
+        refreshView.SetBinding(RefreshView.CommandProperty, nameof(_viewModel.RefreshCommand));
 
-            try
-            {
-                // Set to refreshing
-                refView.IsRefreshing = true;
-                
-                // Execute the refresh command
-                await _viewModel.RefreshCommand.ExecuteAsync(null);
-            }
-            catch (Exception)
-            {
-                // Silent handling - error message will be shown via ViewModel's ErrorMessage property
-            }
-            finally
-            {
-                // Ensure it stops refreshing
-                refView.IsRefreshing = false;
-            }
-        };
+        // Add both the RefreshView and sticky header to the grid
+        tabGrid.Children.Add(refreshView);
+        tabGrid.Children.Add(stickyHeaderContainer);
 
-        return refreshView;
+        return tabGrid;
     }
 
     private Color GetThemeAwareTextColor()

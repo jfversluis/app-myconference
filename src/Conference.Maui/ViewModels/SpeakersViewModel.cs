@@ -5,7 +5,6 @@ using Conference.Maui.Models;
 using Conference.Maui.Pages;
 using Conference.Maui.Services;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Alerts;
 
 namespace Conference.Maui.ViewModels;
 
@@ -128,25 +127,31 @@ public partial class SpeakersViewModel : ObservableObject
     [RelayCommand]
     private async Task RefreshAsync()
     {
-        if (IsRefreshing)
-            return;
-
         try
         {
             IsRefreshing = true;
             ErrorMessage = string.Empty;
             
-            var result = await _refreshService.RefreshWithFeedbackAsync("Speakers");
+            // Use RefreshService with timeout for robustness
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            var result = await _refreshService.RefreshWithFeedbackAsync("Speakers").WaitAsync(cts.Token);
             
+            // Only reload data if there was actually an update
             if (result == RefreshResult.DataUpdated)
             {
                 await LoadSpeakersData();
             }
         }
+        catch (OperationCanceledException)
+        {
+            // RefreshService timed out, still reload local data as fallback
+            await LoadSpeakersData();
+        }
         catch (Exception ex)
         {
-            var errorToast = Toast.Make($"Failed to refresh: {ex.Message}", CommunityToolkit.Maui.Core.ToastDuration.Long);
-            await errorToast.Show();
+            ErrorMessage = $"Failed to refresh: {ex.Message}";
+            // On error, try to load local data as fallback
+            await LoadSpeakersData();
         }
         finally
         {

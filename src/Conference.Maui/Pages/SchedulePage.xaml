@@ -20,7 +20,7 @@
             <converters:PluralConverter x:Key="PluralConverter" />
             <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
             
-            <!-- Grouped Session Template (without time column) -->
+            <!-- Grouped Session Template -->
             <DataTemplate x:Key="GroupedSessionTemplate" x:DataType="models:Session">
                 <Border Style="{StaticResource SessionCardStyle}">
 
@@ -186,25 +186,42 @@
             </syncfusion:SfTabView>
 
             <!-- Show regular CollectionView with RefreshView if there's only one day -->
-            <RefreshView IsRefreshing="{Binding IsRefreshing}"
-                         Command="{Binding RefreshCommand}"
-                         IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}">
-                <CollectionView 
-                    ItemsSource="{Binding FlattenedItems}"
-                    ItemTemplate="{StaticResource ScheduleTemplateSelector}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
-                    Margin="10">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout ItemSpacing="5" Orientation="Vertical" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.Header>
-                        <BoxView HeightRequest="8" BackgroundColor="Transparent" />
-                    </CollectionView.Header>
-                    <CollectionView.Footer>
-                        <BoxView HeightRequest="80" BackgroundColor="Transparent" />
-                    </CollectionView.Footer>
-                </CollectionView>
-            </RefreshView>
+            <Grid IsVisible="{Binding ShowTabs, Converter={StaticResource InvertedBoolConverter}}">
+                <RefreshView x:Name="scheduleRefreshView"
+                             IsRefreshing="{Binding IsRefreshing}"
+                             Command="{Binding RefreshCommand}">
+                    <CollectionView 
+                        x:Name="scheduleCollectionView"
+                        ItemsSource="{Binding FlattenedItems}"
+                        ItemTemplate="{StaticResource ScheduleTemplateSelector}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                        Margin="10"
+                        ItemSizingStrategy="MeasureFirstItem"
+                        RemainingItemsThreshold="10">
+                        <CollectionView.Behaviors>
+                            <controls:StickyHeaderBehavior 
+                                StickyHeaderTemplate="{StaticResource TimeHeaderTemplate}"
+                                HeaderContainer="{x:Reference stickyHeaderContainer}" />
+                        </CollectionView.Behaviors>
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout ItemSpacing="2" Orientation="Vertical" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.Header>
+                            <BoxView HeightRequest="8" BackgroundColor="Transparent" />
+                        </CollectionView.Header>
+                        <CollectionView.Footer>
+                            <BoxView HeightRequest="80" BackgroundColor="Transparent" />
+                        </CollectionView.Footer>
+                    </CollectionView>
+                </RefreshView>
+                
+                <!-- Sticky Header Container -->
+                <ContentView x:Name="stickyHeaderContainer"
+                             VerticalOptions="Start"
+                             HorizontalOptions="Fill"
+                             IsVisible="False"
+                             ZIndex="999" />
+            </Grid>
         </Grid>
 
         <!-- <controls:FloatingButton
