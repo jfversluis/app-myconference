@@ -29,21 +29,23 @@ public class StickyHeaderBehavior : Behavior<CollectionView>
     private List<object>? _cachedItems; // Cache the items list
     private bool _lastShouldShowSticky = false; // Track last state to avoid redundant updates
     private bool _isAnimating = false; // Prevent overlapping animations
+    private readonly double _scrollThreshold = 10;
+    
 
     protected override void OnAttachedTo(CollectionView bindable)
     {
         _associatedObject = bindable;
         bindable.Scrolled += OnScrolled;
-        
+
         // Cache items when attached and when items source changes
         if (bindable.ItemsSource != null)
         {
             _cachedItems = bindable.ItemsSource.Cast<object>().ToList();
         }
-        
+
         // Listen for ItemsSource changes to update cache
         bindable.PropertyChanged += OnCollectionViewPropertyChanged;
-        
+
         base.OnAttachedTo(bindable);
     }
 
@@ -99,8 +101,7 @@ public class StickyHeaderBehavior : Behavior<CollectionView>
                 currentHeader = _cachedItems[i];
                 
                 // If the header we found is the first visible item, don't show sticky
-                // This means the original header is still visible
-                if (i == visibleIndex && e.VerticalOffset <= 10) // Small threshold for scroll position
+                if (i == visibleIndex && e.VerticalOffset <= _scrollThreshold) // Small threshold for scroll position
                 {
                     shouldShowSticky = false;
                 }
