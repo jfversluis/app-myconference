@@ -136,18 +136,21 @@ public partial class SpeakersViewModel : ObservableObject
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             var result = await _refreshService.RefreshWithFeedbackAsync("Speakers").WaitAsync(cts.Token);
             
-            // Always reload data regardless of RefreshService result (fallback for robustness)
-            await LoadSpeakersData();
+            // Only reload data if there was actually an update
+            if (result == RefreshResult.DataUpdated)
+            {
+                await LoadSpeakersData();
+            }
         }
         catch (OperationCanceledException)
         {
-            // RefreshService timed out, still reload local data
+            // RefreshService timed out, still reload local data as fallback
             await LoadSpeakersData();
         }
         catch (Exception ex)
         {
             ErrorMessage = $"Failed to refresh: {ex.Message}";
-            // Still try to load local data
+            // On error, try to load local data as fallback
             await LoadSpeakersData();
         }
         finally
