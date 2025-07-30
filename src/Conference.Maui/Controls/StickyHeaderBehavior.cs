@@ -1,3 +1,4 @@
+using Conference.Maui.Models;
 using Microsoft.Maui.Controls;
 using System.ComponentModel;
 
@@ -321,6 +322,6 @@ public class StickyHeaderBehavior : Behavior<CollectionView>
 
     private bool IsHeaderItem(object item)
     {
-        return item.GetType().Name == "TimeHeader";
+        return item is TimeHeader;
     }
 }
