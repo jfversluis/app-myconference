@@ -14,6 +14,10 @@
             <helpers:EqualToIntConverter x:Key="EqualToIntConverter"/>
             <helpers:EqualToStringConverter x:Key="EqualToStringConverter"/>
             <helpers:SpeakersToStringConverter x:Key="SpeakersToStringConverter"/>
+            <helpers:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
+            <helpers:IsStringNotNullOrEmptyConverter x:Key="IsStringNotNullOrEmptyConverter"/>
+            <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+            <helpers:CompareConverter x:Key="CompareConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

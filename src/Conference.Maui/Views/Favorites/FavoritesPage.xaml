@@ -3,14 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Views.Favorites.FavoritesPage"
              x:DataType="vm:FavoritesViewModel"
              Title="{Binding Title}">
 
     <Grid>
         <!-- Empty State -->
-        <VerticalStackLayout IsVisible="{Binding HasFavorites, Converter={toolkit:InvertedBoolConverter}}"
+        <VerticalStackLayout IsVisible="{Binding HasFavorites, Converter={StaticResource InvertedBoolConverter}}"
                            VerticalOptions="Center"
                            HorizontalOptions="Center"
                            Spacing="20"
@@ -56,7 +55,7 @@
                                 <Border Grid.Column="1"
                                        BackgroundColor="{AppThemeBinding Light={StaticResource Warning}, Dark={StaticResource Warning}}"
                                        Padding="10,5"
-                                       IsVisible="{Binding Sessions.Count, Converter={toolkit:CompareConverter ComparisonOperator=Greater, ComparingValue=1, TrueObject=True, FalseObject=False}}">
+                                       IsVisible="{Binding Sessions.Count, Converter={{StaticResource CompareConverter} ComparisonOperator=Greater, ComparingValue=1, TrueObject=True, FalseObject=False}}">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="5"/>
                                     </Border.StrokeShape>
@@ -128,7 +127,7 @@
                                                        FontSize="14"
                                                        Margin="0,5,0,0"
                                                        TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
-                                                       IsVisible="{Binding Speakers.Count, Converter={toolkit:CompareConverter ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}"/>
+                                                       IsVisible="{Binding Speakers.Count, Converter={{StaticResource CompareConverter} ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

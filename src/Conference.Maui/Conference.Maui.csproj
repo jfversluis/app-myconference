@@ -64,7 +64,6 @@
 		<PackageReference Include="Akavache" Version="10.0.1" />
 		<PackageReference Include="Polly" Version="8.5.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="11.2.0" />
 		<PackageReference Include="Sessionize.Api.Client" Version="1.4.1" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 	</ItemGroup>

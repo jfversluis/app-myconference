@@ -1,5 +1,4 @@
 ﻿using Akavache;
-using CommunityToolkit.Maui;
 using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Conference.Maui.Views.About;
@@ -18,7 +17,6 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
-			.UseMauiCommunityToolkit()
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

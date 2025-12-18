@@ -58,4 +58,13 @@ public partial class SpeakerDetailViewModel : BaseViewModel, IQueryAttributable
             await Shell.Current.GoToAsync($"sessiondetail", navigationParameter);
         }
     }
+
+    [RelayCommand]
+    private async Task OpenUrlAsync(string url)
+    {
+        if (!string.IsNullOrEmpty(url))
+        {
+            await Launcher.OpenAsync(url);
+        }
+    }
 }

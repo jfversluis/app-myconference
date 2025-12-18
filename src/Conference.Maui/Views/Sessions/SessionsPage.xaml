@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Views.Sessions.SessionsPage"
              x:DataType="vm:SessionsViewModel"
              Title="{Binding Title}">
@@ -127,14 +126,9 @@
                                                 <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                                                                       Spacing="10"
                                                                       Margin="0,10,0,0"
-                                                                      IsVisible="{Binding Speakers.Count, Converter={toolkit:CompareConverter ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
+                                                                      IsVisible="{Binding Speakers.Count, Converter={{StaticResource CompareConverter} ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
                                                     <!-- Profile Images -->
                                                     <HorizontalStackLayout Spacing="-15">
-                                                        <HorizontalStackLayout.IsVisible>
-                                                            <MultiBinding Converter="{toolkit:VariableMultiValueConverter ConditionType=All}">
-                                                                <Binding Path="Speakers.Count" Converter="{toolkit:CompareConverter ComparisonOperator=Greater, ComparingValue=0}"/>
-                                                            </MultiBinding>
-                                                        </HorizontalStackLayout.IsVisible>
                                                         <CollectionView ItemsSource="{Binding Speakers}"
                                                                        HeightRequest="32">
                                                             <CollectionView.ItemsLayout>
