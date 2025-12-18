@@ -1,72 +1,62 @@
-﻿using CommunityToolkit.Maui;
-using Conference.Maui.Controls;
-using Conference.Maui.Interfaces;
-using Conference.Maui.Pages;
+﻿using Akavache;
+using CommunityToolkit.Maui;
 using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
+using Conference.Maui.Views.About;
+using Conference.Maui.Views.Favorites;
+using Conference.Maui.Views.Sessions;
+using Conference.Maui.Views.Settings;
+using Conference.Maui.Views.Speakers;
 using Microsoft.Extensions.Logging;
-using Plugin.Maui.SwipeCardView;
-using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace Conference.Maui;
 
 public static class MauiProgram
 {
-    public static MauiApp CreateMauiApp()
-    {
-        var builder = MauiApp.CreateBuilder();
-        builder
-            .UseMauiApp<App>()
-            .ConfigureFonts(fonts =>
-            {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                fonts.AddFont("Poppins-SemiBold.ttf", "PoppinsSemibold");
-            })
-#if IOS
-            .ConfigureMauiHandlers(handlers =>
-            {
-                handlers.AddHandler<CollectionView, Microsoft.Maui.Controls.Handlers.Items2.CollectionViewHandler2>();
-            })
-#endif
-            .UseMauiCommunityToolkit()
-            .UseSwipeCardView() // Add SwipeCardView initialization
-            .ConfigureSyncfusionToolkit();
+	public static MauiApp CreateMauiApp()
+	{
+		var builder = MauiApp.CreateBuilder();
+		builder
+			.UseMauiApp<App>()
+			.UseMauiCommunityToolkit()
+			.ConfigureFonts(fonts =>
+			{
+				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+			});
 
-        // Register services
-        builder.Services.AddSingleton<IDatabaseService, DatabaseService>(); // Add DatabaseService first
-        builder.Services.AddSingleton<IEventDataService, SessionizeService>();
-        builder.Services.AddSingleton<ISponsorService, SponsorService>();
-        builder.Services.AddSingleton<DataSyncService>(); // Add DataSyncService
-        builder.Services.AddSingleton<RefreshService>(); // Add RefreshService
+		// Initialize Akavache
+		BlobCache.ApplicationName = "MyConference";
 
-        // Register view models and pages
-        builder.Services.AddTransient<ScheduleViewModel>();
-        builder.Services.AddTransient<SchedulePage>();
+		// Register HttpClient
+		builder.Services.AddSingleton<HttpClient>();
 
-        builder.Services.AddTransient<SpeakersViewModel>();
-        builder.Services.AddTransient<SpeakersPage>();
+		// Register Services
+		builder.Services.AddSingleton<ISessionizeService, SessionizeService>();
+		builder.Services.AddSingleton<IFavoritesService, FavoritesService>();
 
-        builder.Services.AddTransient<SessionDetailsViewModel>();
-        builder.Services.AddTransient<SessionDetailsPage>();
+		// Register ViewModels
+		builder.Services.AddTransient<SessionsViewModel>();
+		builder.Services.AddTransient<SpeakersViewModel>();
+		builder.Services.AddTransient<FavoritesViewModel>();
+		builder.Services.AddTransient<AboutViewModel>();
+		builder.Services.AddTransient<SettingsViewModel>();
+		builder.Services.AddTransient<SessionDetailViewModel>();
+		builder.Services.AddTransient<SpeakerDetailViewModel>();
 
-        builder.Services.AddTransient<SpeakerDetailsViewModel>();
-        builder.Services.AddTransient<SpeakerDetailsPage>();
-
-        builder.Services.AddTransient<SponsorsViewModel>();
-        builder.Services.AddTransient<SponsorsPage>();
-        
-        // Add MyAgenda view model and page
-        builder.Services.AddTransient<MyAgendaViewModel>();
-        builder.Services.AddTransient<MyAgendaPage>();
-
-        builder.Services.AddTransient<PickFavoriteSessionsViewModel>();
-        builder.Services.AddTransient<PickFavoriteSessionsPage>();
+		// Register Views
+		builder.Services.AddTransient<SessionsPage>();
+		builder.Services.AddTransient<SpeakersPage>();
+		builder.Services.AddTransient<FavoritesPage>();
+		builder.Services.AddTransient<AboutPage>();
+		builder.Services.AddTransient<SettingsPage>();
+		builder.Services.AddTransient<SessionDetailPage>();
+		builder.Services.AddTransient<SpeakerDetailPage>();
 
 #if DEBUG
-        builder.Logging.AddDebug();
+		builder.Logging.AddDebug();
 #endif
 
-        return builder.Build();
-    }
+		return builder.Build();
+	}
 }

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Conference.Maui.Views.Sessions.SessionDetailPage"
+             x:DataType="vm:SessionDetailViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <!-- Title and Favorite -->
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Grid.Column="0"
+                       Text="{Binding Session.Title}"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       MaxLines="3"
+                       LineBreakMode="WordWrap"/>
+
+                <ImageButton Grid.Column="1"
+                           Source="{Binding IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='star_filled.png', FalseObject='star.png'}}"
+                           WidthRequest="32"
+                           HeightRequest="32"
+                           VerticalOptions="Start"
+                           Command="{Binding ToggleFavoriteCommand}"/>
+            </Grid>
+
+            <!-- Time and Room -->
+            <VerticalStackLayout Spacing="5">
+                <Label FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}">
+                    <Label.Text>
+                        <MultiBinding StringFormat="{}{0:MMM dd, yyyy} • {0:HH:mm} - {1:HH:mm}">
+                            <Binding Path="Session.StartsAt"/>
+                            <Binding Path="Session.EndsAt"/>
+                        </MultiBinding>
+                    </Label.Text>
+                </Label>
+
+                <Label Text="{Binding Session.Room, StringFormat='Room: {0}'}"
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                       IsVisible="{Binding Session.Room, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+            </VerticalStackLayout>
+
+            <!-- Description -->
+            <Label Text="{Binding Session.Description}"
+                   FontSize="16"
+                   LineBreakMode="WordWrap"
+                   IsVisible="{Binding Session.Description, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+
+            <!-- Speakers -->
+            <VerticalStackLayout Spacing="10"
+                               IsVisible="{Binding Session.Speakers.Count, Converter={toolkit:CompareConverter ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
+                <Label Text="Speakers"
+                       FontSize="20"
+                       FontAttributes="Bold"/>
+
+                <CollectionView ItemsSource="{Binding Session.Speakers}"
+                              SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Speaker">
+                            <Border Margin="0,5"
+                                  Padding="15"
+                                  BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                  StrokeThickness="1"
+                                  Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionDetailViewModel}}, Path=SpeakerTappedCommand}"
+                                                         CommandParameter="{Binding .}"/>
+                                </Border.GestureRecognizers>
+
+                                <Grid ColumnDefinitions="60,*" ColumnSpacing="15">
+                                    <Border Grid.Column="0"
+                                           WidthRequest="60"
+                                           HeightRequest="60"
+                                           StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <Ellipse/>
+                                        </Border.StrokeShape>
+                                        <Image Source="{Binding ProfilePicture}"
+                                              Aspect="AspectFill"/>
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                        <Label Text="{Binding FullName}"
+                                               FontSize="16"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding TagLine}"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                               MaxLines="2"
+                                               LineBreakMode="TailTruncation"
+                                               IsVisible="{Binding TagLine, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

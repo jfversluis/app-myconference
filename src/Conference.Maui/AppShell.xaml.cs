@@ -1,15 +1,19 @@
-﻿using Conference.Maui.Pages;
+﻿using Conference.Maui.Views.Sessions;
+using Conference.Maui.Views.Speakers;
+using Conference.Maui.Views.Settings;
 
 namespace Conference.Maui;
 
 public partial class AppShell : Shell
 {
-    public AppShell()
-    {
-        InitializeComponent();
+	public AppShell()
+	{
+		InitializeComponent();
 
-        Routing.RegisterRoute(nameof(SessionDetailsPage), typeof(SessionDetailsPage));
-        Routing.RegisterRoute(nameof(PickFavoriteSessionsPage), typeof(PickFavoriteSessionsPage));
-        Routing.RegisterRoute(nameof(SpeakerDetailsPage), typeof(SpeakerDetailsPage));
-    }
+		// Register routes for navigation
+		Routing.RegisterRoute("sessiondetail", typeof(SessionDetailPage));
+		Routing.RegisterRoute("speakerdetail", typeof(SpeakerDetailPage));
+		Routing.RegisterRoute("settings", typeof(SettingsPage));
+		Routing.RegisterRoute("licenses", typeof(LicensesPage));
+	}
 }

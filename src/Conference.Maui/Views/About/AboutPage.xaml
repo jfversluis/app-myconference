@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             x:Class="Conference.Maui.Views.About.AboutPage"
+             x:DataType="vm:AboutViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="30">
+            <!-- App Icon/Logo Placeholder -->
+            <Border WidthRequest="120"
+                   HeightRequest="120"
+                   HorizontalOptions="Center"
+                   BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
+                   StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20"/>
+                </Border.StrokeShape>
+                <Label Text="📅"
+                       FontSize="64"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+            </Border>
+
+            <!-- Event Name -->
+            <Label Text="{Binding EventName}"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"/>
+
+            <!-- Version -->
+            <Label Text="{Binding Version, StringFormat='Version {0}'}"
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                   HorizontalTextAlignment="Center"/>
+
+            <!-- Description -->
+            <Label Text="{Binding EventDescription}"
+                   FontSize="16"
+                   LineBreakMode="WordWrap"
+                   HorizontalTextAlignment="Center"/>
+
+            <!-- Settings Button -->
+            <Button Text="⚙️ Settings"
+                    Command="{Binding OpenSettingsCommand}"
+                    HorizontalOptions="Center"
+                    WidthRequest="200"/>
+
+            <!-- Additional Info -->
+            <VerticalStackLayout Spacing="10" Margin="0,20,0,0">
+                <Label Text="Powered by Sessionize"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                       HorizontalTextAlignment="Center"/>
+
+                <Label Text="Built with .NET MAUI"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                       HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

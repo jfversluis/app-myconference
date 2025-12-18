@@ -1,188 +1,103 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
-using Conference.Maui.Pages;
 using Conference.Maui.Services;
 using System.Collections.ObjectModel;
 
 namespace Conference.Maui.ViewModels;
 
-public partial class SpeakersViewModel : ObservableObject
+public partial class SpeakersViewModel : BaseViewModel
 {
-    private readonly IEventDataService _eventService;
-    private readonly DataSyncService _dataSyncService;
-    private readonly IDatabaseService _databaseService;
-    private readonly RefreshService _refreshService;
-    private bool _isInitialized = false;
-
-    public ObservableCollection<Speaker> Speakers { get; set; } = [];
+    private readonly ISessionizeService _sessionizeService;
+    private List<Speaker> _allSpeakers = new();
 
     [ObservableProperty]
-    private bool isLoading = false;
+    private ObservableCollection<Speaker> speakers = new();
 
     [ObservableProperty]
-    private bool isRefreshing = false;
+    private string searchText = string.Empty;
 
     [ObservableProperty]
-    private bool hasData = false;
+    private bool isRefreshing;
 
-    [ObservableProperty]
-    private string errorMessage = string.Empty;
-
-    public SpeakersViewModel(IEventDataService eventDataService, DataSyncService dataSyncService, IDatabaseService databaseService, RefreshService refreshService)
+    public SpeakersViewModel(ISessionizeService sessionizeService)
     {
-        _eventService = eventDataService;
-        _dataSyncService = dataSyncService;
-        _databaseService = databaseService;
-        _refreshService = refreshService;
-
-        // Subscribe to data sync events
-        _dataSyncService.DataRefreshed += OnDataRefreshed;
-        _dataSyncService.ErrorOccurred += OnErrorOccurred;
+        _sessionizeService = sessionizeService;
+        Title = "Speakers";
     }
 
     public async Task InitializeAsync()
     {
-        // If already initialized, just return instantly (no loading indicator)
-        if (_isInitialized && HasData)
-        {
-            return;
-        }
-
-        // Check if we have cached data first for instant display
-        var hasLocalData = await _databaseService.HasLocalDataAsync();
-        
-        if (hasLocalData && !_isInitialized)
-        {
-            // Load cached data immediately to show something to the user
-            await LoadSpeakersData();
-            _isInitialized = true;
-            
-            // Initialize data sync in background for future updates
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    await _dataSyncService.InitializeAsync().ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        ErrorMessage = $"Background sync failed: {ex.Message}";
-                    });
-                }
-            });
-        }
-        else if (!_isInitialized)
-        {
-            // No cached data, need to initialize first
-            await _dataSyncService.InitializeAsync();
-            await LoadSpeakersData();
-            _isInitialized = true;
-        }
+        await LoadDataAsync(false);
     }
 
-    public async Task LoadSpeakersData()
+    [RelayCommand]
+    private async Task LoadDataAsync(bool forceRefresh)
     {
-        // Skip loading indicator if we already have data (for subsequent navigations)
-        bool shouldShowLoading = !HasData;
-        
-        if (IsLoading)
+        if (IsBusy)
             return;
 
         try
         {
-            if (shouldShowLoading)
-            {
-                IsLoading = true;
-            }
-            ErrorMessage = string.Empty;
+            IsBusy = true;
 
-            var speakers = await _eventService.GetAllSpeakers();
-
-            Speakers.Clear();
-            foreach (var speaker in speakers.OrderBy(s => s.FirstName).ThenBy(s => s.LastName))
-            {
-                Speakers.Add(speaker);
-            }
-
-            HasData = Speakers.Count > 0;
+            _allSpeakers = await _sessionizeService.GetSpeakersAsync(forceRefresh);
+            ApplyFilters();
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Failed to load speakers: {ex.Message}";
-            HasData = false;
+            await Shell.Current.DisplayAlertAsync("Error", $"Failed to load speakers: {ex.Message}", "OK");
         }
         finally
         {
-            if (shouldShowLoading)
-            {
-                IsLoading = false;
-            }
+            IsBusy = false;
+            IsRefreshing = false;
         }
     }
 
     [RelayCommand]
     private async Task RefreshAsync()
     {
-        try
-        {
-            IsRefreshing = true;
-            ErrorMessage = string.Empty;
-            
-            // Use RefreshService with timeout for robustness
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            var result = await _refreshService.RefreshWithFeedbackAsync("Speakers").WaitAsync(cts.Token);
-            
-            // Only reload data if there was actually an update
-            if (result == RefreshResult.DataUpdated)
-            {
-                await LoadSpeakersData();
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            // RefreshService timed out, still reload local data as fallback
-            await LoadSpeakersData();
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Failed to refresh: {ex.Message}";
-            // On error, try to load local data as fallback
-            await LoadSpeakersData();
-        }
-        finally
-        {
-            IsRefreshing = false;
-        }
+        IsRefreshing = true;
+        await LoadDataAsync(true);
     }
 
-    private async void OnDataRefreshed(object? sender, bool success)
+    partial void OnSearchTextChanged(string value)
     {
-        if (success)
-        {
-            // Reload data on UI thread
-            await MainThread.InvokeOnMainThreadAsync(async () =>
-            {
-                await LoadSpeakersData();
-            });
-        }
+        ApplyFilters();
     }
 
-    private void OnErrorOccurred(object? sender, string error)
+    private void ApplyFilters()
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        Speakers.Clear();
+
+        var filtered = _allSpeakers.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(SearchText))
         {
-            ErrorMessage = error;
-        });
+            filtered = filtered.Where(s =>
+                s.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                s.TagLine.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                s.Bio.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+        }
+
+        foreach (var speaker in filtered.OrderBy(s => s.FullName))
+        {
+            Speakers.Add(speaker);
+        }
     }
 
     [RelayCommand]
-    private async Task GoToSpeakerDetails(Speaker selectedSpeaker)
+    private async Task SpeakerTappedAsync(Speaker speaker)
     {
-        await Shell.Current.GoToAsync(nameof(SpeakerDetailsPage),
-            new Dictionary<string, object> { { "SelectedSpeaker", selectedSpeaker } });
+        if (speaker == null)
+            return;
+
+        var navigationParameter = new Dictionary<string, object>
+        {
+            { "Speaker", speaker }
+        };
+
+        await Shell.Current.GoToAsync($"speakerdetail", navigationParameter);
     }
 }

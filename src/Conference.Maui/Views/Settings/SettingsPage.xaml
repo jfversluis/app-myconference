@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             x:Class="Conference.Maui.Views.Settings.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <!-- Theme Section -->
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Theme"
+                       FontSize="20"
+                       FontAttributes="Bold"/>
+
+                <Border Padding="15"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                       StrokeThickness="1"
+                       Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12"/>
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="10">
+                        <RadioButton Content="Light"
+                                    GroupName="Theme"
+                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToIntConverter}, ConverterParameter=0}"/>
+
+                        <RadioButton Content="Dark"
+                                    GroupName="Theme"
+                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToIntConverter}, ConverterParameter=1}"/>
+
+                        <RadioButton Content="System Default"
+                                    GroupName="Theme"
+                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToIntConverter}, ConverterParameter=2}"/>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Licenses Button -->
+            <Button Text="Third-Party Licenses"
+                    Command="{Binding OpenLicensesCommand}"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
