@@ -25,15 +25,15 @@
                     <VerticalStackLayout Spacing="10">
                         <RadioButton Content="Light"
                                     GroupName="Theme"
-                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToIntConverter}, ConverterParameter=0}"/>
+                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToStringConverter}, ConverterParameter=Light}"/>
 
                         <RadioButton Content="Dark"
                                     GroupName="Theme"
-                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToIntConverter}, ConverterParameter=1}"/>
+                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToStringConverter}, ConverterParameter=Dark}"/>
 
                         <RadioButton Content="System Default"
                                     GroupName="Theme"
-                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToIntConverter}, ConverterParameter=2}"/>
+                                    IsChecked="{Binding SelectedTheme, Converter={StaticResource EqualToStringConverter}, ConverterParameter=System}"/>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>

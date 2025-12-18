@@ -159,14 +159,9 @@
 
                                                     <!-- Speaker Names -->
                                                     <Label FontSize="14"
+                                                           Text="{Binding Speakers, Converter={StaticResource SpeakersToStringConverter}}"
                                                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
-                                                           VerticalOptions="Center">
-                                                        <Label.Text>
-                                                            <MultiBinding StringFormat="{}">
-                                                                <Binding Path="Speakers" Converter="{toolkit:ListToStringConverter Separator=', '}"/>
-                                                            </MultiBinding>
-                                                        </Label.Text>
-                                                    </Label>
+                                                           VerticalOptions="Center"/>
                                                 </HorizontalStackLayout>
                                             </Grid>
                                         </Border>

@@ -12,6 +12,8 @@
             </ResourceDictionary.MergedDictionaries>
             
             <helpers:EqualToIntConverter x:Key="EqualToIntConverter"/>
+            <helpers:EqualToStringConverter x:Key="EqualToStringConverter"/>
+            <helpers:SpeakersToStringConverter x:Key="SpeakersToStringConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

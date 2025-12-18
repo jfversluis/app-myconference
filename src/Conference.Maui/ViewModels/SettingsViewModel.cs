@@ -6,7 +6,14 @@ namespace Conference.Maui.ViewModels;
 public partial class SettingsViewModel : BaseViewModel
 {
     [ObservableProperty]
-    private int selectedTheme = 2; // 0 = Light, 1 = Dark, 2 = System
+    private string selectedTheme = "System";
+
+    private readonly Dictionary<string, AppTheme> _themeMap = new()
+    {
+        { "Light", AppTheme.Light },
+        { "Dark", AppTheme.Dark },
+        { "System", AppTheme.Unspecified }
+    };
 
     public SettingsViewModel()
     {
@@ -16,19 +23,11 @@ public partial class SettingsViewModel : BaseViewModel
 
     private void LoadThemePreference()
     {
-        if (Preferences.ContainsKey("AppTheme"))
-        {
-            SelectedTheme = Preferences.Get("AppTheme", 2);
-        }
-        else
-        {
-            SelectedTheme = 2; // System default
-        }
-
+        SelectedTheme = Preferences.Get("AppTheme", "System");
         ApplyTheme();
     }
 
-    partial void OnSelectedThemeChanged(int value)
+    partial void OnSelectedThemeChanged(string value)
     {
         Preferences.Set("AppTheme", value);
         ApplyTheme();
@@ -36,12 +35,10 @@ public partial class SettingsViewModel : BaseViewModel
 
     private void ApplyTheme()
     {
-        Application.Current!.UserAppTheme = SelectedTheme switch
+        if (_themeMap.TryGetValue(SelectedTheme, out var theme))
         {
-            0 => AppTheme.Light,
-            1 => AppTheme.Dark,
-            _ => AppTheme.Unspecified
-        };
+            Application.Current!.UserAppTheme = theme;
+        }
     }
 
     [RelayCommand]
