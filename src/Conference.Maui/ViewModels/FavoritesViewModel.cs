@@ -74,7 +74,7 @@ public partial class FavoritesViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", $"Failed to load favorites: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error loading favorites: {ex.Message}");
         }
         finally
         {

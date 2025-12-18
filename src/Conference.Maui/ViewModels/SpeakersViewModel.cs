@@ -46,7 +46,7 @@ public partial class SpeakersViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", $"Failed to load speakers: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error loading speakers: {ex.Message}");
         }
         finally
         {

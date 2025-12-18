@@ -83,7 +83,7 @@ public partial class SessionsViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", $"Failed to load sessions: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error loading sessions: {ex.Message}");
         }
         finally
         {
