@@ -21,7 +21,7 @@ on:
     - '!.gitignore'
 
 env:
-  DOTNET_VERSION: '9.0.x' # The .NET SDK version to use
+  DOTNET_VERSION: '10.0.x' # .NET 10 preview
 
 jobs:
   build:
@@ -35,6 +35,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
+        dotnet-quality: 'preview'
         
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
@@ -46,8 +47,9 @@ jobs:
       run: |
         dotnet workload install android
         dotnet workload install ios
-        dotnet workload install maccatalyst
         dotnet workload install maui
       
     - name: Build .NET MAUI Conference App
-      run: dotnet build src/Conference.Maui/Conference.Maui.csproj
+      run: |
+        dotnet build src/Conference.Maui/Conference.Maui.csproj -f net10.0-android
+        dotnet build src/Conference.Maui/Conference.Maui.csproj -f net10.0-ios
