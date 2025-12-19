@@ -45,7 +45,7 @@ public partial class SpeakerDetailViewModel : BaseViewModel, IQueryAttributable
         }
 
         var allSessions = await _sessionizeService.GetSessionsAsync();
-        var session = allSessions.FirstOrDefault(s => s.Id == sessionLink.Id);
+        var session = allSessions.FirstOrDefault(s => s.Id == sessionLink.Id.ToString());
 
         if (session != null)
         {

@@ -26,9 +26,19 @@ public partial class SpeakersViewModel : BaseViewModel
         Title = "Speakers";
         Console.WriteLine("=== SpeakersViewModel: Constructor called ===");
         
-        // Load data immediately when ViewModel is created
-        _ = Task.Run(async () =>
+        // Show an alert to verify constructor is called
+        MainThread.BeginInvokeOnMainThread(async () =>
         {
+            if (Application.Current?.Windows?.Count > 0)
+            {
+                var window = Application.Current.Windows[0];
+                if (window?.Page != null)
+                {
+                    await window.Page.DisplayAlert("Debug", "SpeakersViewModel constructor called!", "OK");
+                }
+            }
+            
+            // Then load data
             await LoadDataAsync(false);
         });
     }
@@ -36,7 +46,10 @@ public partial class SpeakersViewModel : BaseViewModel
     public async Task InitializeAsync()
     {
         Console.WriteLine("=== SpeakersViewModel: InitializeAsync called ===");
-        await LoadDataAsync(false);
+        if (_allSpeakers.Count == 0)
+        {
+            await LoadDataAsync(false);
+        }
     }
 
     [RelayCommand]
