@@ -126,7 +126,7 @@
                                                 <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                                                                       Spacing="10"
                                                                       Margin="0,10,0,0"
-                                                                      IsVisible="{Binding Speakers.Count, Converter={{StaticResource CompareConverter} ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
+                                                                      IsVisible="{Binding Speakers.Count, Converter={StaticResource CompareConverter ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
                                                     <!-- Profile Images -->
                                                     <HorizontalStackLayout Spacing="-15">
                                                         <CollectionView ItemsSource="{Binding Speakers}"
