@@ -53,8 +53,42 @@ public partial class SpeakersViewModel : BaseViewModel
             _allSpeakers = await _sessionizeService.GetSpeakersAsync(forceRefresh);
             Console.WriteLine($"Loaded {_allSpeakers?.Count ?? 0} speakers from service");
             
+            if (_allSpeakers == null || _allSpeakers.Count == 0)
+            {
+                Console.WriteLine("❌ No speakers returned from service!");
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    if (Application.Current?.Windows?.Count > 0)
+                    {
+                        var window = Application.Current.Windows[0];
+                        if (window?.Page != null)
+                        {
+                            await window.Page.DisplayAlert("Debug Info", 
+                                "No speakers were returned from the API. The service call succeeded but returned an empty list.", "OK");
+                        }
+                    }
+                });
+            }
+            
             ApplyFilters();
             Console.WriteLine($"After ApplyFilters: Speakers.Count = {Speakers.Count}");
+            
+            if (Speakers.Count == 0 && _allSpeakers.Count > 0)
+            {
+                Console.WriteLine("❌ Speakers were filtered out!");
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    if (Application.Current?.Windows?.Count > 0)
+                    {
+                        var window = Application.Current.Windows[0];
+                        if (window?.Page != null)
+                        {
+                            await window.Page.DisplayAlert("Debug Info", 
+                                $"All {_allSpeakers.Count} speakers were filtered out after ApplyFilters.", "OK");
+                        }
+                    }
+                });
+            }
         }
         catch (Exception ex)
         {
