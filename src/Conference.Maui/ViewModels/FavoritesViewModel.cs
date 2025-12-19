@@ -67,14 +67,9 @@ public partial class FavoritesViewModel : BaseViewModel
                     {
                         SlotStart = g.First().StartsAt.ToString("HH:mm"),
                         StartsAt = g.First().StartsAt,
-                        EndsAt = g.First().EndsAt
+                        EndsAt = g.First().EndsAt,
+                        Sessions = g.ToList()
                     };
-                    
-                    foreach (var session in g)
-                    {
-                        slot.Add(session);
-                    }
-                    
                     return slot;
                 });
 
@@ -137,7 +132,7 @@ public partial class FavoritesViewModel : BaseViewModel
     public List<TimeSlot> GetConflictingSlots()
     {
         return GroupedFavorites
-            .Where(slot => slot.Count > 1)
+            .Where(slot => slot.Sessions.Count > 1)
             .ToList();
     }
 }

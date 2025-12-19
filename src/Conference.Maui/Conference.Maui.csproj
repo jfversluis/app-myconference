@@ -66,6 +66,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Sessionize.Api.Client" Version="1.4.1" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+		<PackageReference Include="Syncfusion.Maui.ListView" Version="28.1.33" />
 	</ItemGroup>
 
 </Project>

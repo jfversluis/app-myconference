@@ -1,20 +1,11 @@
 namespace Conference.Maui.Models;
 
-using System.Collections.ObjectModel;
-
-public class TimeSlot : ObservableCollection<Session>
+public class TimeSlot
 {
     public string SlotStart { get; set; } = string.Empty;
     public DateTime StartsAt { get; set; }
     public DateTime EndsAt { get; set; }
-    
-    public TimeSlot() : base()
-    {
-    }
-    
-    public TimeSlot(IEnumerable<Session> sessions) : base(sessions)
-    {
-    }
+    public List<Session> Sessions { get; set; } = new();
 }
 
 public class DaySchedule

@@ -14,7 +14,7 @@ public partial class SessionsViewModel : BaseViewModel
     private List<Session> _allSessions = new();
 
     [ObservableProperty]
-    private ObservableCollection<TimeSlot> groupedSessions = new();
+    private ObservableCollection<GroupedSessions> groupedSessions = new();
 
     [ObservableProperty]
     private ObservableCollection<DaySchedule> days = new();
@@ -53,7 +53,7 @@ public partial class SessionsViewModel : BaseViewModel
             _allSchedule = await _sessionizeService.GetScheduleAsync(forceRefresh);
             _allSessions = _allSchedule
                 .SelectMany(d => d.TimeSlots)
-                .SelectMany(ts => ts) // TimeSlot now IS the collection
+                .SelectMany(ts => ts.Sessions)
                 .GroupBy(s => s.Id)
                 .Select(g => g.First())
                 .ToList();
@@ -120,29 +120,24 @@ public partial class SessionsViewModel : BaseViewModel
 
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
-            var searchLower = SearchText.ToLower();
             filteredSlots = filteredSlots
-                .Select(slot =>
+                .Select(slot => new TimeSlot
                 {
-                    var sessions = slot
+                    SlotStart = slot.SlotStart,
+                    StartsAt = slot.StartsAt,
+                    EndsAt = slot.EndsAt,
+                    Sessions = slot.Sessions
                         .Where(s => s.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
                                    s.Speakers.Any(sp => sp.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)))
-                        .ToList();
-                    
-                    var newSlot = new TimeSlot(sessions)
-                    {
-                        SlotStart = slot.SlotStart,
-                        StartsAt = slot.StartsAt,
-                        EndsAt = slot.EndsAt
-                    };
-                    return newSlot;
+                        .ToList()
                 })
-                .Where(slot => slot.Any());
+                .Where(slot => slot.Sessions.Any());
         }
 
         foreach (var slot in filteredSlots)
         {
-            GroupedSessions.Add(slot);
+            var grouped = new GroupedSessions(slot);
+            GroupedSessions.Add(grouped);
         }
     }
 

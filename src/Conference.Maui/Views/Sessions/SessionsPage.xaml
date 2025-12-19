@@ -81,7 +81,7 @@
                            SelectionMode="None">
                 <!-- Group Header (Sticky) -->
                 <CollectionView.GroupHeaderTemplate>
-                    <DataTemplate x:DataType="models:TimeSlot">
+                    <DataTemplate x:DataType="models:GroupedSessions">
                         <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
                               Padding="15,10">
                             <Label Text="{Binding SlotStart}"
