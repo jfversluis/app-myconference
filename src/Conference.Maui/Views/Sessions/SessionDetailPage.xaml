@@ -19,7 +19,7 @@
                        LineBreakMode="WordWrap"/>
 
                 <ImageButton Grid.Column="1"
-                           Source="{Binding IsFavorite, Converter={StaticResource BoolToObjectConverter TrueObject='star_filled.png', FalseObject='star.png'}}"
+                           Source="{Binding IsFavorite, Converter={StaticResource FavoriteStarConverter}}"
                            WidthRequest="32"
                            HeightRequest="32"
                            VerticalOptions="Start"
@@ -41,14 +41,14 @@
                 <Label Text="{Binding Session.Room, StringFormat='Room: {0}'}"
                        FontSize="16"
                        TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
-                       IsVisible="{Binding Session.Room, Converter={{StaticResource IsStringNotNullOrEmptyConverter}}}"/>
+                       IsVisible="{Binding Session.Room, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"/>
             </VerticalStackLayout>
 
             <!-- Description -->
             <Label Text="{Binding Session.Description}"
                    FontSize="16"
                    LineBreakMode="WordWrap"
-                   IsVisible="{Binding Session.Description, Converter={{StaticResource IsStringNotNullOrEmptyConverter}}}"/>
+                   IsVisible="{Binding Session.Description, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"/>
 
             <!-- Speakers -->
             <VerticalStackLayout Spacing="10"
@@ -95,7 +95,7 @@
                                                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
                                                MaxLines="2"
                                                LineBreakMode="TailTruncation"
-                                               IsVisible="{Binding TagLine, Converter={{StaticResource IsStringNotNullOrEmptyConverter}}}"/>
+                                               IsVisible="{Binding TagLine, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"/>
                                     </VerticalStackLayout>
                                 </Grid>
                             </Border>

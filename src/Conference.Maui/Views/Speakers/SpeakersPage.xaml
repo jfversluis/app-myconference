@@ -60,14 +60,14 @@
                                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
                                            MaxLines="1"
                                            LineBreakMode="TailTruncation"
-                                           IsVisible="{Binding TagLine, Converter={{StaticResource IsStringNotNullOrEmptyConverter}}}"/>
+                                           IsVisible="{Binding TagLine, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"/>
 
                                     <Label Text="{Binding Bio}"
                                            FontSize="14"
                                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
                                            MaxLines="2"
                                            LineBreakMode="TailTruncation"
-                                           IsVisible="{Binding Bio, Converter={{StaticResource IsStringNotNullOrEmptyConverter}}}"/>
+                                           IsVisible="{Binding Bio, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"/>
                                 </VerticalStackLayout>
                             </Grid>
                         </Border>
