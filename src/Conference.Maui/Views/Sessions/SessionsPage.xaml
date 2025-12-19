@@ -9,7 +9,7 @@
              Title="{Binding Title}">
 
     <ContentPage.Resources>
-        <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+        <!-- Page-specific resources if needed -->
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,Auto,*">
@@ -127,7 +127,7 @@
                                     
                                     <!-- Favorite Icon -->
                                     <Image Grid.Row="0" Grid.Column="1"
-                                           Source="{Binding IsFavorite, Converter={StaticResource FavoriteIconConverter}}"
+                                           Source="{Binding IsFavorite, Converter={StaticResource FavoriteStarConverter}}"
                                            HeightRequest="24"
                                            WidthRequest="24"
                                            VerticalOptions="Start"

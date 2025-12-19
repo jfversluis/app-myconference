@@ -4,6 +4,7 @@ namespace Conference.Maui.Models;
 
 public class GroupedSessions : ObservableCollection<Session>
 {
+    public string Key => SlotStart;
     public string SlotStart { get; set; } = string.Empty;
     public DateTime StartsAt { get; set; }
     public DateTime EndsAt { get; set; }

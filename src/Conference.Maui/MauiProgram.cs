@@ -23,6 +23,11 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+		// Configure handlers
+		#if IOS
+		Conference.Maui.Handlers.CollectionViewStickyHeaderHandler.Map();
+		#endif
+
 		// Initialize Akavache
 		BlobCache.ApplicationName = "MyConference";
 
