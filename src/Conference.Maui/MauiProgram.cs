@@ -1,5 +1,4 @@
 ﻿using Akavache;
-using Conference.Maui.Handlers;
 using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Conference.Maui.Views.About;
@@ -8,7 +7,6 @@ using Conference.Maui.Views.Sessions;
 using Conference.Maui.Views.Settings;
 using Conference.Maui.Views.Speakers;
 using Microsoft.Extensions.Logging;
-using Syncfusion.Maui.Core.Hosting;
 
 namespace Conference.Maui;
 
@@ -19,15 +17,11 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
-			.ConfigureSyncfusionCore()
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
-
-		// Enable sticky headers for CollectionView on iOS
-		CollectionViewStickyHeaderHandler.Map();
 
 		// Initialize Akavache
 		BlobCache.ApplicationName = "MyConference";

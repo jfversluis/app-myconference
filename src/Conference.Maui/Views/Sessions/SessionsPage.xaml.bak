@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Views.Sessions.SessionsPage"
              x:DataType="vm:SessionsViewModel"
@@ -89,20 +90,23 @@
                 <!-- Group Header Template -->
                 <CollectionView.GroupHeaderTemplate>
                     <DataTemplate>
-                        <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
-                              Padding="15,10"
-                              HeightRequest="44">
-                            <Label Text="{Binding Key}"
-                                   FontSize="16"
-                                   FontAttributes="Bold"
-                                   VerticalOptions="Center"/>
-                        </Grid>
+                        <ViewCell>
+                            <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
+                                  Padding="15,10"
+                                  HeightRequest="44">
+                                <Label Text="{Binding Key}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center"/>
+                            </Grid>
+                        </ViewCell>
                     </DataTemplate>
-                </CollectionView.GroupHeaderTemplate>
+                </syncfusion:SfListView.GroupHeaderTemplate>
                 
                 <!-- Session Item Template -->
-                <CollectionView.ItemTemplate>
+                <syncfusion:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Session">
+                        <ViewCell>
                             <Border Margin="10,5"
                                     Padding="15"
                                     BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
@@ -205,9 +209,10 @@
                                     </HorizontalStackLayout>
                                 </Grid>
                             </Border>
+                        </ViewCell>
                     </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                </syncfusion:SfListView.ItemTemplate>
+            </syncfusion:SfListView>
         </Grid>
     </Grid>
 </ContentPage>
