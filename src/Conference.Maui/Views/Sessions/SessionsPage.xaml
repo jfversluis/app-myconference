@@ -93,6 +93,7 @@
                               Padding="15,10"
                               HeightRequest="44">
                             <Label Text="{Binding Key}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}"
                                    FontSize="16"
                                    FontAttributes="Bold"
                                    VerticalOptions="Center"/>

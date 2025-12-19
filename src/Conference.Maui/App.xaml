@@ -34,8 +34,8 @@
             
             <!-- Pre-configured BoolToObjectConverter for favorites -->
             <helpers:BoolToObjectConverter x:Key="FavoriteStarConverter"
-                                          TrueObject="star_filled.png"
-                                          FalseObject="star.png"/>
+                                          TrueObject="star_filled.svg"
+                                          FalseObject="star.svg"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
