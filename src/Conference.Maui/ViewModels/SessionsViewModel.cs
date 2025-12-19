@@ -17,6 +17,9 @@ public partial class SessionsViewModel : BaseViewModel
     private ObservableCollection<GroupedSessions> groupedSessions = new();
 
     [ObservableProperty]
+    private ObservableCollection<Session> flatSessions = new();
+
+    [ObservableProperty]
     private ObservableCollection<DaySchedule> days = new();
 
     [ObservableProperty]
@@ -112,6 +115,7 @@ public partial class SessionsViewModel : BaseViewModel
     private void ApplyFilters()
     {
         GroupedSessions.Clear();
+        FlatSessions.Clear();
 
         if (SelectedDay == null)
             return;
@@ -138,6 +142,14 @@ public partial class SessionsViewModel : BaseViewModel
         {
             var grouped = new GroupedSessions(slot);
             GroupedSessions.Add(grouped);
+            
+            // Add flat sessions for Syncfusion ListView
+            foreach (var session in slot.Sessions)
+            {
+                // Add SlotStart property to Session for grouping
+                session.SlotStart = slot.SlotStart;
+                FlatSessions.Add(session);
+            }
         }
     }
 

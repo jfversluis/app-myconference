@@ -16,4 +16,7 @@ public class Session
     public string LiveUrl { get; set; } = string.Empty;
     public string RecordingUrl { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
+    
+    // For grouping in Syncfusion ListView
+    public string SlotStart { get; set; } = string.Empty;
 }

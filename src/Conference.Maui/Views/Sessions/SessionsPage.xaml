@@ -3,9 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Views.Sessions.SessionsPage"
              x:DataType="vm:SessionsViewModel"
              Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,Auto,*">
         <!-- Search Bar -->
@@ -20,27 +26,28 @@
                         SelectedItem="{Binding SelectedDay}"
                         SelectionMode="Single"
                         HeightRequest="60"
-                        Margin="10,5"
-                        IsVisible="{Binding Days.Count, Converter={StaticResource GreaterThanZeroConverter}}">
+                        Margin="10,5">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:DaySchedule">
-                    <Border StrokeThickness="2"
-                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                            Padding="20,10">
+                    <Border Padding="20,10"
+                            Stroke="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
+                            StrokeThickness="2">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="8"/>
                         </Border.StrokeShape>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup Name="CommonStates">
-                                <VisualState Name="Normal"/>
+                                <VisualState Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="Transparent"/>
+                                    </VisualState.Setters>
+                                </VisualState>
                                 <VisualState Name="Selected">
                                     <VisualState.Setters>
                                         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"/>
-                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -65,126 +72,155 @@
         <Grid Grid.Row="2">
             <!-- Loading Indicator -->
             <ActivityIndicator IsRunning="{Binding IsBusy}"
-                             IsVisible="{Binding IsBusy}"
-                             Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
-                             VerticalOptions="Center"
-                             HorizontalOptions="Center"
-                             HeightRequest="50"
-                             WidthRequest="50"/>
+                              IsVisible="{Binding IsBusy}"
+                              Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
+                              VerticalOptions="Center"
+                              HorizontalOptions="Center"
+                              HeightRequest="50"
+                              WidthRequest="50"/>
             
-            <!-- Content -->
-            <RefreshView IsRefreshing="{Binding IsRefreshing}"
-                        Command="{Binding RefreshCommand}"
-                        IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
-            <CollectionView ItemsSource="{Binding GroupedSessions}"
-                           IsGrouped="True"
-                           SelectionMode="None">
-                <!-- Group Header (Sticky) -->
-                <CollectionView.GroupHeaderTemplate>
-                    <DataTemplate x:DataType="models:GroupedSessions">
-                        <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
-                              Padding="15,10">
-                            <Label Text="{Binding SlotStart}"
-                                   FontSize="16"
-                                   FontAttributes="Bold"/>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.GroupHeaderTemplate>
+            <!-- Syncfusion ListView with REAL Sticky Headers -->
+            <syncfusion:SfListView x:Name="SessionsListView"
+                                   ItemsSource="{Binding FlatSessions}"
+                                   IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                                   SelectionMode="None"
+                                   IsStickyGroupHeader="True">
                 
-                <!-- Session Items -->
-                <CollectionView.ItemTemplate>
+                <!-- DataSource with GroupDescriptors -->
+                <syncfusion:SfListView.DataSource>
+                    <syncfusion:DataSource>
+                        <syncfusion:DataSource.GroupDescriptors>
+                            <syncfusion:GroupDescriptor PropertyName="SlotStart"/>
+                        </syncfusion:DataSource.GroupDescriptors>
+                    </syncfusion:DataSource>
+                </syncfusion:SfListView.DataSource>
+                
+                <!-- Group Header Template (WILL STICK!) -->
+                <syncfusion:SfListView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
+                                  Padding="15,10"
+                                  HeightRequest="44">
+                                <Label Text="{Binding Key}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </syncfusion:SfListView.GroupHeaderTemplate>
+                
+                <!-- Session Item Template -->
+                <syncfusion:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Session">
-                        <Border Margin="10,5"
-                                Padding="15"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                StrokeThickness="1"
-                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="12"/>
-                            </Border.StrokeShape>
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=SessionTappedCommand}"
-                                                     CommandParameter="{Binding .}"/>
-                            </Border.GestureRecognizers>
+                        <ViewCell>
+                            <Border Margin="10,5"
+                                    Padding="15"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                    StrokeThickness="1"
+                                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=SessionTappedCommand}"
+                                                         CommandParameter="{Binding .}"/>
+                                </Border.GestureRecognizers>
+                                
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                                    <!-- Title -->
+                                    <Label Grid.Row="0" Grid.Column="0"
+                                           Text="{Binding Title}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="WordWrap"
+                                           Margin="0,0,0,8"/>
+                                    
+                                    <!-- Favorite Icon -->
+                                    <Image Grid.Row="0" Grid.Column="1"
+                                           Source="{Binding IsFavorite, Converter={StaticResource FavoriteIconConverter}}"
+                                           HeightRequest="24"
+                                           WidthRequest="24"
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="End">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=ToggleFavoriteCommand}"
+                                                                CommandParameter="{Binding .}"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+                                    
+                                    <!-- Room and Time -->
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="10" Margin="0,0,0,8">
+                                        <Label Text="{Binding Room}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"/>
+                                        <Label Text="{Binding StartTime, StringFormat='{0:HH:mm}'}"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+                                        <Label Text="-"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+                                        <Label Text="{Binding EndTime, StringFormat='{0:HH:mm}'}"
+                                               FontSize="14"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+                                    </HorizontalStackLayout>
+                                    
+                                    <!-- Category -->
+                                    <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
+                                            Padding="8,4"
+                                            Margin="0,0,0,8"
+                                            HorizontalOptions="Start">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="6"/>
+                                        </Border.StrokeShape>
+                                        <Label Text="{Binding Category}"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"/>
+                                    </Border>
+                                    
+                                    <!-- Speakers -->
+                                    <HorizontalStackLayout Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Spacing="10">
+                                        <!-- Speaker Profile Images (Overlapping) -->
+                                        <HorizontalStackLayout Spacing="-15">
+                                            <CollectionView ItemsSource="{Binding Speakers}"
+                                                           HeightRequest="32"
+                                                           SelectionMode="None">
+                                                <CollectionView.ItemsLayout>
+                                                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="-15"/>
+                                                </CollectionView.ItemsLayout>
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:Speaker">
+                                                        <Border HeightRequest="32"
+                                                               WidthRequest="32"
+                                                               StrokeThickness="2"
+                                                               Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                               BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}">
+                                                            <Border.StrokeShape>
+                                                                <Ellipse/>
+                                                            </Border.StrokeShape>
+                                                            <Image Source="{Binding ProfilePicture}"
+                                                                  Aspect="AspectFill"/>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
+                                        </HorizontalStackLayout>
 
-                            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
-                                                <!-- Title -->
-                                                <Label Grid.Row="0" Grid.Column="0"
-                                                       Text="{Binding Title}"
-                                                       FontSize="16"
-                                                       FontAttributes="Bold"
-                                                       MaxLines="2"
-                                                       LineBreakMode="TailTruncation"/>
-
-                                                <!-- Favorite Button -->
-                                                <ImageButton Grid.Row="0" Grid.Column="1"
-                                                           Source="star.png"
-                                                           WidthRequest="24"
-                                                           HeightRequest="24"
-                                                           VerticalOptions="Start"
-                                                           Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=ToggleFavoriteCommand}"
-                                                           CommandParameter="{Binding .}"/>
-
-                                                <!-- Room and Time -->
-                                                <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                                                      Spacing="10"
-                                                                      Margin="0,5,0,0">
-                                                    <Label Text="{Binding Room}"
-                                                           FontSize="14"
-                                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
-                                                    <Label Text="•"/>
-                                                    <Label FontSize="14"
-                                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}">
-                                                        <Label.Text>
-                                                            <MultiBinding StringFormat="{}{0:HH:mm} - {1:HH:mm}">
-                                                                <Binding Path="StartsAt"/>
-                                                                <Binding Path="EndsAt"/>
-                                                            </MultiBinding>
-                                                        </Label.Text>
-                                                    </Label>
-                                                </HorizontalStackLayout>
-
-                                                <!-- Speakers -->
-                                                <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                                                                      Spacing="10"
-                                                                      Margin="0,10,0,0"
-                                                                      IsVisible="{Binding Speakers.Count, Converter={StaticResource GreaterThanZeroConverter}}">
-                                                    <!-- Profile Images -->
-                                                    <HorizontalStackLayout Spacing="-15">
-                                                        <CollectionView ItemsSource="{Binding Speakers}"
-                                                                       HeightRequest="32">
-                                                            <CollectionView.ItemsLayout>
-                                                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="-15"/>
-                                                            </CollectionView.ItemsLayout>
-                                                            <CollectionView.ItemTemplate>
-                                                                <DataTemplate x:DataType="models:Speaker">
-                                                                    <Border StrokeThickness="2"
-                                                                           Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                                                           WidthRequest="32"
-                                                                           HeightRequest="32">
-                                                                        <Border.StrokeShape>
-                                                                            <Ellipse/>
-                                                                        </Border.StrokeShape>
-                                                                        <Image Source="{Binding ProfilePicture}"
-                                                                              Aspect="AspectFill"/>
-                                                                    </Border>
-                                                                </DataTemplate>
-                                                            </CollectionView.ItemTemplate>
-                                                        </CollectionView>
-                                                    </HorizontalStackLayout>
-
-                                                    <!-- Speaker Names -->
-                                                    <Label FontSize="14"
-                                                           Text="{Binding Speakers, Converter={StaticResource SpeakersToStringConverter}}"
-                                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
-                                                           VerticalOptions="Center"/>
-                                                </HorizontalStackLayout>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </RefreshView>
+                                        <!-- Speaker Names -->
+                                        <Label FontSize="14"
+                                               Text="{Binding Speakers, Converter={StaticResource SpeakersToStringConverter}}"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                               VerticalOptions="Center"/>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Border>
+                        </ViewCell>
+                    </DataTemplate>
+                </syncfusion:SfListView.ItemTemplate>
+            </syncfusion:SfListView>
         </Grid>
     </Grid>
 </ContentPage>
