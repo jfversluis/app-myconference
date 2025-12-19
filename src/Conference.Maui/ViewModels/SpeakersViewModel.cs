@@ -24,28 +24,16 @@ public partial class SpeakersViewModel : BaseViewModel
     {
         _sessionizeService = sessionizeService;
         Title = "Speakers";
-        Console.WriteLine("=== SpeakersViewModel: Constructor called ===");
         
-        // Show an alert to verify constructor is called
+        // Load data immediately when ViewModel is created
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            if (Application.Current?.Windows?.Count > 0)
-            {
-                var window = Application.Current.Windows[0];
-                if (window?.Page != null)
-                {
-                    await window.Page.DisplayAlert("Debug", "SpeakersViewModel constructor called!", "OK");
-                }
-            }
-            
-            // Then load data
             await LoadDataAsync(false);
         });
     }
 
     public async Task InitializeAsync()
     {
-        Console.WriteLine("=== SpeakersViewModel: InitializeAsync called ===");
         if (_allSpeakers.Count == 0)
         {
             await LoadDataAsync(false);
@@ -61,71 +49,18 @@ public partial class SpeakersViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            Console.WriteLine("=== SpeakersViewModel: LoadDataAsync started ===");
 
             _allSpeakers = await _sessionizeService.GetSpeakersAsync(forceRefresh);
-            Console.WriteLine($"Loaded {_allSpeakers?.Count ?? 0} speakers from service");
-            
-            if (_allSpeakers == null || _allSpeakers.Count == 0)
-            {
-                Console.WriteLine("❌ No speakers returned from service!");
-                await MainThread.InvokeOnMainThreadAsync(async () =>
-                {
-                    if (Application.Current?.Windows?.Count > 0)
-                    {
-                        var window = Application.Current.Windows[0];
-                        if (window?.Page != null)
-                        {
-                            await window.Page.DisplayAlert("Debug Info", 
-                                "No speakers were returned from the API. The service call succeeded but returned an empty list.", "OK");
-                        }
-                    }
-                });
-            }
-            
             ApplyFilters();
-            Console.WriteLine($"After ApplyFilters: Speakers.Count = {Speakers.Count}");
-            
-            if (Speakers.Count == 0 && _allSpeakers.Count > 0)
-            {
-                Console.WriteLine("❌ Speakers were filtered out!");
-                await MainThread.InvokeOnMainThreadAsync(async () =>
-                {
-                    if (Application.Current?.Windows?.Count > 0)
-                    {
-                        var window = Application.Current.Windows[0];
-                        if (window?.Page != null)
-                        {
-                            await window.Page.DisplayAlert("Debug Info", 
-                                $"All {_allSpeakers.Count} speakers were filtered out after ApplyFilters.", "OK");
-                        }
-                    }
-                });
-            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error loading speakers: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
-            
-            await MainThread.InvokeOnMainThreadAsync(async () =>
-            {
-                if (Application.Current?.Windows?.Count > 0)
-                {
-                    var window = Application.Current.Windows[0];
-                    if (window?.Page != null)
-                    {
-                        await window.Page.DisplayAlert("Error", 
-                            $"Failed to load speakers: {ex.Message}", "OK");
-                    }
-                }
-            });
+            System.Diagnostics.Debug.WriteLine($"Error loading speakers: {ex.Message}");
         }
         finally
         {
             IsBusy = false;
             IsRefreshing = false;
-            Console.WriteLine("=== SpeakersViewModel: LoadDataAsync finished ===");
         }
     }
 

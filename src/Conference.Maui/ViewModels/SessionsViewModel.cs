@@ -49,24 +49,19 @@ public partial class SessionsViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            Console.WriteLine("=== LoadDataAsync started ===");
 
             _allSchedule = await _sessionizeService.GetScheduleAsync(forceRefresh);
-            Console.WriteLine($"Schedule loaded: {_allSchedule?.Count ?? 0} days");
-            
             _allSessions = _allSchedule
                 .SelectMany(d => d.TimeSlots)
                 .SelectMany(ts => ts.Sessions)
                 .GroupBy(s => s.Id)
                 .Select(g => g.First())
                 .ToList();
-            Console.WriteLine($"Sessions extracted: {_allSessions?.Count ?? 0} sessions");
 
             Days.Clear();
             foreach (var day in _allSchedule)
             {
                 Days.Add(day);
-                Console.WriteLine($"Added day: {day.Date:MMM dd}");
             }
 
             if (SelectedDay == null && Days.Any())
@@ -74,7 +69,6 @@ public partial class SessionsViewModel : BaseViewModel
                 var today = DateTime.Today;
                 var matchingDay = Days.FirstOrDefault(d => d.Date.Date == today);
                 SelectedDay = matchingDay ?? Days.First();
-                Console.WriteLine($"Selected day: {SelectedDay.Date:MMM dd}");
             }
             else if (SelectedDay != null)
             {
@@ -86,25 +80,15 @@ public partial class SessionsViewModel : BaseViewModel
             }
 
             ApplyFilters();
-            Console.WriteLine($"Filters applied. GroupedSessions count: {GroupedSessions.Count}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error loading sessions: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
-            
-            // Show error to user
-            await MainThread.InvokeOnMainThreadAsync(async () =>
-            {
-                await Application.Current!.MainPage!.DisplayAlert("Error", 
-                    $"Failed to load sessions: {ex.Message}", "OK");
-            });
+            System.Diagnostics.Debug.WriteLine($"Error loading sessions: {ex.Message}");
         }
         finally
         {
             IsBusy = false;
             IsRefreshing = false;
-            Console.WriteLine("=== LoadDataAsync finished ===");
         }
     }
 
