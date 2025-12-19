@@ -164,6 +164,10 @@ public class SessionizeService : ISessionizeService
 
         try
         {
+            // Load speakers first to get profile pictures
+            var speakers = await GetSpeakersAsync(forceRefresh);
+            var speakerLookup = speakers.ToDictionary(s => s.Id, s => s);
+            
             var url = $"{BaseUrl}/{AppConfig.SessionizeId}/view/GridSmart";
             var json = await _retryPolicy.ExecuteAsync(() => _httpClient.GetStringAsync(url));
             
@@ -172,7 +176,7 @@ public class SessionizeService : ISessionizeService
                 PropertyNameCaseInsensitive = true
             }) ?? new List<GridSmartDay>();
 
-            var schedule = ConvertToSchedule(scheduleData);
+            var schedule = ConvertToSchedule(scheduleData, speakerLookup);
             
             await BlobCache.LocalMachine.InsertObject(cacheKey, schedule, DateTimeOffset.Now.Add(CacheDuration));
             
@@ -212,7 +216,7 @@ public class SessionizeService : ISessionizeService
         }
     }
 
-    private List<DaySchedule> ConvertToSchedule(List<GridSmartDay> gridData)
+    private List<DaySchedule> ConvertToSchedule(List<GridSmartDay> gridData, Dictionary<string, Speaker> speakerLookup)
     {
         var result = new List<DaySchedule>();
 
@@ -269,14 +273,32 @@ public class SessionizeService : ISessionizeService
                         {
                             foreach (var speaker in room.Session.Speakers)
                             {
-                                session.Speakers.Add(new Speaker
+                                // Try to get full speaker data from lookup
+                                if (speakerLookup.TryGetValue(speaker.Id, out var fullSpeaker))
                                 {
-                                    Id = speaker.Id,
-                                    FirstName = speaker.FirstName ?? string.Empty,
-                                    LastName = speaker.LastName ?? string.Empty,
-                                    FullName = speaker.Name,
-                                    ProfilePicture = speaker.ProfilePicture ?? string.Empty
-                                });
+                                    session.Speakers.Add(new Speaker
+                                    {
+                                        Id = fullSpeaker.Id,
+                                        FirstName = fullSpeaker.FirstName,
+                                        LastName = fullSpeaker.LastName,
+                                        FullName = fullSpeaker.FullName,
+                                        ProfilePicture = fullSpeaker.ProfilePicture,
+                                        Bio = fullSpeaker.Bio,
+                                        TagLine = fullSpeaker.TagLine
+                                    });
+                                }
+                                else
+                                {
+                                    // Fallback to minimal data from grid
+                                    session.Speakers.Add(new Speaker
+                                    {
+                                        Id = speaker.Id,
+                                        FirstName = speaker.FirstName ?? string.Empty,
+                                        LastName = speaker.LastName ?? string.Empty,
+                                        FullName = speaker.Name,
+                                        ProfilePicture = speaker.ProfilePicture ?? string.Empty
+                                    });
+                                }
                             }
                         }
 
