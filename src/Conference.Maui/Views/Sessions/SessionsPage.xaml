@@ -21,7 +21,7 @@
                         SelectionMode="Single"
                         HeightRequest="60"
                         Margin="10,5"
-                        IsVisible="{Binding Days.Count, Converter={StaticResource CompareConverter}, ComparisonOperator=Greater, ComparingValue=0}">
+                        IsVisible="{Binding Days.Count, Converter={StaticResource GreaterThanZeroConverter}}">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
             </CollectionView.ItemsLayout>
@@ -48,21 +48,13 @@
                         <Label Text="{Binding Date, StringFormat='{0:MMM dd}'}"
                                FontAttributes="Bold"
                                VerticalOptions="Center"
-                               HorizontalOptions="Center">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup Name="CommonStates">
-                                    <VisualState Name="Normal">
-                                        <VisualState.Setters>
-                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState Name="Selected">
-                                        <VisualState.Setters>
-                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
+                               HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type Border}}, Path=BackgroundColor}" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}">
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}"/>
+                                </DataTrigger>
+                            </Label.Triggers>
                         </Label>
                     </Border>
                 </DataTemplate>
@@ -157,7 +149,7 @@
                                                 <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                                                                       Spacing="10"
                                                                       Margin="0,10,0,0"
-                                                                      IsVisible="{Binding Speakers.Count, Converter={StaticResource CompareConverter ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
+                                                                      IsVisible="{Binding Speakers.Count, Converter={StaticResource GreaterThanZeroConverter}}">
                                                     <!-- Profile Images -->
                                                     <HorizontalStackLayout Spacing="-15">
                                                         <CollectionView ItemsSource="{Binding Speakers}"

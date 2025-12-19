@@ -19,6 +19,18 @@
             <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
             <helpers:CompareConverter x:Key="CompareConverter"/>
             <helpers:IsEqualConverter x:Key="IsEqualConverter"/>
+            
+            <!-- Pre-configured CompareConverter instances -->
+            <helpers:CompareConverter x:Key="GreaterThanZeroConverter" 
+                                     ComparisonOperator="Greater" 
+                                     ComparingValue="0"
+                                     TrueObject="True"
+                                     FalseObject="False"/>
+            <helpers:CompareConverter x:Key="GreaterThanOneConverter" 
+                                     ComparisonOperator="Greater" 
+                                     ComparingValue="1"
+                                     TrueObject="True"
+                                     FalseObject="False"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

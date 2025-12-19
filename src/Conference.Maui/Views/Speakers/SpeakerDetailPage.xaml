@@ -42,7 +42,7 @@
 
             <!-- Sessions -->
             <VerticalStackLayout Spacing="10"
-                               IsVisible="{Binding Speaker.Sessions.Count, Converter={StaticResource CompareConverter ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
+                               IsVisible="{Binding Speaker.Sessions.Count, Converter={StaticResource GreaterThanZeroConverter}}">
                 <Label Text="Sessions"
                        FontSize="20"
                        FontAttributes="Bold"/>
@@ -75,7 +75,7 @@
 
             <!-- Social Links -->
             <VerticalStackLayout Spacing="10"
-                               IsVisible="{Binding Speaker.Links.Count, Converter={StaticResource CompareConverter ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
+                               IsVisible="{Binding Speaker.Links.Count, Converter={StaticResource GreaterThanZeroConverter}}">
                 <Label Text="Links"
                        FontSize="20"
                        FontAttributes="Bold"/>

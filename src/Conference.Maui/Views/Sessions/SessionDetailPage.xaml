@@ -52,7 +52,7 @@
 
             <!-- Speakers -->
             <VerticalStackLayout Spacing="10"
-                               IsVisible="{Binding Session.Speakers.Count, Converter={StaticResource CompareConverter ComparisonOperator=Greater, ComparingValue=0, TrueObject=True, FalseObject=False}}">
+                               IsVisible="{Binding Session.Speakers.Count, Converter={StaticResource GreaterThanZeroConverter}}">
                 <Label Text="Speakers"
                        FontSize="20"
                        FontAttributes="Bold"/>
