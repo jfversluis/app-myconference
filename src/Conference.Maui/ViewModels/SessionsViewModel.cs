@@ -101,6 +101,12 @@ public partial class SessionsViewModel : BaseViewModel
 
     partial void OnSelectedDayChanged(DaySchedule? value)
     {
+        // Update IsSelected for all days
+        foreach (var day in Days)
+        {
+            day.IsSelected = day == value;
+        }
+        
         ApplyFilters();
     }
 
