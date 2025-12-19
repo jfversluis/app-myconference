@@ -53,7 +53,7 @@ public partial class SessionsViewModel : BaseViewModel
             _allSchedule = await _sessionizeService.GetScheduleAsync(forceRefresh);
             _allSessions = _allSchedule
                 .SelectMany(d => d.TimeSlots)
-                .SelectMany(ts => ts.Sessions)
+                .SelectMany(ts => ts) // TimeSlot now IS the collection
                 .GroupBy(s => s.Id)
                 .Select(g => g.First())
                 .ToList();
@@ -122,17 +122,22 @@ public partial class SessionsViewModel : BaseViewModel
         {
             var searchLower = SearchText.ToLower();
             filteredSlots = filteredSlots
-                .Select(slot => new TimeSlot
+                .Select(slot =>
                 {
-                    SlotStart = slot.SlotStart,
-                    StartsAt = slot.StartsAt,
-                    EndsAt = slot.EndsAt,
-                    Sessions = slot.Sessions
+                    var sessions = slot
                         .Where(s => s.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
                                    s.Speakers.Any(sp => sp.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)))
-                        .ToList()
+                        .ToList();
+                    
+                    var newSlot = new TimeSlot(sessions)
+                    {
+                        SlotStart = slot.SlotStart,
+                        StartsAt = slot.StartsAt,
+                        EndsAt = slot.EndsAt
+                    };
+                    return newSlot;
                 })
-                .Where(slot => slot.Sessions.Any());
+                .Where(slot => slot.Any());
         }
 
         foreach (var slot in filteredSlots)

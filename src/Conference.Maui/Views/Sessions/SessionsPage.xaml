@@ -77,38 +77,37 @@
                         Command="{Binding RefreshCommand}"
                         IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
             <CollectionView ItemsSource="{Binding GroupedSessions}"
-                           IsGrouped="False"
+                           IsGrouped="True"
                            SelectionMode="None">
-                <CollectionView.ItemTemplate>
+                <!-- Group Header (Sticky) -->
+                <CollectionView.GroupHeaderTemplate>
                     <DataTemplate x:DataType="models:TimeSlot">
-                        <VerticalStackLayout Spacing="0">
-                            <!-- Sticky Header -->
-                            <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
-                                  Padding="15,10">
-                                <Label Text="{Binding SlotStart}"
-                                       FontSize="16"
-                                       FontAttributes="Bold"/>
-                            </Grid>
+                        <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
+                              Padding="15,10">
+                            <Label Text="{Binding SlotStart}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+                
+                <!-- Session Items -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Session">
+                        <Border Margin="10,5"
+                                Padding="15"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=SessionTappedCommand}"
+                                                     CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
 
-                            <!-- Sessions in this slot -->
-                            <CollectionView ItemsSource="{Binding Sessions}"
-                                          SelectionMode="None">
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:Session">
-                                        <Border Margin="10,5"
-                                                Padding="15"
-                                                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                                StrokeThickness="1"
-                                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="12"/>
-                                            </Border.StrokeShape>
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=SessionTappedCommand}"
-                                                                     CommandParameter="{Binding .}"/>
-                                            </Border.GestureRecognizers>
-
-                                            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
                                                 <!-- Title -->
                                                 <Label Grid.Row="0" Grid.Column="0"
                                                        Text="{Binding Title}"
@@ -184,10 +183,6 @@
                                         </Border>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
-                            </CollectionView>
-                        </VerticalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
         </Grid>

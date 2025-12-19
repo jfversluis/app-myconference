@@ -61,12 +61,21 @@ public partial class FavoritesViewModel : BaseViewModel
 
             var grouped = favoriteSessions
                 .GroupBy(s => new { s.StartsAt.Date, s.StartsAt.Hour, s.StartsAt.Minute })
-                .Select(g => new TimeSlot
+                .Select(g =>
                 {
-                    SlotStart = g.First().StartsAt.ToString("HH:mm"),
-                    StartsAt = g.First().StartsAt,
-                    EndsAt = g.First().EndsAt,
-                    Sessions = g.ToList()
+                    var slot = new TimeSlot
+                    {
+                        SlotStart = g.First().StartsAt.ToString("HH:mm"),
+                        StartsAt = g.First().StartsAt,
+                        EndsAt = g.First().EndsAt
+                    };
+                    
+                    foreach (var session in g)
+                    {
+                        slot.Add(session);
+                    }
+                    
+                    return slot;
                 });
 
             foreach (var slot in grouped)
@@ -128,7 +137,7 @@ public partial class FavoritesViewModel : BaseViewModel
     public List<TimeSlot> GetConflictingSlots()
     {
         return GroupedFavorites
-            .Where(slot => slot.Sessions.Count > 1)
+            .Where(slot => slot.Count > 1)
             .ToList();
     }
 }

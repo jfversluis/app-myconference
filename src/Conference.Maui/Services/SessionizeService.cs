@@ -68,7 +68,7 @@ public class SessionizeService : ISessionizeService
             var schedule = await GetScheduleAsync(forceRefresh);
             var sessions = schedule
                 .SelectMany(d => d.TimeSlots)
-                .SelectMany(ts => ts.Sessions)
+                .SelectMany(ts => ts) // TimeSlot is now the collection
                 .GroupBy(s => s.Id)
                 .Select(g => g.First())
                 .ToList();
@@ -233,8 +233,7 @@ public class SessionizeService : ISessionizeService
             {
                 var timeSlot = new TimeSlot
                 {
-                    SlotStart = slot.SlotStart,
-                    Sessions = new List<Session>()
+                    SlotStart = slot.SlotStart
                 };
 
                 if (DateTime.TryParse(slot.SlotStart, out var slotTime))
@@ -302,11 +301,11 @@ public class SessionizeService : ISessionizeService
                             }
                         }
 
-                        timeSlot.Sessions.Add(session);
+                        timeSlot.Add(session);
                     }
                 }
 
-                if (timeSlot.Sessions.Any())
+                if (timeSlot.Any())
                 {
                     daySchedule.TimeSlots.Add(timeSlot);
                 }
