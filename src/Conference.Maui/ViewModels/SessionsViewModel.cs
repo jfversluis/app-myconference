@@ -49,10 +49,10 @@ public partial class SessionsViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            System.Diagnostics.Debug.WriteLine("=== LoadDataAsync started ===");
+            Console.WriteLine("=== LoadDataAsync started ===");
 
             _allSchedule = await _sessionizeService.GetScheduleAsync(forceRefresh);
-            System.Diagnostics.Debug.WriteLine($"Schedule loaded: {_allSchedule?.Count ?? 0} days");
+            Console.WriteLine($"Schedule loaded: {_allSchedule?.Count ?? 0} days");
             
             _allSessions = _allSchedule
                 .SelectMany(d => d.TimeSlots)
@@ -60,13 +60,13 @@ public partial class SessionsViewModel : BaseViewModel
                 .GroupBy(s => s.Id)
                 .Select(g => g.First())
                 .ToList();
-            System.Diagnostics.Debug.WriteLine($"Sessions extracted: {_allSessions?.Count ?? 0} sessions");
+            Console.WriteLine($"Sessions extracted: {_allSessions?.Count ?? 0} sessions");
 
             Days.Clear();
             foreach (var day in _allSchedule)
             {
                 Days.Add(day);
-                System.Diagnostics.Debug.WriteLine($"Added day: {day.Date:MMM dd}");
+                Console.WriteLine($"Added day: {day.Date:MMM dd}");
             }
 
             if (SelectedDay == null && Days.Any())
@@ -74,7 +74,7 @@ public partial class SessionsViewModel : BaseViewModel
                 var today = DateTime.Today;
                 var matchingDay = Days.FirstOrDefault(d => d.Date.Date == today);
                 SelectedDay = matchingDay ?? Days.First();
-                System.Diagnostics.Debug.WriteLine($"Selected day: {SelectedDay.Date:MMM dd}");
+                Console.WriteLine($"Selected day: {SelectedDay.Date:MMM dd}");
             }
             else if (SelectedDay != null)
             {
@@ -86,12 +86,12 @@ public partial class SessionsViewModel : BaseViewModel
             }
 
             ApplyFilters();
-            System.Diagnostics.Debug.WriteLine($"Filters applied. GroupedSessions count: {GroupedSessions.Count}");
+            Console.WriteLine($"Filters applied. GroupedSessions count: {GroupedSessions.Count}");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"❌ Error loading sessions: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            Console.WriteLine($"❌ Error loading sessions: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
             
             // Show error to user
             await MainThread.InvokeOnMainThreadAsync(async () =>
@@ -104,7 +104,7 @@ public partial class SessionsViewModel : BaseViewModel
         {
             IsBusy = false;
             IsRefreshing = false;
-            System.Diagnostics.Debug.WriteLine("=== LoadDataAsync finished ===");
+            Console.WriteLine("=== LoadDataAsync finished ===");
         }
     }
 

@@ -24,10 +24,18 @@ public partial class SpeakersViewModel : BaseViewModel
     {
         _sessionizeService = sessionizeService;
         Title = "Speakers";
+        Console.WriteLine("=== SpeakersViewModel: Constructor called ===");
+        
+        // Load data immediately when ViewModel is created
+        _ = Task.Run(async () =>
+        {
+            await LoadDataAsync(false);
+        });
     }
 
     public async Task InitializeAsync()
     {
+        Console.WriteLine("=== SpeakersViewModel: InitializeAsync called ===");
         await LoadDataAsync(false);
     }
 
@@ -40,18 +48,18 @@ public partial class SpeakersViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            System.Diagnostics.Debug.WriteLine("=== SpeakersViewModel: LoadDataAsync started ===");
+            Console.WriteLine("=== SpeakersViewModel: LoadDataAsync started ===");
 
             _allSpeakers = await _sessionizeService.GetSpeakersAsync(forceRefresh);
-            System.Diagnostics.Debug.WriteLine($"Loaded {_allSpeakers?.Count ?? 0} speakers from service");
+            Console.WriteLine($"Loaded {_allSpeakers?.Count ?? 0} speakers from service");
             
             ApplyFilters();
-            System.Diagnostics.Debug.WriteLine($"After ApplyFilters: Speakers.Count = {Speakers.Count}");
+            Console.WriteLine($"After ApplyFilters: Speakers.Count = {Speakers.Count}");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"❌ Error loading speakers: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            Console.WriteLine($"❌ Error loading speakers: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
             
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
@@ -70,7 +78,7 @@ public partial class SpeakersViewModel : BaseViewModel
         {
             IsBusy = false;
             IsRefreshing = false;
-            System.Diagnostics.Debug.WriteLine("=== SpeakersViewModel: LoadDataAsync finished ===");
+            Console.WriteLine("=== SpeakersViewModel: LoadDataAsync finished ===");
         }
     }
 

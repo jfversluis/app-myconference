@@ -26,6 +26,12 @@ public partial class FavoritesViewModel : BaseViewModel
         _sessionizeService = sessionizeService;
         _favoritesService = favoritesService;
         Title = "My Favorites";
+        
+        // Load data immediately when ViewModel is created
+        _ = Task.Run(async () =>
+        {
+            await LoadDataAsync();
+        });
     }
 
     public async Task InitializeAsync()
@@ -74,7 +80,7 @@ public partial class FavoritesViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error loading favorites: {ex.Message}");
+            Console.WriteLine($"Error loading favorites: {ex.Message}");
         }
         finally
         {

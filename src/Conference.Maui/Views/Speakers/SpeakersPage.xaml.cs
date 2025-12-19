@@ -16,6 +16,8 @@ public partial class SpeakersPage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
+		Console.WriteLine("=== SpeakersPage: OnAppearing called ===");
 		await _viewModel.InitializeAsync();
+		Console.WriteLine("=== SpeakersPage: OnAppearing finished ===");
 	}
 }
