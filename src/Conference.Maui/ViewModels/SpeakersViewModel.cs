@@ -40,18 +40,37 @@ public partial class SpeakersViewModel : BaseViewModel
         try
         {
             IsBusy = true;
+            System.Diagnostics.Debug.WriteLine("=== SpeakersViewModel: LoadDataAsync started ===");
 
             _allSpeakers = await _sessionizeService.GetSpeakersAsync(forceRefresh);
+            System.Diagnostics.Debug.WriteLine($"Loaded {_allSpeakers?.Count ?? 0} speakers from service");
+            
             ApplyFilters();
+            System.Diagnostics.Debug.WriteLine($"After ApplyFilters: Speakers.Count = {Speakers.Count}");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error loading speakers: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Error loading speakers: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                if (Application.Current?.Windows?.Count > 0)
+                {
+                    var window = Application.Current.Windows[0];
+                    if (window?.Page != null)
+                    {
+                        await window.Page.DisplayAlert("Error", 
+                            $"Failed to load speakers: {ex.Message}", "OK");
+                    }
+                }
+            });
         }
         finally
         {
             IsBusy = false;
             IsRefreshing = false;
+            System.Diagnostics.Debug.WriteLine("=== SpeakersViewModel: LoadDataAsync finished ===");
         }
     }
 

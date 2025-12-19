@@ -14,10 +14,20 @@
                    Text="{Binding SearchText}"
                    Margin="10,10,10,0"/>
 
-        <!-- Speakers List -->
-        <RefreshView Grid.Row="1"
-                     IsRefreshing="{Binding IsRefreshing}"
-                     Command="{Binding RefreshCommand}">
+        <!-- Speakers Content -->
+        <Grid Grid.Row="1">
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                             IsVisible="{Binding IsBusy}"
+                             Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             HeightRequest="50"
+                             WidthRequest="50"/>
+            
+            <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                        Command="{Binding RefreshCommand}"
+                        IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
             <CollectionView ItemsSource="{Binding Speakers}"
                            SelectionMode="None">
                 <CollectionView.ItemTemplate>
@@ -75,12 +85,6 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
-
-        <!-- Loading Indicator -->
-        <ActivityIndicator Grid.Row="1"
-                          IsRunning="{Binding IsBusy}"
-                          IsVisible="{Binding IsBusy}"
-                          VerticalOptions="Center"
-                          HorizontalOptions="Center"/>
+        </Grid>
     </Grid>
 </ContentPage>
