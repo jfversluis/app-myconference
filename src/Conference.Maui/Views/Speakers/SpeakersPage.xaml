@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             x:Class="Conference.Maui.Views.Speakers.SpeakersPage"
+             x:DataType="vm:SpeakersViewModel"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Search Bar -->
+        <SearchBar Grid.Row="0"
+                   Placeholder="Search speakers..."
+                   Text="{Binding SearchText}"
+                   Margin="10,10,10,0"/>
+
+        <!-- Speakers Content -->
+        <Grid Grid.Row="1">
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                             IsVisible="{Binding IsBusy}"
+                             Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             HeightRequest="50"
+                             WidthRequest="50"/>
+            
+            <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                        Command="{Binding RefreshCommand}"
+                        IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
+            <CollectionView ItemsSource="{Binding Speakers}"
+                           SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Speaker">
+                        <Border Margin="10,5"
+                                Padding="15"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SpeakersViewModel}}, Path=SpeakerTappedCommand}"
+                                                     CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="80,*" ColumnSpacing="15">
+                                <!-- Profile Image -->
+                                <Border Grid.Column="0"
+                                       WidthRequest="80"
+                                       HeightRequest="80"
+                                       StrokeThickness="0"
+                                       VerticalOptions="Start">
+                                    <Border.StrokeShape>
+                                        <Ellipse/>
+                                    </Border.StrokeShape>
+                                    <Image Source="{Binding ProfilePicture}"
+                                          Aspect="AspectFill"/>
+                                </Border>
+
+                                <!-- Speaker Info -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                    <Label Text="{Binding FullName}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"/>
+                                    
+                                    <Label Text="{Binding TagLine}"
+                                           FontSize="14"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                           MaxLines="1"
+                                           LineBreakMode="TailTruncation"
+                                           IsVisible="{Binding TagLine, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"/>
+
+                                    <Label Text="{Binding Bio}"
+                                           FontSize="14"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                           MaxLines="2"
+                                           LineBreakMode="TailTruncation"
+                                           IsVisible="{Binding Bio, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+        </Grid>
+    </Grid>
+</ContentPage>

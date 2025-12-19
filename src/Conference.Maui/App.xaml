@@ -1,17 +1,41 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-<Application
-    x:Class="Conference.Maui.App"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:Conference.Maui"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Conference.Maui"
+             xmlns:helpers="clr-namespace:Conference.Maui.Helpers"
+             x:Class="Conference.Maui.App">
     <Application.Resources>
         <ResourceDictionary>
-            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <helpers:EqualToIntConverter x:Key="EqualToIntConverter"/>
+            <helpers:EqualToStringConverter x:Key="EqualToStringConverter"/>
+            <helpers:SpeakersToStringConverter x:Key="SpeakersToStringConverter"/>
+            <helpers:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
+            <helpers:IsStringNotNullOrEmptyConverter x:Key="IsStringNotNullOrEmptyConverter"/>
+            <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+            <helpers:CompareConverter x:Key="CompareConverter"/>
+            <helpers:IsEqualConverter x:Key="IsEqualConverter"/>
+            
+            <!-- Pre-configured CompareConverter instances -->
+            <helpers:CompareConverter x:Key="GreaterThanZeroConverter" 
+                                     ComparisonOperator="Greater" 
+                                     ComparingValue="0"
+                                     TrueObject="True"
+                                     FalseObject="False"/>
+            <helpers:CompareConverter x:Key="GreaterThanOneConverter" 
+                                     ComparisonOperator="Greater" 
+                                     ComparingValue="1"
+                                     TrueObject="True"
+                                     FalseObject="False"/>
+            
+            <!-- Pre-configured BoolToObjectConverter for favorites -->
+            <helpers:BoolToObjectConverter x:Key="FavoriteStarConverter"
+                                          TrueObject="star_filled.svg"
+                                          FalseObject="star.svg"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

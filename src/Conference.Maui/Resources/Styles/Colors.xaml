@@ -1,95 +1,48 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
-<?xaml-comp compile="true" ?>
 <ResourceDictionary 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <!-- Azure Dev Summit Inspired Color Palette -->
-    
-    <!-- Primary Azure Blues -->
-    <Color x:Key="Primary">#0078D4</Color><!-- Default Azure Blue -->
-    <Color x:Key="PrimaryDark">#106EBE</Color><!-- Darker Azure Blue -->
-    <Color x:Key="PrimaryLight">#40E0FF</Color><!-- Light Azure -->
-    
-    <!-- Theme-specific Primary Colors -->
-    <Color x:Key="LightPrimary">#0078D4</Color><!-- Bright Azure Blue for light theme -->
-    <Color x:Key="DarkPrimary">#40A6F7</Color><!-- Softer, lighter blue for dark theme (easier on eyes) -->
-    
-    <!-- Light Theme Colors -->
-    <Color x:Key="LightBackground">#F8F9FA</Color>
-    <Color x:Key="LightSurface">#FFFFFF</Color>
-    <Color x:Key="LightSurfaceVariant">#F3F4F6</Color>
-    <Color x:Key="LightTextPrimary">#1A1A1A</Color>
-    <Color x:Key="LightTextSecondary">#6B7280</Color>
-    <Color x:Key="LightBorderColor">#E5E7EB</Color>
-    
-    <!-- Dark Theme Colors -->
-    <Color x:Key="DarkBackground">#1F2937</Color>
-    <Color x:Key="DarkSurface">#374151</Color>
-    <Color x:Key="DarkSurfaceVariant">#4B5563</Color>
-    <Color x:Key="DarkTextPrimary">#F9FAFB</Color>
-    <Color x:Key="DarkTextSecondary">#E5E7EB</Color><!-- Lighter for better contrast -->
-    <Color x:Key="DarkBorderColor">#4B5563</Color>
-    
-    <!-- AppThemeColor for automatic theme switching -->
-    <toolkit:AppThemeColor x:Key="ThemePrimary" Light="{StaticResource LightPrimary}" Dark="{StaticResource DarkPrimary}" />
-    <toolkit:AppThemeColor x:Key="ThemeTextPrimary" Light="{StaticResource LightTextPrimary}" Dark="{StaticResource DarkTextPrimary}" />
-    <toolkit:AppThemeColor x:Key="ThemeTextSecondary" Light="{StaticResource LightTextSecondary}" Dark="{StaticResource DarkTextSecondary}" />
-    <toolkit:AppThemeColor x:Key="ThemeBackground" Light="{StaticResource LightBackground}" Dark="{StaticResource DarkBackground}" />
-    <toolkit:AppThemeColor x:Key="ThemeSurface" Light="{StaticResource LightSurface}" Dark="{StaticResource DarkSurface}" />
-    
-    <!-- Secondary Colors -->
-    <Color x:Key="Secondary">#00BCF2</Color><!-- Azure Cyan -->
-    <Color x:Key="SecondaryDark">#0099CC</Color><!-- Darker Cyan -->
-    
-    <!-- Accent Colors -->
-    <Color x:Key="Accent">#FF6900</Color><!-- Azure Orange -->
-    
-    <!-- Interactive Colors -->
-    <Color x:Key="LikeColor">#63DD99</Color><!-- Green for like/approve -->
-    <Color x:Key="DislikeColor">#FF6A4F</Color><!-- Red for dislike/reject -->
+    <Color x:Key="Primary">#512BD4</Color>
+    <Color x:Key="PrimaryDark">#ac99ea</Color>
+    <Color x:Key="PrimaryDarkText">#242424</Color>
+    <Color x:Key="Secondary">#DFD8F7</Color>
+    <Color x:Key="SecondaryDarkText">#9880e5</Color>
+    <Color x:Key="Tertiary">#2B0B98</Color>
 
-    <!-- Neutral Colors -->
-    <Color x:Key="White">#FFFFFF</Color>
-    <Color x:Key="Black">#000000</Color>
-    
-    <!-- Legacy static colors for fallback -->
-    <Color x:Key="Background">#F8F9FA</Color><!-- Light Background -->
-    <Color x:Key="Surface">#FFFFFF</Color><!-- Card/Surface Background -->
-    
-    <!-- Text Colors -->
-    <Color x:Key="TextPrimary">#1A1A1A</Color><!-- Primary Text -->
-    <Color x:Key="TextSecondary">#6B7280</Color><!-- Secondary Text -->
-    <Color x:Key="TextTertiary">#9CA3AF</Color><!-- Tertiary Text -->
-    <Color x:Key="TextOnPrimary">#FFFFFF</Color><!-- Text on Primary Color -->
-
-    <!-- Gray Scale (Updated for modern look) -->
-    <Color x:Key="Gray50">#F9FAFB</Color>
-    <Color x:Key="Gray100">#F3F4F6</Color>
-    <Color x:Key="Gray200">#E5E7EB</Color>
-    <Color x:Key="Gray300">#D1D5DB</Color>
-    <Color x:Key="Gray400">#9CA3AF</Color>
-    <Color x:Key="Gray500">#6B7280</Color>
-    <Color x:Key="Gray600">#4B5563</Color>
-    <Color x:Key="Gray700">#374151</Color>
-    <Color x:Key="Gray800">#1F2937</Color>
-    <Color x:Key="Gray900">#111827</Color>
-
-    <!-- Border Colors -->
-    <Color x:Key="BorderLight">#E5E7EB</Color>
-    <Color x:Key="BorderMedium">#D1D5DB</Color>
-    <Color x:Key="BorderDark">#9CA3AF</Color>
-
-    <!-- Legacy Support (keeping for existing bindings) -->
-    <Color x:Key="PrimaryDarkText">#FFFFFF</Color>
-    <Color x:Key="SecondaryDarkText">#0099CC</Color>
-    <Color x:Key="Tertiary">#FF6900</Color>
+    <Color x:Key="White">White</Color>
+    <Color x:Key="Black">Black</Color>
     <Color x:Key="Magenta">#D600AA</Color>
-    <Color x:Key="OffBlack">#1F2937</Color>
-    <Color x:Key="TitleColor">#0078D4</Color>
-    <Color x:Key="Gray950">#0F172A</Color>
+    <Color x:Key="MidnightBlue">#190649</Color>
+    <Color x:Key="OffBlack">#1f1f1f</Color>
 
+    <Color x:Key="Gray100">#E1E1E1</Color>
+    <Color x:Key="Gray200">#C8C8C8</Color>
+    <Color x:Key="Gray300">#ACACAC</Color>
+    <Color x:Key="Gray400">#919191</Color>
+    <Color x:Key="Gray500">#6E6E6E</Color>
+    <Color x:Key="Gray600">#404040</Color>
+    <Color x:Key="Gray700">#303030</Color>
+    <Color x:Key="Gray800">#252525</Color>
+    <Color x:Key="Gray900">#212121</Color>
+    <Color x:Key="Gray950">#141414</Color>
+    
+    <Color x:Key="Warning">#FFA500</Color>
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
+    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
+    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
+
+    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}"/>
+    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}"/>
+    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}"/>
+    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}"/>
+    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}"/>
+    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
+    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
+    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
 </ResourceDictionary>

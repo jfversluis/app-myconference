@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Conference.Maui.Views.Settings.LicensesPage"
+             Title="Third-Party Licenses">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <Label Text="This app uses the following open-source libraries:"
+                   FontSize="16"
+                   FontAttributes="Bold"/>
+
+            <!-- Akavache -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Akavache"
+                       FontSize="16"
+                       FontAttributes="Bold"/>
+                <Label Text="An asynchronous, persistent key-value store"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+                <Label Text="License: MIT"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+            </VerticalStackLayout>
+
+            <!-- Polly -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Polly"
+                       FontSize="16"
+                       FontAttributes="Bold"/>
+                <Label Text="Resilience and transient-fault-handling library"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+                <Label Text="License: BSD-3-Clause"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+            </VerticalStackLayout>
+
+            <!-- CommunityToolkit.Mvvm -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="CommunityToolkit.Mvvm"
+                       FontSize="16"
+                       FontAttributes="Bold"/>
+                <Label Text="MVVM toolkit for .NET"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+                <Label Text="License: MIT"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+            </VerticalStackLayout>
+
+            <!-- CommunityToolkit.Maui -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="CommunityToolkit.Maui"
+                       FontSize="16"
+                       FontAttributes="Bold"/>
+                <Label Text=".NET MAUI Community Toolkit"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+                <Label Text="License: MIT"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+            </VerticalStackLayout>
+
+            <!-- Sessionize.Api.Client -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Sessionize.Api.Client"
+                       FontSize="16"
+                       FontAttributes="Bold"/>
+                <Label Text="Sessionize API client for .NET"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+                <Label Text="License: MIT"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
