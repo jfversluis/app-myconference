@@ -20,39 +20,70 @@
                         SelectedItem="{Binding SelectedDay}"
                         SelectionMode="Single"
                         HeightRequest="60"
-                        Margin="10,5">
+                        Margin="10,5"
+                        IsVisible="{Binding Days.Count, Converter={StaticResource CompareConverter}, ComparisonOperator=Greater, ComparingValue=0}">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:DaySchedule">
                     <Border StrokeThickness="2"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                             Padding="20,10">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="8"/>
                         </Border.StrokeShape>
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border" 
-                                        Binding="{Binding IsSelected, Source={RelativeSource AncestorType={x:Type CollectionView}}}"
-                                        Value="True">
-                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"/>
-                                <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"/>
-                            </DataTrigger>
-                        </Border.Triggers>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Normal"/>
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"/>
+                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Label Text="{Binding Date, StringFormat='{0:MMM dd}'}"
                                FontAttributes="Bold"
                                VerticalOptions="Center"
-                               HorizontalOptions="Center"/>
+                               HorizontalOptions="Center">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Label>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
         <!-- Sessions List with Sticky Headers -->
-        <RefreshView Grid.Row="2"
-                     IsRefreshing="{Binding IsRefreshing}"
-                     Command="{Binding RefreshCommand}">
+        <Grid Grid.Row="2">
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                             IsVisible="{Binding IsBusy}"
+                             Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             HeightRequest="50"
+                             WidthRequest="50"/>
+            
+            <!-- Content -->
+            <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                        Command="{Binding RefreshCommand}"
+                        IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
             <CollectionView ItemsSource="{Binding GroupedSessions}"
                            IsGrouped="False"
                            SelectionMode="None">
@@ -167,12 +198,6 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
-
-        <!-- Loading Indicator -->
-        <ActivityIndicator Grid.Row="2"
-                          IsRunning="{Binding IsBusy}"
-                          IsVisible="{Binding IsBusy}"
-                          VerticalOptions="Center"
-                          HorizontalOptions="Center"/>
+        </Grid>
     </Grid>
 </ContentPage>

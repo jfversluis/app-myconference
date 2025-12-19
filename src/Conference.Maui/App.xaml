@@ -18,6 +18,7 @@
             <helpers:IsStringNotNullOrEmptyConverter x:Key="IsStringNotNullOrEmptyConverter"/>
             <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
             <helpers:CompareConverter x:Key="CompareConverter"/>
+            <helpers:IsEqualConverter x:Key="IsEqualConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

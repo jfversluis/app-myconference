@@ -1,5 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-
 namespace Conference.Maui.Models;
 
 public class TimeSlot
@@ -10,12 +8,9 @@ public class TimeSlot
     public List<Session> Sessions { get; set; } = new();
 }
 
-public partial class DaySchedule : ObservableObject
+public class DaySchedule
 {
     public DateTime Date { get; set; }
     public string DateString { get; set; } = string.Empty;
     public List<TimeSlot> TimeSlots { get; set; } = new();
-    
-    [ObservableProperty]
-    private bool isSelected;
 }
