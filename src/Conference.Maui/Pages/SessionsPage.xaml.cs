@@ -1,3 +1,4 @@
+using Conference.Maui.Models;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
 
@@ -29,6 +30,23 @@ public partial class SessionsPage : ContentPage
         foreach (var day in _viewModel.Days)
         {
             DaySwitcher.Items.Add(new SfTabItem { Header = day.DisplayName });
+        }
+    }
+
+    private async void OnSessionSelected(object? sender, SelectionChangedEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine($"Selection changed: {e.CurrentSelection.Count} items");
+        
+        var session = e.CurrentSelection.FirstOrDefault() as SessionItem;
+        if (session != null)
+        {
+            System.Diagnostics.Debug.WriteLine($"Selected session: {session.Title}");
+            SessionsCollectionView.SelectedItem = null;
+            
+            await Shell.Current.GoToAsync(nameof(SessionDetailsPage), new Dictionary<string, object>
+            {
+                ["SessionId"] = session.Id
+            });
         }
     }
 

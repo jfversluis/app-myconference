@@ -2,11 +2,171 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Pages.SessionDetailsPage"
              x:DataType="vm:SessionDetailsViewModel"
              Title="{Binding Title}">
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Label Text="Session Details" FontSize="24" />
-        <Label Text="Coming soon..." TextColor="Gray" />
-    </VerticalStackLayout>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            
+            <!-- Session Title -->
+            <Label Text="{Binding Session.Title}"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   LineBreakMode="WordWrap" />
+
+            <!-- Time and Room Info -->
+            <Border Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="12">
+                <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="8" RowSpacing="4">
+                    <!-- Date -->
+                    <Image Grid.Column="0"
+                           Source="calendar_regular.svg"
+                           HeightRequest="18"
+                           WidthRequest="18"
+                           VerticalOptions="Center" />
+                    <Label Grid.Column="1"
+                           Text="{Binding Session.StartsAt, StringFormat='{0:ddd, MMM d}'}"
+                           FontSize="14"
+                           VerticalOptions="Center" />
+                    
+                    <!-- Room -->
+                    <Image Grid.Column="2"
+                           Source="location_regular.svg"
+                           HeightRequest="18"
+                           WidthRequest="18"
+                           VerticalOptions="Center" />
+                    <Label Grid.Column="3"
+                           Text="{Binding Session.RoomName}"
+                           FontSize="14"
+                           VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <!-- Time -->
+            <HorizontalStackLayout Spacing="8">
+                <Image Source="clock_regular.svg"
+                       HeightRequest="18"
+                       WidthRequest="18"
+                       VerticalOptions="Center" />
+                <Label Text="{Binding Session.TimeDisplay}"
+                       FontSize="14"
+                       VerticalOptions="Center" />
+                <Label Text="{Binding Session.DurationDisplay, StringFormat='({0})'}"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!-- Favorite Button -->
+            <Button Text="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='★ Remove from Favorites', FalseObject='☆ Add to Favorites'}}"
+                    Command="{Binding ToggleFavoriteCommand}"
+                    BackgroundColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject=Transparent}}"
+                    TextColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject=White, FalseObject={StaticResource Primary}}}"
+                    BorderColor="{StaticResource Primary}"
+                    BorderWidth="1"
+                    CornerRadius="8"
+                    HeightRequest="44" />
+
+            <!-- Description -->
+            <Label Text="About this session"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   Margin="0,8,0,0" />
+            <Label Text="{Binding Session.Description}"
+                   FontSize="15"
+                   LineBreakMode="WordWrap"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+
+            <!-- Speakers Section -->
+            <Label Text="Speakers"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   Margin="0,8,0,0"
+                   IsVisible="{Binding Session.HasSpeaker1}" />
+
+            <CollectionView ItemsSource="{Binding Session.Speakers}"
+                            SelectionMode="None"
+                            IsVisible="{Binding Session.HasSpeaker1}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:SpeakerItem">
+                        <Border Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="12">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionDetailsViewModel}}, Path=NavigateToSpeakerCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="56,*,Auto" ColumnSpacing="12">
+                                <!-- Speaker Avatar -->
+                                <Border Grid.Column="0"
+                                        HeightRequest="56"
+                                        WidthRequest="56"
+                                        StrokeShape="RoundRectangle 28"
+                                        StrokeThickness="0">
+                                    <Grid>
+                                        <!-- Fallback initials -->
+                                        <Border Background="{StaticResource Primary}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 28"
+                                                HeightRequest="56"
+                                                WidthRequest="56">
+                                            <Label Text="{Binding Initials}"
+                                                   TextColor="White"
+                                                   FontSize="18"
+                                                   FontAttributes="Bold"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                        <!-- Actual image -->
+                                        <Image Source="{Binding ProfilePictureUrl}"
+                                               Aspect="AspectFill"
+                                               HeightRequest="56"
+                                               WidthRequest="56">
+                                            <Image.Clip>
+                                                <EllipseGeometry Center="28,28" RadiusX="28" RadiusY="28" />
+                                            </Image.Clip>
+                                        </Image>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Speaker Info -->
+                                <VerticalStackLayout Grid.Column="1" 
+                                                     VerticalOptions="Center"
+                                                     Spacing="2">
+                                    <Label Text="{Binding FullName}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding TagLine}"
+                                           FontSize="13"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                           LineBreakMode="TailTruncation"
+                                           MaxLines="2" />
+                                </VerticalStackLayout>
+
+                                <!-- Chevron -->
+                                <Label Grid.Column="2"
+                                       Text="›"
+                                       FontSize="24"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

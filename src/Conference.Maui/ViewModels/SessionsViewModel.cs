@@ -270,8 +270,10 @@ public partial class SessionsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task NavigateToSessionDetailsAsync(SessionItem session)
+    private async Task NavigateToSessionDetailsAsync(SessionItem? session)
     {
+        if (session == null) return;
+        
         await Shell.Current.GoToAsync(nameof(SessionDetailsPage), new Dictionary<string, object>
         {
             ["SessionId"] = session.Id

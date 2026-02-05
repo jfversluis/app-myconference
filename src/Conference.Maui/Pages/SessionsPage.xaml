@@ -78,7 +78,9 @@
         <Grid Grid.Row="2" SafeAreaEdges="None">
             <CollectionView x:Name="SessionsCollectionView"
                             ItemsSource="{Binding CurrentDaySlots}"
-                            IsGrouped="True">
+                            IsGrouped="True"
+                            SelectionMode="Single"
+                            SelectionChanged="OnSessionSelected">
                 <CollectionView.GroupHeaderTemplate>
                     <DataTemplate x:DataType="models:TimeSlotGroup">
                         <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
@@ -101,11 +103,6 @@
                                     StrokeShape="RoundRectangle 12"
                                     Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                     Padding="16">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=NavigateToSessionDetailsCommand}"
-                                    CommandParameter="{Binding}" />
-                            </Border.GestureRecognizers>
                             
                             <Grid RowDefinitions="Auto,Auto,Auto">
                                 <Label Grid.Row="0"
