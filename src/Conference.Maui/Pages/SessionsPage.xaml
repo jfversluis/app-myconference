@@ -83,23 +83,15 @@
                                     CommandParameter="{Binding}" />
                             </Border.GestureRecognizers>
                             
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                                <Label Grid.Row="0" Grid.Column="0"
+                            <Grid RowDefinitions="Auto,Auto,Auto">
+                                <Label Grid.Row="0"
                                        Text="{Binding Title}"
                                        FontSize="16"
                                        FontAttributes="Bold"
                                        LineBreakMode="TailTruncation"
                                        MaxLines="2" />
 
-                                <ImageButton Grid.Row="0" Grid.Column="1"
-                                             Source="{Binding IsFavorite, Converter={StaticResource FavoriteIconConverter}}"
-                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=ToggleFavoriteCommand}"
-                                             CommandParameter="{Binding}"
-                                             HeightRequest="24"
-                                             WidthRequest="24"
-                                             VerticalOptions="Start" />
-
-                                <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                <HorizontalStackLayout Grid.Row="1"
                                                        Spacing="16"
                                                        Margin="0,8,0,0">
                                     <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
@@ -120,7 +112,7 @@
                                     </HorizontalStackLayout>
                                 </HorizontalStackLayout>
 
-                                <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                <Label Grid.Row="2"
                                        Text="{Binding SpeakerNames}"
                                        FontSize="13"
                                        Margin="0,8,0,0"
