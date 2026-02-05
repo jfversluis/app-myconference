@@ -4,10 +4,9 @@ namespace Conference.Maui.Pages;
 
 public partial class SessionDetailsPage : ContentPage
 {
-	public SessionDetailsPage(SessionDetailsViewModel sessionDetailsViewModel)
-	{
-		InitializeComponent();
-
-		BindingContext = sessionDetailsViewModel;
-	}
+    public SessionDetailsPage(SessionDetailsViewModel viewModel)
+    {
+        InitializeComponent();
+        BindingContext = viewModel;
+    }
 }

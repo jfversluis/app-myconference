@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
+             x:Class="Conference.Maui.Pages.SessionsPage"
+             x:DataType="vm:SessionsViewModel"
+             Title="{Binding Title}"
+             SafeAreaEdges="None"
+             Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
+
+    <Grid RowDefinitions="Auto,Auto,*" SafeAreaEdges="None">
+        <!-- Day Selector using SfTabView -->
+        <syncfusion:SfTabView Grid.Row="0"
+                              HeightRequest="48"
+                              TabBarPlacement="Top"
+                              IndicatorPlacement="Bottom"
+                              TabWidthMode="Default"
+                              IndicatorWidthMode="Stretch"
+                              SelectedIndex="{Binding SelectedDayIndex}"
+                              TabBarBackground="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
+                              IndicatorBackground="{StaticResource Primary}">
+            <syncfusion:SfTabItem Header="Sep 10" />
+            <syncfusion:SfTabItem Header="Sep 11" />
+            <syncfusion:SfTabItem Header="Sep 12" />
+        </syncfusion:SfTabView>
+
+        <!-- Search Bar -->
+        <Border Grid.Row="1"
+                Margin="16,8"
+                StrokeShape="RoundRectangle 12"
+                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                StrokeThickness="1"
+                Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                Padding="0">
+            <Grid ColumnDefinitions="Auto,*" Padding="12,0">
+                <Label Grid.Column="0"
+                       Text="🔍"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       Margin="0,0,8,0" />
+                <Entry Grid.Column="1"
+                       Placeholder="Search sessions..."
+                       Text="{Binding SearchText}"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       BackgroundColor="Transparent"
+                       PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+            </Grid>
+        </Border>
+
+        <!-- Sessions CollectionView -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding CurrentDaySlots}"
+                        IsGrouped="True">
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate x:DataType="models:TimeSlotGroup">
+                    <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
+                          Padding="16,12">
+                        <Label Text="{Binding TimeDisplay}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:SessionItem">
+                    <ContentView Padding="16,8,16,0">
+                        <Border Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                Padding="16">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=NavigateToSessionDetailsCommand}"
+                                    CommandParameter="{Binding}" />
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding Title}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2" />
+
+                                <ImageButton Grid.Row="0" Grid.Column="1"
+                                             Source="{Binding IsFavorite, Converter={StaticResource FavoriteIconConverter}}"
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionsViewModel}}, Path=ToggleFavoriteCommand}"
+                                             CommandParameter="{Binding}"
+                                             HeightRequest="24"
+                                             WidthRequest="24"
+                                             VerticalOptions="Start" />
+
+                                <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       Spacing="16"
+                                                       Margin="0,8,0,0">
+                                    <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
+                                        <Image Source="location_regular.png" 
+                                               HeightRequest="16" 
+                                               WidthRequest="16" />
+                                        <Label Text="{Binding RoomName}"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="4">
+                                        <Image Source="clock_regular.png" 
+                                               HeightRequest="16" 
+                                               WidthRequest="16" />
+                                        <Label Text="{Binding DurationDisplay}"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                    </HorizontalStackLayout>
+                                </HorizontalStackLayout>
+
+                                <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                       Text="{Binding SpeakerNames}"
+                                       FontSize="13"
+                                       Margin="0,8,0,0"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                       IsVisible="{Binding Speakers.Count, Converter={toolkit:IsNotEqualConverter}, ConverterParameter=0}" />
+                            </Grid>
+                        </Border>
+                    </ContentView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <!-- Tab bar padding -->
+                <BoxView HeightRequest="90" BackgroundColor="Transparent" />
+            </CollectionView.Footer>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32">
+                    <Label Text="No sessions found"
+                           FontSize="18"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator Grid.RowSpan="3"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Color="{StaticResource Primary}" />
+    </Grid>
+</ContentPage>

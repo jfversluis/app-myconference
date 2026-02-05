@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
+		<TargetFrameworks>net10.0-android;net10.0-ios</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Conference.Maui</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -10,10 +10,10 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>Conference.Maui</ApplicationTitle>
+		<ApplicationTitle>MyConference</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.conference.maui</ApplicationId>
+		<ApplicationId>com.myconference.app</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -21,7 +21,7 @@
 
 		<NeutralLanguage>en-US</NeutralLanguage>
 
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">12.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 
 		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
@@ -36,12 +36,6 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-		<MauiImage Update="Resources\Images\tab_about.svg" Resize="True" BaseSize="25,25" />
-		<MauiImage Update="Resources\Images\tab_myagenda.svg" Resize="True" BaseSize="25,25" />
-		<MauiImage Update="Resources\Images\tab_schedule.svg" Resize="True" BaseSize="25,25" />
-		<MauiImage Update="Resources\Images\tab_speakers.svg" Resize="True" BaseSize="25,25" />
-		<MauiImage Update="Resources\Images\tab_sponsors.svg" Resize="True" BaseSize="25,25" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
@@ -51,13 +45,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Maui" Version="11.2.0" />
+		<PackageReference Include="Akavache" Version="10.0.1" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="13.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.110" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
-		<PackageReference Include="Plugin.Maui.SwipeCardView" Version="1.0.0-preview1" />
-		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.6" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="10.0.0" />
+		<PackageReference Include="Polly" Version="8.5.2" />
+		<PackageReference Include="Sessionize.Api.Client" Version="1.2.0" />
+		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.8" />
 	</ItemGroup>
 
 	<!-- Localization -->

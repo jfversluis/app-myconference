@@ -2,9 +2,9 @@ using Conference.Maui.ViewModels;
 
 namespace Conference.Maui.Pages;
 
-public partial class AboutPage : ContentPage
+public partial class FavoritesPage : ContentPage
 {
-    public AboutPage(AboutViewModel viewModel)
+    public FavoritesPage(FavoritesViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;

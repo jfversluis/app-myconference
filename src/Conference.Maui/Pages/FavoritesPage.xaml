@@ -2,11 +2,11 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
-             x:Class="Conference.Maui.Pages.AboutPage"
-             x:DataType="vm:AboutViewModel"
+             x:Class="Conference.Maui.Pages.FavoritesPage"
+             x:DataType="vm:FavoritesViewModel"
              Title="{Binding Title}">
     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Label Text="About" FontSize="24" />
+        <Label Text="My Agenda" FontSize="24" />
         <Label Text="Coming soon..." TextColor="Gray" />
     </VerticalStackLayout>
 </ContentPage>

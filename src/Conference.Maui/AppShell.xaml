@@ -4,38 +4,31 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:Conference.Maui.Pages"
-    xmlns:localization="clr-namespace:Conference.Maui.Resources.Strings"
     Shell.FlyoutBehavior="Disabled"
-    Title="{x:Static localization:Strings.AppTitle}">
+    Title="MyConference">
 
     <TabBar>
-        <Tab Title="{x:Static localization:Strings.ScheduleTabTitle}" Icon="tab_schedule.png">
+        <Tab Title="Sessions" Icon="calendar_regular.png">
             <ShellContent
-                Title="{x:Static localization:Strings.SchedulePageTitle}"
-                ContentTemplate="{DataTemplate pages:SchedulePage}"
-                Route="Schedule" />
+                Title="Sessions"
+                ContentTemplate="{DataTemplate pages:SessionsPage}"
+                Route="Sessions" />
         </Tab>
-        <Tab Title="{x:Static localization:Strings.SpeakersTabTitle}" Icon="tab_speakers.png">
+        <Tab Title="Speakers" Icon="people_regular.png">
             <ShellContent
-                Title="{x:Static localization:Strings.SpeakersPageTitle}"
+                Title="Speakers"
                 ContentTemplate="{DataTemplate pages:SpeakersPage}"
                 Route="Speakers" />
         </Tab>
-        <Tab Title="{x:Static localization:Strings.MyAgendaTabTitle}" Icon="tab_myagenda.png">
+        <Tab Title="My Agenda" Icon="star_regular.png">
             <ShellContent
-                Title="{x:Static localization:Strings.MyAgendaPageTitle}"
-                ContentTemplate="{DataTemplate pages:MyAgendaPage}"
-                Route="MyAgenda" />
+                Title="My Agenda"
+                ContentTemplate="{DataTemplate pages:FavoritesPage}"
+                Route="Favorites" />
         </Tab>
-        <Tab Title="{x:Static localization:Strings.SponsorsTabTitle}" Icon="tab_sponsors.png">
+        <Tab Title="About" Icon="info_regular.png">
             <ShellContent
-                Title="{x:Static localization:Strings.SponsorsPageTitle}"
-                ContentTemplate="{DataTemplate pages:SponsorsPage}"
-                Route="Sponsors" />
-        </Tab>
-        <Tab Title="{x:Static localization:Strings.AboutTabTitle}" Icon="tab_about.png">
-            <ShellContent
-                Title="{x:Static localization:Strings.AboutPageTitle}"
+                Title="About"
                 ContentTemplate="{DataTemplate pages:AboutPage}"
                 Route="About" />
         </Tab>

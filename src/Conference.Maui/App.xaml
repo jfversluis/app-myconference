@@ -4,10 +4,15 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Conference.Maui"
+    xmlns:converters="clr-namespace:Conference.Maui.Converters"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
     <Application.Resources>
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:FavoriteIconConverter x:Key="FavoriteIconConverter" />
+            <converters:SelectedDayBackgroundConverter x:Key="SelectedDayBackgroundConverter" />
+            <converters:SelectedDayTextColorConverter x:Key="SelectedDayTextColorConverter" />
+            <converters:SelectedDayFontConverter x:Key="SelectedDayFontConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
