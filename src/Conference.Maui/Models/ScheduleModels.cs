@@ -11,7 +11,7 @@ public partial class ScheduleDay : ObservableObject
     public DateOnly Date { get; set; }
     public string DateDisplay => Date.ToString("ddd, MMM d");
     public string DateShort => Date.ToString("MMM d");
-    public string DisplayName => Date.ToString("MMM d");
+    public string DisplayName => $"{Date:ddd} {Date:d} {Date:MMM}";  // e.g., "Wed 10 Sep" - localized by .NET
     public List<TimeSlotGroup> TimeSlots { get; set; } = [];
 
     [ObservableProperty]
@@ -28,7 +28,7 @@ public class TimeSlotGroup : List<SessionItem>
     public DateOnly? Date { get; set; }
     
     public string TimeDisplay => Date.HasValue 
-        ? $"{Date.Value:MMM d} · {StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}"
+        ? $"{Date.Value:MMM} {Date.Value:d} · {StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}"
         : $"{StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}";
 }
 

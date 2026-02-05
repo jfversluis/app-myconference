@@ -25,9 +25,9 @@
                               IsVisible="{Binding IsSearching, Converter={toolkit:InvertedBoolConverter}}"
                               TabBarBackground="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
                               IndicatorBackground="{StaticResource Primary}">
-            <syncfusion:SfTabItem Header="Sep 10" />
-            <syncfusion:SfTabItem Header="Sep 11" />
-            <syncfusion:SfTabItem Header="Sep 12" />
+            <syncfusion:SfTabItem Header="Wed 10 Sep" />
+            <syncfusion:SfTabItem Header="Thu 11 Sep" />
+            <syncfusion:SfTabItem Header="Fri 12 Sep" />
         </syncfusion:SfTabView>
 
         <!-- Search Bar -->
@@ -84,9 +84,9 @@
                 <CollectionView.GroupHeaderTemplate>
                     <DataTemplate x:DataType="models:TimeSlotGroup">
                         <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
-                              Padding="16,12">
+                              Padding="12,8">
                             <Label Text="{Binding TimeDisplay}"
-                                   FontSize="14"
+                                   FontSize="13"
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                         </Grid>
@@ -97,7 +97,7 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:SessionItem">
-                        <ContentView Padding="16,8,16,0">
+                        <ContentView Padding="16,4">
                             <Border Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                                     StrokeThickness="1"
                                     StrokeShape="RoundRectangle 12"
