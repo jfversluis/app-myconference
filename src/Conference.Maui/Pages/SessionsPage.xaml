@@ -91,33 +91,99 @@
                                        LineBreakMode="TailTruncation"
                                        MaxLines="2" />
 
-                                <HorizontalStackLayout Grid.Row="1"
-                                                       Spacing="16"
-                                                       Margin="0,8,0,0">
-                                    <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
-                                        <Image Source="location_regular.png" 
-                                               HeightRequest="16" 
-                                               WidthRequest="16" />
-                                        <Label Text="{Binding RoomName}"
-                                               FontSize="13"
-                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="16">
+                                        <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
+                                            <Image Source="location_regular.png" 
+                                                   HeightRequest="16" 
+                                                   WidthRequest="16" />
+                                            <Label Text="{Binding RoomName}"
+                                                   FontSize="13"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Image Source="clock_regular.png" 
+                                                   HeightRequest="16" 
+                                                   WidthRequest="16" />
+                                            <Label Text="{Binding DurationDisplay}"
+                                                   FontSize="13"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                        </HorizontalStackLayout>
                                     </HorizontalStackLayout>
-                                    <HorizontalStackLayout Spacing="4">
-                                        <Image Source="clock_regular.png" 
-                                               HeightRequest="16" 
-                                               WidthRequest="16" />
-                                        <Label Text="{Binding DurationDisplay}"
-                                               FontSize="13"
-                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                    
+                                    <!-- Overlapping Speaker Avatars -->
+                                    <HorizontalStackLayout Grid.Column="1" 
+                                                           VerticalOptions="Center"
+                                                           IsVisible="{Binding HasSpeaker1}">
+                                        <!-- Speaker 1 -->
+                                        <toolkit:AvatarView Text="{Binding Speaker1.Initials}"
+                                                            ImageSource="{Binding Speaker1.ProfilePictureUrl}"
+                                                            HeightRequest="28"
+                                                            WidthRequest="28"
+                                                            CornerRadius="14"
+                                                            BorderWidth="2"
+                                                            BorderColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                            TextColor="White"
+                                                            FontSize="10"
+                                                            BackgroundColor="{StaticResource Primary}"
+                                                            IsVisible="{Binding HasSpeaker1}" />
+                                        <!-- Speaker 2 -->
+                                        <toolkit:AvatarView Text="{Binding Speaker2.Initials}"
+                                                            ImageSource="{Binding Speaker2.ProfilePictureUrl}"
+                                                            HeightRequest="28"
+                                                            WidthRequest="28"
+                                                            CornerRadius="14"
+                                                            BorderWidth="2"
+                                                            BorderColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                            TextColor="White"
+                                                            FontSize="10"
+                                                            BackgroundColor="{StaticResource Secondary}"
+                                                            Margin="-10,0,0,0"
+                                                            IsVisible="{Binding HasSpeaker2}" />
+                                        <!-- Speaker 3 -->
+                                        <toolkit:AvatarView Text="{Binding Speaker3.Initials}"
+                                                            ImageSource="{Binding Speaker3.ProfilePictureUrl}"
+                                                            HeightRequest="28"
+                                                            WidthRequest="28"
+                                                            CornerRadius="14"
+                                                            BorderWidth="2"
+                                                            BorderColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                            TextColor="White"
+                                                            FontSize="10"
+                                                            BackgroundColor="{StaticResource Tertiary}"
+                                                            Margin="-10,0,0,0"
+                                                            IsVisible="{Binding HasSpeaker3}" />
+                                        <!-- Speaker 4 -->
+                                        <toolkit:AvatarView Text="{Binding Speaker4.Initials}"
+                                                            ImageSource="{Binding Speaker4.ProfilePictureUrl}"
+                                                            HeightRequest="28"
+                                                            WidthRequest="28"
+                                                            CornerRadius="14"
+                                                            BorderWidth="2"
+                                                            BorderColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                            TextColor="White"
+                                                            FontSize="10"
+                                                            BackgroundColor="{StaticResource Primary}"
+                                                            Margin="-10,0,0,0"
+                                                            IsVisible="{Binding HasSpeaker4}" />
+                                        <!-- More speakers indicator -->
+                                        <Border StrokeShape="RoundRectangle 14"
+                                                HeightRequest="28"
+                                                WidthRequest="28"
+                                                StrokeThickness="2"
+                                                Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                                                Margin="-10,0,0,0"
+                                                IsVisible="{Binding HasMoreSpeakers}">
+                                            <Label Text="{Binding MoreSpeakersText}"
+                                                   FontSize="10"
+                                                   FontAttributes="Bold"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                        </Border>
                                     </HorizontalStackLayout>
-                                </HorizontalStackLayout>
-
-                                <Label Grid.Row="2"
-                                       Text="{Binding SpeakerNames}"
-                                       FontSize="13"
-                                       Margin="0,8,0,0"
-                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                                       IsVisible="{Binding Speakers.Count, Converter={toolkit:IsNotEqualConverter}, ConverterParameter=0}" />
+                                </Grid>
                             </Grid>
                         </Border>
                     </ContentView>

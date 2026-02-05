@@ -49,6 +49,18 @@ public partial class SessionItem : ObservableObject
     public string DurationDisplay => $"{(EndsAt - StartsAt).TotalMinutes:0} min";
     public bool HasMultipleSpeakers => Speakers.Count > 1;
     public string SpeakerNames => string.Join(", ", Speakers.Select(s => s.FullName));
+    
+    // Avatar display properties - show up to 4 speakers, then "+N"
+    public SpeakerItem? Speaker1 => Speakers.Count > 0 ? Speakers[0] : null;
+    public SpeakerItem? Speaker2 => Speakers.Count > 1 ? Speakers[1] : null;
+    public SpeakerItem? Speaker3 => Speakers.Count > 2 ? Speakers[2] : null;
+    public SpeakerItem? Speaker4 => Speakers.Count > 3 ? Speakers[3] : null;
+    public bool HasSpeaker1 => Speakers.Count > 0;
+    public bool HasSpeaker2 => Speakers.Count > 1;
+    public bool HasSpeaker3 => Speakers.Count > 2;
+    public bool HasSpeaker4 => Speakers.Count > 3;
+    public bool HasMoreSpeakers => Speakers.Count > 4;
+    public string MoreSpeakersText => $"+{Speakers.Count - 4}";
 }
 
 /// <summary>
@@ -64,6 +76,8 @@ public class SpeakerItem
     public string? Bio { get; set; }
     public string? ProfilePictureUrl { get; set; }
     public List<int> SessionIds { get; set; } = [];
+
+    public string Initials => $"{(FirstName?.Length > 0 ? FirstName[0] : ' ')}{(LastName?.Length > 0 ? LastName[0] : ' ')}".Trim().ToUpperInvariant();
 
     public string BioPreview => string.IsNullOrEmpty(Bio) 
         ? string.Empty 
