@@ -37,6 +37,12 @@ public partial class SessionsViewModel : BaseViewModel
     [ObservableProperty]
     private bool _isSearching;
 
+    private bool _hasMultipleDays;
+
+    public bool ShowDaySwitcher => _hasMultipleDays && !IsSearching;
+
+    partial void OnIsSearchingChanged(bool value) => OnPropertyChanged(nameof(ShowDaySwitcher));
+
     public SessionsViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
@@ -144,6 +150,8 @@ public partial class SessionsViewModel : BaseViewModel
         }
 
         Days = new ObservableCollection<ScheduleDay>(_allDays);
+        _hasMultipleDays = _allDays.Count > 1;
+        OnPropertyChanged(nameof(ShowDaySwitcher));
 
         // Select appropriate day (today if within event dates, otherwise first day)
         SelectAppropriateDay();

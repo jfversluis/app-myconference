@@ -15,19 +15,17 @@
 
     <Grid RowDefinitions="Auto,Auto,*" SafeAreaEdges="None">
         <!-- Day Selector using SfTabView - hidden when searching -->
-        <syncfusion:SfTabView Grid.Row="0"
+        <syncfusion:SfTabView x:Name="DaySwitcher"
+                              Grid.Row="0"
                               HeightRequest="48"
                               TabBarPlacement="Top"
                               IndicatorPlacement="Bottom"
                               TabWidthMode="Default"
                               IndicatorWidthMode="Stretch"
                               SelectedIndex="{Binding SelectedDayIndex}"
-                              IsVisible="{Binding IsSearching, Converter={toolkit:InvertedBoolConverter}}"
+                              IsVisible="{Binding ShowDaySwitcher}"
                               TabBarBackground="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
                               IndicatorBackground="{StaticResource Primary}">
-            <syncfusion:SfTabItem Header="Wed 10 Sep" />
-            <syncfusion:SfTabItem Header="Thu 11 Sep" />
-            <syncfusion:SfTabItem Header="Fri 12 Sep" />
         </syncfusion:SfTabView>
 
         <!-- Search Bar -->
