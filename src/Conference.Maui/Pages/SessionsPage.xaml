@@ -121,17 +121,10 @@
                                                 WidthRequest="28"
                                                 StrokeThickness="2"
                                                 Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                                Background="Transparent"
+                                                Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                                                 IsVisible="{Binding HasSpeaker1}">
-                                            <toolkit:AvatarView Text="{Binding Speaker1.Initials}"
-                                                                ImageSource="{Binding Speaker1.ProfilePictureUrl}"
-                                                                HeightRequest="24"
-                                                                WidthRequest="24"
-                                                                CornerRadius="12"
-                                                                BorderWidth="0"
-                                                                TextColor="White"
-                                                                FontSize="9"
-                                                                BackgroundColor="{StaticResource Primary}" />
+                                            <Image Source="{Binding Speaker1.ProfilePictureUrl}"
+                                                   Aspect="AspectFill" />
                                         </Border>
                                         <!-- Speaker 2 -->
                                         <Border StrokeShape="RoundRectangle 14"
@@ -139,18 +132,11 @@
                                                 WidthRequest="28"
                                                 StrokeThickness="2"
                                                 Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                                Background="Transparent"
+                                                Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                                                 Margin="-10,0,0,0"
                                                 IsVisible="{Binding HasSpeaker2}">
-                                            <toolkit:AvatarView Text="{Binding Speaker2.Initials}"
-                                                                ImageSource="{Binding Speaker2.ProfilePictureUrl}"
-                                                                HeightRequest="24"
-                                                                WidthRequest="24"
-                                                                CornerRadius="12"
-                                                                BorderWidth="0"
-                                                                TextColor="White"
-                                                                FontSize="9"
-                                                                BackgroundColor="{StaticResource Secondary}" />
+                                            <Image Source="{Binding Speaker2.ProfilePictureUrl}"
+                                                   Aspect="AspectFill" />
                                         </Border>
                                         <!-- Speaker 3 -->
                                         <Border StrokeShape="RoundRectangle 14"
@@ -158,18 +144,11 @@
                                                 WidthRequest="28"
                                                 StrokeThickness="2"
                                                 Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                                Background="Transparent"
+                                                Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                                                 Margin="-10,0,0,0"
                                                 IsVisible="{Binding HasSpeaker3}">
-                                            <toolkit:AvatarView Text="{Binding Speaker3.Initials}"
-                                                                ImageSource="{Binding Speaker3.ProfilePictureUrl}"
-                                                                HeightRequest="24"
-                                                                WidthRequest="24"
-                                                                CornerRadius="12"
-                                                                BorderWidth="0"
-                                                                TextColor="White"
-                                                                FontSize="9"
-                                                                BackgroundColor="{StaticResource Tertiary}" />
+                                            <Image Source="{Binding Speaker3.ProfilePictureUrl}"
+                                                   Aspect="AspectFill" />
                                         </Border>
                                         <!-- Speaker 4 -->
                                         <Border StrokeShape="RoundRectangle 14"
@@ -177,18 +156,11 @@
                                                 WidthRequest="28"
                                                 StrokeThickness="2"
                                                 Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                                Background="Transparent"
+                                                Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                                                 Margin="-10,0,0,0"
                                                 IsVisible="{Binding HasSpeaker4}">
-                                            <toolkit:AvatarView Text="{Binding Speaker4.Initials}"
-                                                                ImageSource="{Binding Speaker4.ProfilePictureUrl}"
-                                                                HeightRequest="24"
-                                                                WidthRequest="24"
-                                                                CornerRadius="12"
-                                                                BorderWidth="0"
-                                                                TextColor="White"
-                                                                FontSize="9"
-                                                                BackgroundColor="{StaticResource Primary}" />
+                                            <Image Source="{Binding Speaker4.ProfilePictureUrl}"
+                                                   Aspect="AspectFill" />
                                         </Border>
                                         <!-- More speakers indicator -->
                                         <Border StrokeShape="RoundRectangle 14"
