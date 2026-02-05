@@ -25,7 +25,11 @@ public class TimeSlotGroup : List<SessionItem>
 {
     public DateTimeOffset StartTime { get; set; }
     public DateTimeOffset EndTime { get; set; }
-    public string TimeDisplay => $"{StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}";
+    public DateOnly? Date { get; set; }
+    
+    public string TimeDisplay => Date.HasValue 
+        ? $"{Date.Value:MMM d} · {StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}"
+        : $"{StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}";
 }
 
 /// <summary>

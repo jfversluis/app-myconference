@@ -34,6 +34,9 @@ public partial class SessionsViewModel : BaseViewModel
     [ObservableProperty]
     private string _searchText = string.Empty;
 
+    [ObservableProperty]
+    private bool _isSearching;
+
     public SessionsViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
@@ -207,24 +210,33 @@ public partial class SessionsViewModel : BaseViewModel
 
     private void ApplySearch()
     {
-        if (SelectedDay == null) return;
-
         if (string.IsNullOrWhiteSpace(SearchText))
         {
-            CurrentDaySlots = new ObservableCollection<TimeSlotGroup>(SelectedDay.TimeSlots);
+            // No search - show selected day's sessions
+            IsSearching = false;
+            if (SelectedDay != null)
+            {
+                CurrentDaySlots = new ObservableCollection<TimeSlotGroup>(SelectedDay.TimeSlots);
+            }
             return;
         }
 
+        // Search across ALL days
+        IsSearching = true;
         var searchLower = SearchText.ToLowerInvariant();
-        var filteredSlots = SelectedDay.TimeSlots
-            .Select(slot =>
+        var allFilteredSlots = new List<TimeSlotGroup>();
+
+        foreach (var day in _allDays)
+        {
+            foreach (var slot in day.TimeSlots)
             {
                 var filteredSlot = new TimeSlotGroup
                 {
                     StartTime = slot.StartTime,
-                    EndTime = slot.EndTime
+                    EndTime = slot.EndTime,
+                    Date = day.Date  // Include the date for search results
                 };
-                
+
                 foreach (var session in slot.Where(s =>
                     s.Title.Contains(searchLower, StringComparison.OrdinalIgnoreCase) ||
                     s.Speakers.Any(sp => sp.FullName.Contains(searchLower, StringComparison.OrdinalIgnoreCase)) ||
@@ -232,13 +244,15 @@ public partial class SessionsViewModel : BaseViewModel
                 {
                     filteredSlot.Add(session);
                 }
-                
-                return filteredSlot;
-            })
-            .Where(slot => slot.Count > 0)
-            .ToList();
 
-        CurrentDaySlots = new ObservableCollection<TimeSlotGroup>(filteredSlots);
+                if (filteredSlot.Count > 0)
+                {
+                    allFilteredSlots.Add(filteredSlot);
+                }
+            }
+        }
+
+        CurrentDaySlots = new ObservableCollection<TimeSlotGroup>(allFilteredSlots);
     }
 
     [RelayCommand]

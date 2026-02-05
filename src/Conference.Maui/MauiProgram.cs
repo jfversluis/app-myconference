@@ -37,6 +37,14 @@ public static class MauiProgram
             .UseMauiCommunityToolkit()
             .ConfigureSyncfusionToolkit();
 
+        // Remove native border from Entry on iOS
+        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("NoBorder", (handler, view) =>
+        {
+#if IOS
+            handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+#endif
+        });
+
         // Configure Sessionize API client
         builder.Services.Configure<SessionizeConfiguration>(options =>
         {
