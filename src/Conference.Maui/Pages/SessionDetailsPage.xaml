@@ -7,9 +7,9 @@
              x:Class="Conference.Maui.Pages.SessionDetailsPage"
              x:DataType="vm:SessionDetailsViewModel"
              Title="Session"
-             Shell.TabBarIsVisible="False">
+             SafeAreaEdges="None">
 
-    <Grid>
+    <Grid SafeAreaEdges="None">
         <!-- Loading State -->
         <VerticalStackLayout IsVisible="{Binding IsBusy}"
                              VerticalOptions="Center"
