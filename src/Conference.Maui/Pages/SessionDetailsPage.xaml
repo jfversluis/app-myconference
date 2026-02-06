@@ -8,193 +8,295 @@
              x:DataType="vm:SessionDetailsViewModel"
              Title="Session">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="0">
-            
-            <!-- Header Section with gradient background -->
-            <Grid Padding="20,24" 
-                  Background="{StaticResource Primary}">
-                <VerticalStackLayout Spacing="12">
-                    <!-- Session Title -->
-                    <Label Text="{Binding Session.Title}"
-                           FontSize="22"
+    <Grid>
+        <!-- Loading State -->
+        <VerticalStackLayout IsVisible="{Binding IsBusy}"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="12">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               Color="{StaticResource Primary}"
+                               HeightRequest="40"
+                               WidthRequest="40" />
+            <Label Text="Loading session..."
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                   HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <!-- Content (hidden while loading) -->
+        <ScrollView IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
+            <VerticalStackLayout Spacing="0">
+                
+                <!-- Compact Header Section -->
+                <Grid Padding="16,16,16,14" 
+                      Background="{StaticResource Primary}"
+                      IsVisible="{Binding Session, Converter={toolkit:IsNotNullConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Row 0: Title -->
+                    <Label Grid.Row="0"
+                           Text="{Binding Session.Title}"
+                           FontSize="20"
                            FontAttributes="Bold"
                            TextColor="White"
-                           LineBreakMode="WordWrap" />
+                           LineBreakMode="WordWrap"
+                           Margin="0,0,0,10" />
 
-                    <!-- Meta info row -->
-                    <HorizontalStackLayout Spacing="16">
-                        <!-- Date -->
-                        <HorizontalStackLayout Spacing="6">
-                            <Label Text="📅"
-                                   FontSize="14"
-                                   VerticalOptions="Center" />
-                            <Label Text="{Binding Session.StartsAt, StringFormat='{0:ddd, MMM d}'}"
-                                   FontSize="13"
+                    <!-- Row 1: Meta info with icons -->
+                    <HorizontalStackLayout Grid.Row="1" Spacing="16" Margin="0,0,0,10">
+                        <!-- Date & Time -->
+                        <HorizontalStackLayout Spacing="5">
+                            <Image Source="calendar_regular.png" 
+                                   HeightRequest="14" 
+                                   WidthRequest="14"
+                                   VerticalOptions="Center">
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="White" />
+                                </Image.Behaviors>
+                            </Image>
+                            <Label Text="{Binding Session.StartsAt, StringFormat='{0:ddd d MMM}'}"
+                                   FontSize="12"
                                    TextColor="White"
                                    Opacity="0.9"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
                         
                         <!-- Time -->
-                        <HorizontalStackLayout Spacing="6">
-                            <Label Text="⏱"
-                                   FontSize="14"
-                                   VerticalOptions="Center" />
-                            <Label Text="{Binding Session.DurationDisplay}"
-                                   FontSize="13"
+                        <HorizontalStackLayout Spacing="5">
+                            <Image Source="clock_regular.png" 
+                                   HeightRequest="14" 
+                                   WidthRequest="14"
+                                   VerticalOptions="Center">
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="White" />
+                                </Image.Behaviors>
+                            </Image>
+                            <Label Text="{Binding Session.TimeDisplay}"
+                                   FontSize="12"
                                    TextColor="White"
                                    Opacity="0.9"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
+                        
+                        <!-- Duration -->
+                        <Label Text="{Binding Session.DurationDisplay, StringFormat='({0})'}"
+                               FontSize="12"
+                               TextColor="White"
+                               Opacity="0.7"
+                               VerticalOptions="Center" />
                     </HorizontalStackLayout>
 
-                    <!-- Room chip -->
-                    <Border Background="Transparent"
-                            Stroke="White"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 16"
-                            Padding="12,6"
-                            HorizontalOptions="Start"
-                            IsVisible="{Binding Session.RoomName, Converter={toolkit:IsNotNullConverter}}">
-                        <HorizontalStackLayout Spacing="6">
-                            <Label Text="📍"
-                                   FontSize="12"
-                                   VerticalOptions="Center" />
+                    <!-- Row 2: Room and Speaker Avatars -->
+                    <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                        <!-- Room -->
+                        <HorizontalStackLayout Grid.Column="0" 
+                                               Spacing="5"
+                                               VerticalOptions="Center"
+                                               IsVisible="{Binding Session.RoomName, Converter={toolkit:IsNotNullConverter}}">
+                            <Image Source="location_regular.png" 
+                                   HeightRequest="14" 
+                                   WidthRequest="14"
+                                   VerticalOptions="Center">
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="White" />
+                                </Image.Behaviors>
+                            </Image>
                             <Label Text="{Binding Session.RoomName}"
-                                   FontSize="13"
+                                   FontSize="12"
                                    TextColor="White"
+                                   Opacity="0.9"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
-                    </Border>
-                </VerticalStackLayout>
-            </Grid>
 
-            <!-- Content Section -->
-            <VerticalStackLayout Padding="20,20" Spacing="20"
-                                 Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
-                
-                <!-- Time Display -->
-                <HorizontalStackLayout Spacing="8">
-                    <Label Text="🕐"
-                           FontSize="18"
-                           VerticalOptions="Center" />
-                    <Label Text="{Binding Session.TimeDisplay}"
-                           FontSize="16"
-                           FontAttributes="Bold"
-                           VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                        <!-- Overlapping Speaker Avatars -->
+                        <HorizontalStackLayout Grid.Column="1" 
+                                               VerticalOptions="Center"
+                                               IsVisible="{Binding Session.HasSpeaker1}">
+                            <!-- Speaker 1 -->
+                            <Border StrokeShape="RoundRectangle 16"
+                                    HeightRequest="32"
+                                    WidthRequest="32"
+                                    StrokeThickness="2"
+                                    Stroke="White"
+                                    Background="{StaticResource Primary}"
+                                    IsVisible="{Binding Session.HasSpeaker1}">
+                                <Image Source="{Binding Session.Speaker1.ProfilePictureUrl}"
+                                       Aspect="AspectFill" />
+                            </Border>
+                            <!-- Speaker 2 -->
+                            <Border StrokeShape="RoundRectangle 16"
+                                    HeightRequest="32"
+                                    WidthRequest="32"
+                                    StrokeThickness="2"
+                                    Stroke="White"
+                                    Background="{StaticResource Primary}"
+                                    Margin="-12,0,0,0"
+                                    IsVisible="{Binding Session.HasSpeaker2}">
+                                <Image Source="{Binding Session.Speaker2.ProfilePictureUrl}"
+                                       Aspect="AspectFill" />
+                            </Border>
+                            <!-- Speaker 3 -->
+                            <Border StrokeShape="RoundRectangle 16"
+                                    HeightRequest="32"
+                                    WidthRequest="32"
+                                    StrokeThickness="2"
+                                    Stroke="White"
+                                    Background="{StaticResource Primary}"
+                                    Margin="-12,0,0,0"
+                                    IsVisible="{Binding Session.HasSpeaker3}">
+                                <Image Source="{Binding Session.Speaker3.ProfilePictureUrl}"
+                                       Aspect="AspectFill" />
+                            </Border>
+                            <!-- Speaker 4 -->
+                            <Border StrokeShape="RoundRectangle 16"
+                                    HeightRequest="32"
+                                    WidthRequest="32"
+                                    StrokeThickness="2"
+                                    Stroke="White"
+                                    Background="{StaticResource Primary}"
+                                    Margin="-12,0,0,0"
+                                    IsVisible="{Binding Session.HasSpeaker4}">
+                                <Image Source="{Binding Session.Speaker4.ProfilePictureUrl}"
+                                       Aspect="AspectFill" />
+                            </Border>
+                            <!-- More speakers indicator -->
+                            <Border StrokeShape="RoundRectangle 16"
+                                    HeightRequest="32"
+                                    WidthRequest="32"
+                                    StrokeThickness="2"
+                                    Stroke="White"
+                                    Background="{StaticResource PrimaryDark}"
+                                    Margin="-12,0,0,0"
+                                    IsVisible="{Binding Session.HasMoreSpeakers}">
+                                <Label Text="{Binding Session.MoreSpeakersText}"
+                                       FontSize="10"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Grid>
 
-                <!-- Favorite Button -->
-                <Button Text="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='★ Added to My Agenda', FalseObject='☆ Add to My Agenda'}}"
-                        Command="{Binding ToggleFavoriteCommand}"
-                        BackgroundColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject=Transparent}}"
-                        TextColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject=White, FalseObject={StaticResource Primary}}}"
-                        BorderColor="{StaticResource Primary}"
-                        BorderWidth="2"
-                        CornerRadius="12"
-                        FontAttributes="Bold"
-                        HeightRequest="48" />
+                <!-- Content Section -->
+                <VerticalStackLayout Padding="16,16" Spacing="16"
+                                     Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}"
+                                     IsVisible="{Binding Session, Converter={toolkit:IsNotNullConverter}}">
+                    
+                    <!-- Favorite Button -->
+                    <Button Text="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='★ Added to My Agenda', FalseObject='☆ Add to My Agenda'}}"
+                            Command="{Binding ToggleFavoriteCommand}"
+                            BackgroundColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject=Transparent}}"
+                            TextColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject=White, FalseObject={StaticResource Primary}}}"
+                            BorderColor="{StaticResource Primary}"
+                            BorderWidth="2"
+                            CornerRadius="10"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            HeightRequest="44" />
 
-                <!-- Description Section -->
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="About"
-                           FontSize="13"
-                           FontAttributes="Bold"
-                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                           TextTransform="Uppercase" />
-                    <Label Text="{Binding Session.Description}"
-                           FontSize="15"
-                           LineHeight="1.4"
-                           LineBreakMode="WordWrap"
-                           TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray200}}" />
-                </VerticalStackLayout>
+                    <!-- Description Section -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="ABOUT THIS SESSION"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               CharacterSpacing="0.5" />
+                        <Label Text="{Binding Session.Description}"
+                               FontSize="15"
+                               LineHeight="1.5"
+                               LineBreakMode="WordWrap"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray800}, Dark={StaticResource Gray200}}" />
+                    </VerticalStackLayout>
 
-                <!-- Speakers Section -->
-                <VerticalStackLayout Spacing="12" IsVisible="{Binding Session.HasSpeaker1}">
-                    <Label Text="Speakers"
-                           FontSize="13"
-                           FontAttributes="Bold"
-                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                           TextTransform="Uppercase" />
+                    <!-- Speakers Section -->
+                    <VerticalStackLayout Spacing="10" IsVisible="{Binding Session.HasSpeaker1}">
+                        <Label Text="SPEAKERS"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               CharacterSpacing="0.5" />
 
-                    <CollectionView ItemsSource="{Binding Session.Speakers}"
-                                    SelectionMode="None">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="models:SpeakerItem">
-                                <Border Background="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray900}}"
-                                        StrokeThickness="0"
-                                        StrokeShape="RoundRectangle 16"
-                                        Padding="14">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer 
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionDetailsViewModel}}, Path=NavigateToSpeakerCommand}"
-                                            CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <Grid ColumnDefinitions="52,*,Auto" ColumnSpacing="14">
-                                        <!-- Speaker Avatar -->
-                                        <Grid Grid.Column="0"
-                                              HeightRequest="52"
-                                              WidthRequest="52">
-                                            <!-- Fallback initials -->
-                                            <Border Background="{StaticResource Primary}"
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Session.Speakers}"
+                                             Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:SpeakerItem">
+                                    <Border Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 12"
+                                            Padding="12">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionDetailsViewModel}}, Path=NavigateToSpeakerCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
+                                            <!-- Speaker Avatar -->
+                                            <Border Grid.Column="0"
+                                                    StrokeShape="RoundRectangle 24"
+                                                    HeightRequest="48"
+                                                    WidthRequest="48"
                                                     StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 26"
-                                                    HeightRequest="52"
-                                                    WidthRequest="52">
-                                                <Label Text="{Binding Initials}"
-                                                       TextColor="White"
-                                                       FontSize="16"
-                                                       FontAttributes="Bold"
-                                                       HorizontalOptions="Center"
-                                                       VerticalOptions="Center" />
+                                                    Background="{StaticResource Primary}">
+                                                <Grid>
+                                                    <!-- Fallback initials -->
+                                                    <Label Text="{Binding Initials}"
+                                                           TextColor="White"
+                                                           FontSize="14"
+                                                           FontAttributes="Bold"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="Center" />
+                                                    <!-- Actual image -->
+                                                    <Image Source="{Binding ProfilePictureUrl}"
+                                                           Aspect="AspectFill"
+                                                           HeightRequest="48"
+                                                           WidthRequest="48">
+                                                        <Image.Clip>
+                                                            <EllipseGeometry Center="24,24" RadiusX="24" RadiusY="24" />
+                                                        </Image.Clip>
+                                                    </Image>
+                                                </Grid>
                                             </Border>
-                                            <!-- Actual image -->
-                                            <Image Source="{Binding ProfilePictureUrl}"
-                                                   Aspect="AspectFill"
-                                                   HeightRequest="52"
-                                                   WidthRequest="52">
-                                                <Image.Clip>
-                                                    <EllipseGeometry Center="26,26" RadiusX="26" RadiusY="26" />
-                                                </Image.Clip>
-                                            </Image>
+
+                                            <!-- Speaker Info -->
+                                            <VerticalStackLayout Grid.Column="1" 
+                                                                 VerticalOptions="Center"
+                                                                 Spacing="1">
+                                                <Label Text="{Binding FullName}"
+                                                       FontSize="15"
+                                                       FontAttributes="Bold"
+                                                       LineBreakMode="TailTruncation" />
+                                                <Label Text="{Binding TagLine}"
+                                                       FontSize="12"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                                       LineBreakMode="TailTruncation"
+                                                       MaxLines="1" />
+                                            </VerticalStackLayout>
+
+                                            <!-- Chevron -->
+                                            <Label Grid.Column="2"
+                                                   Text="›"
+                                                   FontSize="20"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                                                   VerticalOptions="Center" />
                                         </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
 
-                                        <!-- Speaker Info -->
-                                        <VerticalStackLayout Grid.Column="1" 
-                                                             VerticalOptions="Center"
-                                                             Spacing="2">
-                                            <Label Text="{Binding FullName}"
-                                                   FontSize="15"
-                                                   FontAttributes="Bold"
-                                                   LineBreakMode="TailTruncation" />
-                                            <Label Text="{Binding TagLine}"
-                                                   FontSize="13"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                                                   LineBreakMode="TailTruncation"
-                                                   MaxLines="2" />
-                                        </VerticalStackLayout>
-
-                                        <!-- Chevron -->
-                                        <Label Grid.Column="2"
-                                               Text="›"
-                                               FontSize="22"
-                                               TextColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
-                                               VerticalOptions="Center" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                    <!-- Bottom padding for safe area -->
+                    <BoxView HeightRequest="30" BackgroundColor="Transparent" />
+                    
                 </VerticalStackLayout>
-
-                <!-- Bottom padding for safe area -->
-                <BoxView HeightRequest="40" BackgroundColor="Transparent" />
-                
             </VerticalStackLayout>
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>
