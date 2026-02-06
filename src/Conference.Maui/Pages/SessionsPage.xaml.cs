@@ -35,12 +35,10 @@ public partial class SessionsPage : ContentPage
 
     private async void OnSessionSelected(object? sender, SelectionChangedEventArgs e)
     {
-        System.Diagnostics.Debug.WriteLine($"Selection changed: {e.CurrentSelection.Count} items");
-        
         var session = e.CurrentSelection.FirstOrDefault() as SessionItem;
         if (session != null)
         {
-            System.Diagnostics.Debug.WriteLine($"Selected session: {session.Title}");
+            // Clear selection immediately to remove visual highlight
             SessionsCollectionView.SelectedItem = null;
             
             await Shell.Current.GoToAsync(nameof(SessionDetailsPage), new Dictionary<string, object>
