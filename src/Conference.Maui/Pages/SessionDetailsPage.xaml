@@ -294,7 +294,7 @@
                     </VerticalStackLayout>
 
                     <!-- Bottom padding for tab bar safe area on iOS -->
-                    <BoxView HeightRequest="100" BackgroundColor="Transparent" />
+                    <BoxView HeightRequest="30" BackgroundColor="Transparent" />
                     
                 </VerticalStackLayout>
             </VerticalStackLayout>
