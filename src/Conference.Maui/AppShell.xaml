@@ -8,25 +8,25 @@
     Title="MyConference">
 
     <TabBar>
-        <Tab Title="Sessions" Icon="tab_schedule.png">
+        <Tab Title="Sessions" Icon="calendar_regular.png">
             <ShellContent
                 Title="Sessions"
                 ContentTemplate="{DataTemplate pages:SessionsPage}"
                 Route="Sessions" />
         </Tab>
-        <Tab Title="Speakers" Icon="tab_speakers.png">
+        <Tab Title="Speakers" Icon="people_regular.png">
             <ShellContent
                 Title="Speakers"
                 ContentTemplate="{DataTemplate pages:SpeakersPage}"
                 Route="Speakers" />
         </Tab>
-        <Tab Title="My Agenda" Icon="tab_myagenda.png">
+        <Tab Title="My Agenda" Icon="star.png">
             <ShellContent
                 Title="My Agenda"
                 ContentTemplate="{DataTemplate pages:FavoritesPage}"
                 Route="Favorites" />
         </Tab>
-        <Tab Title="About" Icon="tab_about.png">
+        <Tab Title="About" Icon="info_regular.png">
             <ShellContent
                 Title="About"
                 ContentTemplate="{DataTemplate pages:AboutPage}"
