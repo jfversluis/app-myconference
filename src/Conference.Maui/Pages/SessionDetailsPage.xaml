@@ -6,7 +6,8 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Pages.SessionDetailsPage"
              x:DataType="vm:SessionDetailsViewModel"
-             Title="Session">
+             Title="Session"
+             Shell.TabBarIsVisible="False">
 
     <Grid>
         <!-- Loading State -->
@@ -292,8 +293,8 @@
                         </VerticalStackLayout>
                     </VerticalStackLayout>
 
-                    <!-- Bottom padding for safe area -->
-                    <BoxView HeightRequest="30" BackgroundColor="Transparent" />
+                    <!-- Bottom padding for tab bar safe area on iOS -->
+                    <BoxView HeightRequest="100" BackgroundColor="Transparent" />
                     
                 </VerticalStackLayout>
             </VerticalStackLayout>
