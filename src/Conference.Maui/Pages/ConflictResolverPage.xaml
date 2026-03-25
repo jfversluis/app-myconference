@@ -38,6 +38,12 @@
                     VerticalOptions="Center" />
         </Grid>
 
+        <!-- Loading indicator -->
+        <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center" VerticalOptions="Center"
+                           Color="{StaticResource Primary}" />
+
         <!-- All resolved state -->
         <VerticalStackLayout Grid.Row="1" Spacing="12" Padding="32"
                              VerticalOptions="Center" HorizontalOptions="Center"
@@ -148,16 +154,27 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Bottom info -->
+        <!-- Bottom bar with info and undo -->
         <Border Grid.Row="2" StrokeThickness="0"
                 BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                 Padding="20,14,20,20"
                 IsVisible="{Binding AllResolved, Converter={StaticResource InvertedBoolConverter}}">
-            <Label Text="Tap 'Keep' on the session you want. The others will be removed from your agenda."
-                   FontSize="13"
-                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                   HorizontalTextAlignment="Center"
-                   LineBreakMode="WordWrap" />
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Tap 'Keep' on the session you want. The others will be removed from your agenda."
+                       FontSize="13"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       LineBreakMode="WordWrap"
+                       VerticalOptions="Center" />
+                <Button Grid.Column="1"
+                        Clicked="OnUndoClicked"
+                        mi:MauiIcon.Value="{mi:Fluent Icon=ArrowUndo24, IconColor={StaticResource Primary}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
+                        CornerRadius="20"
+                        HeightRequest="40" WidthRequest="40"
+                        Padding="0"
+                        VerticalOptions="Center"
+                        IsVisible="{Binding CanUndo}" />
+            </Grid>
         </Border>
     </Grid>
 </ContentPage>

@@ -22,14 +22,25 @@ public partial class ConflictResolverViewModel : ObservableObject
     private bool _isBusy;
 
     [ObservableProperty]
+    private bool _hasLoaded;
+
+    [ObservableProperty]
     private int _totalConflicts;
 
     [ObservableProperty]
     private int _resolvedCount;
 
+    [ObservableProperty]
+    private bool _canUndo;
+
+    // Undo state
+    private ConflictGroup? _lastResolvedGroup;
+    private SessionItem? _lastKeptSession;
+    private List<string>? _lastRemovedIds;
+
     public ObservableCollection<ConflictGroup> ConflictGroups { get; } = [];
 
-    public bool AllResolved => ConflictGroups.Count == 0 && !IsBusy;
+    public bool AllResolved => ConflictGroups.Count == 0 && !IsBusy && HasLoaded;
 
     public ConflictResolverViewModel(
         IConferenceDataService dataService,
@@ -45,6 +56,9 @@ public partial class ConflictResolverViewModel : ObservableObject
     {
         if (IsBusy) return;
         IsBusy = true;
+        HasLoaded = false;
+        CanUndo = false;
+        OnPropertyChanged(nameof(AllResolved));
 
         try
         {
@@ -132,6 +146,7 @@ public partial class ConflictResolverViewModel : ObservableObject
         finally
         {
             IsBusy = false;
+            HasLoaded = true;
             OnPropertyChanged(nameof(AllResolved));
         }
     }
@@ -175,13 +190,18 @@ public partial class ConflictResolverViewModel : ObservableObject
                 _logger.LogDebug("Unfavorited conflicting session: {Title}", other.Title);
             }
 
-            // Mark unfavorited sessions as skipped in the Quick Pick swipe state
-            // so they don't reappear as un-swiped cards
             await MarkSessionsAsSkippedAsync(removedIds);
 
             session.IsFavorite = true;
+
+            // Store undo state before removing the group
+            _lastResolvedGroup = group;
+            _lastKeptSession = session;
+            _lastRemovedIds = removedIds;
+
             ConflictGroups.Remove(group);
             ResolvedCount++;
+            CanUndo = true;
 
             OnPropertyChanged(nameof(AllResolved));
 
@@ -191,6 +211,50 @@ public partial class ConflictResolverViewModel : ObservableObject
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error resolving conflict for session {Id}", session.Id);
+        }
+    }
+
+    [RelayCommand]
+    private async Task UndoAsync()
+    {
+        if (_lastResolvedGroup == null || _lastRemovedIds == null) return;
+
+        try
+        {
+            // Re-favorite the removed sessions
+            foreach (var id in _lastRemovedIds)
+            {
+                await _favoritesService.ToggleFavoriteAsync(id);
+                var session = _lastResolvedGroup.Sessions.FirstOrDefault(s => s.Id == id);
+                if (session != null) session.IsFavorite = true;
+            }
+
+            // Remove them from skipped state
+            await RemoveSessionsFromSkippedAsync(_lastRemovedIds);
+
+            // Re-insert the group at its original sorted position
+            var insertIndex = 0;
+            for (var i = 0; i < ConflictGroups.Count; i++)
+            {
+                if (string.Compare(ConflictGroups[i].TimeSlotLabel, _lastResolvedGroup.TimeSlotLabel, StringComparison.Ordinal) > 0)
+                    break;
+                insertIndex = i + 1;
+            }
+            ConflictGroups.Insert(insertIndex, _lastResolvedGroup);
+            ResolvedCount--;
+
+            _logger.LogInformation("Undid resolution of group: {TimeSlot}", _lastResolvedGroup.TimeSlotLabel);
+
+            _lastResolvedGroup = null;
+            _lastKeptSession = null;
+            _lastRemovedIds = null;
+            CanUndo = false;
+
+            OnPropertyChanged(nameof(AllResolved));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error undoing conflict resolution");
         }
     }
 
@@ -222,6 +286,22 @@ public partial class ConflictResolverViewModel : ObservableObject
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failed to update swipe state with skipped sessions");
+        }
+    }
+
+    private async Task RemoveSessionsFromSkippedAsync(List<string> sessionIds)
+    {
+        try
+        {
+            var state = await BlobCache.UserAccount.GetObject<SwipeState>(SwipeStateCacheKey);
+            foreach (var id in sessionIds)
+                state.SkippedSessionIds.Remove(id);
+            state.LastUpdated = DateTime.UtcNow;
+            await BlobCache.UserAccount.InsertObject(SwipeStateCacheKey, state);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to remove sessions from skipped state");
         }
     }
 

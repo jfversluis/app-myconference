@@ -36,4 +36,9 @@ public partial class ConflictResolverPage : ContentPage
     {
         await _viewModel.ViewAgendaCommand.ExecuteAsync(null);
     }
+
+    private async void OnUndoClicked(object? sender, EventArgs e)
+    {
+        await _viewModel.UndoCommand.ExecuteAsync(null);
+    }
 }
