@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="Conference.Maui.Pages.MyEventPage"
              x:DataType="vm:MyEventViewModel"
              Title="{Binding Title}"
@@ -331,14 +332,15 @@
                                 </Label>
                             </HorizontalStackLayout>
                             <HorizontalStackLayout Spacing="8">
-                                <Button Text="⚡ Quick Pick"
+                                <Button Text="Quick Pick"
                                         Command="{Binding NavigateToQuickPickCommand}"
                                         BackgroundColor="{StaticResource Primary}"
                                         TextColor="White"
                                         FontAttributes="Bold"
                                         CornerRadius="8"
                                         HorizontalOptions="Start"
-                                        Padding="20,10" />
+                                        Padding="20,10"
+                                        mi:MauiIcon.Value="{mi:Fluent Icon=Flash28, IconColor=White}" />
                                 <Button Text="Browse Sessions"
                                         Command="{Binding NavigateToSessionsCommand}"
                                         BackgroundColor="Transparent"

@@ -7,9 +7,10 @@
              x:Class="Conference.Maui.Pages.FavoritesPage"
              x:DataType="vm:FavoritesViewModel"
              Title="{Binding Title}"
+             SafeAreaEdges="None"
              Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
 
-    <Grid>
+    <Grid SafeAreaEdges="None">
         <!-- Favorites List -->
         <CollectionView x:Name="FavoritesCollectionView"
                         ItemsSource="{Binding FavoriteSlots}"

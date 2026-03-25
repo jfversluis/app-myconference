@@ -6,6 +6,7 @@
              xmlns:controls="clr-namespace:Conference.Maui.Controls"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="Conference.Maui.Pages.SessionsPage"
              x:Name="ThisPage"
              x:DataType="vm:SessionsViewModel"
@@ -14,7 +15,8 @@
              Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="⚡" Command="{Binding NavigateToQuickPickCommand}" Order="Primary" />
+        <ToolbarItem Command="{Binding NavigateToQuickPickCommand}" Order="Primary"
+                     mi:MauiIcon.Value="{mi:Fluent Icon=Flash28}" />
     </ContentPage.ToolbarItems>
 
 
