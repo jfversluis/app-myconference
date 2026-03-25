@@ -31,4 +31,9 @@ public partial class ConflictResolverPage : ContentPage
         if (sender is BindableObject bo && bo.BindingContext is SessionItem session)
             await _viewModel.KeepSessionCommand.ExecuteAsync(session);
     }
+
+    private async void OnViewAgendaClicked(object? sender, EventArgs e)
+    {
+        await _viewModel.ViewAgendaCommand.ExecuteAsync(null);
+    }
 }

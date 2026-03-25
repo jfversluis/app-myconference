@@ -50,7 +50,7 @@
                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                    HorizontalTextAlignment="Center" />
             <Button Text="View My Agenda"
-                    Command="{Binding CloseCommand}"
+                    Clicked="OnViewAgendaClicked"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="White"
                     FontSize="15" FontAttributes="Bold"

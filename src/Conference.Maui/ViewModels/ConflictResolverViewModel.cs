@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using Akavache;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Interfaces;
@@ -164,12 +166,18 @@ public partial class ConflictResolverViewModel : ObservableObject
 
         try
         {
+            var removedIds = new List<string>();
             foreach (var other in group.Sessions.Where(s => s.Id != session.Id))
             {
                 await _favoritesService.RemoveFavoriteAsync(other.Id);
                 other.IsFavorite = false;
+                removedIds.Add(other.Id);
                 _logger.LogDebug("Unfavorited conflicting session: {Title}", other.Title);
             }
+
+            // Mark unfavorited sessions as skipped in the Quick Pick swipe state
+            // so they don't reappear as un-swiped cards
+            await MarkSessionsAsSkippedAsync(removedIds);
 
             session.IsFavorite = true;
             ConflictGroups.Remove(group);
@@ -186,10 +194,47 @@ public partial class ConflictResolverViewModel : ObservableObject
         }
     }
 
+    private const string SwipeStateCacheKey = "quick_pick_swipe_state";
+
+    private async Task MarkSessionsAsSkippedAsync(List<string> sessionIds)
+    {
+        try
+        {
+            SwipeState state;
+            try
+            {
+                state = await BlobCache.UserAccount.GetObject<SwipeState>(SwipeStateCacheKey);
+            }
+            catch
+            {
+                state = new SwipeState();
+            }
+
+            foreach (var id in sessionIds)
+            {
+                if (!state.SkippedSessionIds.Contains(id))
+                    state.SkippedSessionIds.Add(id);
+            }
+
+            state.LastUpdated = DateTime.UtcNow;
+            await BlobCache.UserAccount.InsertObject(SwipeStateCacheKey, state);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to update swipe state with skipped sessions");
+        }
+    }
+
     [RelayCommand]
     private async Task CloseAsync()
     {
         await Shell.Current.GoToAsync("..");
+    }
+
+    [RelayCommand]
+    private async Task ViewAgendaAsync()
+    {
+        await Shell.Current.GoToAsync("//Favorites");
     }
 }
 
