@@ -236,7 +236,8 @@
                 <BoxView HeightRequest="90" BackgroundColor="Transparent" />
             </CollectionView.Footer>
             <CollectionView.EmptyView>
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32">
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32"
+                                     IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
                     <Label Text="No sessions found"
                            FontSize="18"
                            HorizontalOptions="Center"

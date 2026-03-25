@@ -115,7 +115,7 @@
                              HorizontalOptions="Center"
                              Padding="32"
                              Spacing="12"
-                             IsVisible="{Binding HasFavorites, Converter={toolkit:InvertedBoolConverter}}">
+                             IsVisible="{Binding ShowEmptyState}">
             <Label Text="☆" FontSize="48" HorizontalOptions="Center" />
             <Label Text="No sessions in your agenda yet"
                    FontSize="18"

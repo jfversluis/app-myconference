@@ -21,7 +21,10 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
     private ObservableCollection<TimeSlotGroup> _favoriteSlots = [];
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
     private bool _hasFavorites;
+
+    public bool ShowEmptyState => !HasFavorites && !IsBusy;
 
     public FavoritesViewModel(
         IConferenceDataService dataService,
@@ -44,6 +47,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
         try
         {
             IsBusy = true;
+            OnPropertyChanged(nameof(ShowEmptyState));
             await BuildFavoriteSlotsAsync();
         }
         catch (Exception ex)
@@ -54,6 +58,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
         {
             IsBusy = false;
             IsRefreshing = false;
+            OnPropertyChanged(nameof(ShowEmptyState));
         }
     }
 
