@@ -199,12 +199,13 @@
                                        Padding="24,12,24,0"
                                        SemanticProperties.HeadingLevel="Level2" />
 
-                                <!-- Description -->
+                                <!-- Description — fills remaining card space -->
                                 <Label Grid.Row="3" Text="{Binding Description}"
                                        FontSize="14" LineHeight="1.5"
                                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                                       LineBreakMode="WordWrap" MaxLines="4"
-                                       Padding="24,10,24,0" />
+                                       LineBreakMode="WordWrap" MaxLines="20"
+                                       Padding="24,10,24,0"
+                                       VerticalOptions="Start" />
 
                                 <!-- Bottom: Details bar — full-width tappable -->
                                 <Border Grid.Row="4" StrokeThickness="0"
