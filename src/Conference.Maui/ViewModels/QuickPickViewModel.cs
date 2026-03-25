@@ -264,11 +264,16 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
                 && s.EndsAt > session.StartsAt)
             .ToList();
 
-        if (conflicting.Count > 0)
+        if (conflicting.Count == 1)
         {
-            var conflictSession = conflicting.First();
+            var c = conflicting.First();
             HasConflict = true;
-            ConflictText = $"⚠️ Conflicts with \"{conflictSession.Title}\" at {conflictSession.StartsAt:h:mm tt}";
+            ConflictText = $"⚠️ Conflicts with \"{c.Title}\" at {c.StartsAt:h:mm tt}";
+        }
+        else if (conflicting.Count > 1)
+        {
+            HasConflict = true;
+            ConflictText = $"⚠️ Already {conflicting.Count} sessions favorited in this time slot";
         }
         else
         {
