@@ -386,16 +386,6 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
     [RelayCommand]
     private async Task ResetSkippedAsync()
     {
-        var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-        if (page == null) return;
-
-        var confirmed = await page.DisplayAlertAsync(
-            "Reset Skipped Sessions",
-            "This will show all skipped sessions again. Your favorites will not be changed.",
-            "Reset", "Cancel");
-
-        if (!confirmed) return;
-
         _swipeState.SkippedSessionIds.Clear();
         await SaveSwipeStateAsync();
         await LoadDeckAsync();
