@@ -30,6 +30,9 @@ public class TimeSlotGroup : List<SessionItem>
     public string TimeDisplay => Date.HasValue 
         ? $"{Date.Value:ddd} {Date.Value.Day} {Date.Value:MMM} · {StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}"
         : $"{StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}";
+
+    public bool HasConflict => Count > 1;
+    public string ConflictText => $"{Count} sessions";
 }
 
 /// <summary>

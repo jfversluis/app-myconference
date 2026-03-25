@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="Conference.Maui.Pages.FavoritesPage"
              x:DataType="vm:FavoritesViewModel"
              Title="{Binding Title}"
@@ -21,11 +22,20 @@
             <CollectionView.GroupHeaderTemplate>
                 <DataTemplate x:DataType="models:TimeSlotGroup">
                     <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
-                          Padding="12,8">
+                          Padding="12,8"
+                          ColumnDefinitions="*,Auto">
                         <Label Text="{Binding TimeDisplay}"
                                FontSize="13"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                        <HorizontalStackLayout Grid.Column="1" Spacing="4" IsVisible="{Binding HasConflict}" VerticalOptions="Center">
+                            <Image HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Warning24, IconColor={StaticResource Primary}}" />
+                            <Label Text="{Binding ConflictText}"
+                                   FontSize="12"
+                                   TextColor="{StaticResource Primary}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
                     </Grid>
                 </DataTemplate>
             </CollectionView.GroupHeaderTemplate>
