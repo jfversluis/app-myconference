@@ -12,5 +12,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(SpeakerDetailsPage), typeof(SpeakerDetailsPage));
         Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
         Routing.RegisterRoute(nameof(QuickPickPage), typeof(QuickPickPage));
+        Routing.RegisterRoute(nameof(ConflictResolverPage), typeof(ConflictResolverPage));
     }
 }

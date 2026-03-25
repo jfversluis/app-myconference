@@ -285,7 +285,11 @@
                             <Span Text="{Binding AddedCount}" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
                             <Span Text=" added · " />
                             <Span Text="{Binding SkippedCount}" FontAttributes="Bold" />
-                            <Span Text=" skipped" />
+                            <Span Text=" skipped · " />
+                            <Span Text="{Binding TotalConflictCount}" FontAttributes="Bold"
+                                  TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}" />
+                            <Span Text=" conflicts"
+                                  TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}" />
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
@@ -301,28 +305,16 @@
                         Margin="4,0"
                         SemanticProperties.Description="View your favorited sessions" />
 
-                <Border StrokeThickness="1"
-                        Stroke="#E65100"
-                        StrokeShape="RoundRectangle 12"
+                <Button Text="⚠️ Resolve Conflicts"
+                        Command="{Binding ReviewConflictsCommand}"
                         BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#3E2723}"
-                        Padding="16,12"
+                        TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"
+                        FontSize="14" FontAttributes="Bold"
+                        CornerRadius="12"
+                        Padding="20,12"
+                        HorizontalOptions="Fill"
                         Margin="4,0"
-                        IsVisible="{Binding HasConflictsOnComplete}">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding ReviewConflictsCommand}" />
-                    </Border.GestureRecognizers>
-                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Label Text="⚠️" FontSize="15" VerticalOptions="Center" />
-                        <Label Text="{Binding ConflictSummaryText}"
-                               FontSize="14" FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"
-                               VerticalOptions="Center" />
-                        <Label Text="— Review"
-                               FontSize="14"
-                               TextColor="{StaticResource Primary}"
-                               VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </Border>
+                        IsVisible="{Binding HasConflictsOnComplete}" />
 
                 <Button Text="Review Skipped"
                         Command="{Binding ResetSkippedCommand}"

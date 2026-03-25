@@ -340,7 +340,7 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
     [RelayCommand]
     private async Task ReviewConflictsAsync()
     {
-        await Shell.Current.GoToAsync("//Favorites");
+        await Shell.Current.GoToAsync(nameof(Pages.ConflictResolverPage));
     }
 
     [RelayCommand]

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Conference.Maui.Pages.ConflictResolverPage"
+             x:DataType="vm:ConflictResolverViewModel"
+             Title="Resolve Conflicts"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light=#F8F7FA, Dark={StaticResource Gray950}}"
+             x:Name="resolver">
+
+    <Grid RowDefinitions="Auto,*,Auto" SafeAreaEdges="Container">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Padding="20,12,20,12" ColumnDefinitions="*,Auto">
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Resolve Conflicts" FontSize="22" FontAttributes="Bold" />
+                <Label FontSize="13"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding ConflictGroups.Count}" FontAttributes="Bold" />
+                            <Span Text=" time slots to resolve" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </VerticalStackLayout>
+            <Button Grid.Column="1"
+                    mi:MauiIcon.Value="{mi:Fluent Icon=Dismiss12, IconColor={StaticResource Gray600}}"
+                    Command="{Binding CloseCommand}"
+                    BackgroundColor="Transparent"
+                    FontSize="20"
+                    Padding="8,4"
+                    MinimumWidthRequest="48" MinimumHeightRequest="48"
+                    VerticalOptions="Center" />
+        </Grid>
+
+        <!-- All resolved state -->
+        <VerticalStackLayout Grid.Row="1" Spacing="12" Padding="32"
+                             VerticalOptions="Center" HorizontalOptions="Center"
+                             IsVisible="{Binding AllResolved}">
+            <Label Text="🎉" FontSize="48" HorizontalTextAlignment="Center" />
+            <Label Text="All conflicts resolved!" FontSize="22" FontAttributes="Bold"
+                   HorizontalTextAlignment="Center" />
+            <Label Text="Your agenda is now conflict-free."
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                   HorizontalTextAlignment="Center" />
+            <Button Text="View My Agenda"
+                    Command="{Binding CloseCommand}"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    FontSize="15" FontAttributes="Bold"
+                    CornerRadius="12"
+                    Padding="24,14"
+                    HorizontalOptions="Center"
+                    Margin="0,12,0,0" />
+        </VerticalStackLayout>
+
+        <!-- Conflict groups list -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding ConflictGroups}"
+                        IsVisible="{Binding AllResolved, Converter={StaticResource InvertedBoolConverter}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:ConflictGroup">
+                    <VerticalStackLayout Padding="16,8">
+                        <!-- Time slot header -->
+                        <Border StrokeThickness="0"
+                                StrokeShape="RoundRectangle 12,12,0,0"
+                                BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3E2723}"
+                                Padding="16,10">
+                            <HorizontalStackLayout Spacing="8">
+                                <Label Text="⚠️" FontSize="14" VerticalOptions="Center" />
+                                <Label Text="{Binding TimeSlotLabel}"
+                                       FontSize="14" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"
+                                       VerticalOptions="Center" />
+                                <Label FontSize="12"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                       VerticalOptions="Center">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text=" · " />
+                                            <Span Text="{Binding SessionCount}" />
+                                            <Span Text=" sessions overlap" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <!-- Sessions in this slot -->
+                        <Border StrokeThickness="0"
+                                StrokeShape="RoundRectangle 0,0,12,12"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                Padding="0">
+                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Sessions}" Spacing="0">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:SessionItem">
+                                        <Border StrokeThickness="0"
+                                                BackgroundColor="Transparent"
+                                                Padding="16,14">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnKeepSessionTapped"
+                                                    CommandParameter="{Binding}" />
+                                            </Border.GestureRecognizers>
+                                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                                                <Label Text="{Binding Title}"
+                                                       FontSize="15" FontAttributes="Bold"
+                                                       LineBreakMode="TailTruncation" MaxLines="2" />
+                                                <Label Grid.Row="1" Text="{Binding SpeakerNames}"
+                                                       FontSize="13"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                                       LineBreakMode="TailTruncation" MaxLines="1"
+                                                       Margin="0,2,0,0" />
+                                                <HorizontalStackLayout Grid.Row="2" Spacing="6" Margin="0,4,0,0">
+                                                    <Label Text="{Binding TimeDisplay}" FontSize="12"
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                                    <Label Text="·" FontSize="12"
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                           IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
+                                                    <Label Text="{Binding RoomName}" FontSize="12"
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                           IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
+                                                </HorizontalStackLayout>
+
+                                                <!-- Keep button -->
+                                                <Button Grid.RowSpan="3" Grid.Column="1"
+                                                        Text="Keep"
+                                                        BackgroundColor="{StaticResource Primary}"
+                                                        TextColor="White"
+                                                        FontSize="13" FontAttributes="Bold"
+                                                        CornerRadius="8"
+                                                        Padding="14,8"
+                                                        VerticalOptions="Center"
+                                                        Clicked="OnKeepButtonClicked"
+                                                        CommandParameter="{Binding}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Bottom info -->
+        <Border Grid.Row="2" StrokeThickness="0"
+                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                Padding="20,14,20,20"
+                IsVisible="{Binding AllResolved, Converter={StaticResource InvertedBoolConverter}}">
+            <Label Text="Tap 'Keep' on the session you want. The others will be removed from your agenda."
+                   FontSize="13"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="WordWrap" />
+        </Border>
+    </Grid>
+</ContentPage>
