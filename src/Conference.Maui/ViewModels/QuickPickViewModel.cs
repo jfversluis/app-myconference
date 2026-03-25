@@ -402,6 +402,34 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
     }
 
     [RelayCommand]
+    private async Task StartOverAsync()
+    {
+        var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+        if (page == null) return;
+
+        var confirmed = await page.DisplayAlertAsync(
+            "Start Over",
+            "This will remove all favorites added through Quick Pick and reset your progress. You'll start fresh with all sessions.",
+            "Start Over", "Cancel");
+
+        if (!confirmed) return;
+
+        // Remove all favorites
+        foreach (var id in _favoriteIds)
+        {
+            await _favoritesService.ToggleFavoriteAsync(id);
+        }
+
+        // Clear skipped state
+        _swipeState.SkippedSessionIds.Clear();
+        await SaveSwipeStateAsync();
+
+        _logger.LogInformation("Quick Pick fully reset: cleared {FavCount} favorites and all skipped sessions", _favoriteIds.Count);
+
+        await LoadDeckAsync();
+    }
+
+    [RelayCommand]
     private async Task ViewAgendaAsync()
     {
         await Shell.Current.GoToAsync("//Favorites");

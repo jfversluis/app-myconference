@@ -270,16 +270,16 @@
             <Border.Shadow>
                 <Shadow Brush="#15000000" Offset="0,6" Radius="20" Opacity="0.5" />
             </Border.Shadow>
-            <VerticalStackLayout Spacing="6" Padding="32,44">
-                <Label Text="✓" FontSize="44"
+            <VerticalStackLayout Spacing="4" Padding="28,32">
+                <Label Text="✓" FontSize="40"
                        TextColor="{StaticResource Primary}"
                        HorizontalTextAlignment="Center" />
-                <Label Text="Done" FontSize="26" FontAttributes="Bold"
+                <Label Text="Done" FontSize="24" FontAttributes="Bold"
                        HorizontalTextAlignment="Center"
-                       Margin="0,4,0,0" />
+                       Margin="0,2,0,0" />
                 <Label HorizontalTextAlignment="Center" FontSize="14"
                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                       LineBreakMode="WordWrap" Margin="0,4,0,20">
+                       LineBreakMode="WordWrap" Margin="0,2,0,16">
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="{Binding AddedCount}" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
@@ -300,7 +300,7 @@
                         TextColor="White"
                         FontSize="15" FontAttributes="Bold"
                         CornerRadius="12"
-                        Padding="24,14"
+                        Padding="24,12"
                         HorizontalOptions="Fill"
                         Margin="4,0"
                         SemanticProperties.Description="View your favorited sessions" />
@@ -311,7 +311,7 @@
                         TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"
                         FontSize="14" FontAttributes="Bold"
                         CornerRadius="12"
-                        Padding="20,12"
+                        Padding="20,10"
                         HorizontalOptions="Fill"
                         Margin="4,0"
                         IsVisible="{Binding HasConflictsOnComplete}" />
@@ -322,17 +322,24 @@
                         TextColor="{StaticResource Primary}"
                         FontSize="14"
                         CornerRadius="12"
-                        Padding="20,12"
+                        Padding="20,10"
                         HorizontalOptions="Fill"
                         Margin="4,0" />
 
-                <Button Text="Close"
-                        Command="{Binding CloseCommand}"
-                        BackgroundColor="Transparent"
-                        TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                        FontSize="13"
-                        Padding="20,10"
-                        HorizontalOptions="Center" />
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="16" Margin="0,4,0,0">
+                    <Button Text="Start Over"
+                            Command="{Binding StartOverCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                            FontSize="13"
+                            Padding="12,8" />
+                    <Button Text="Close"
+                            Command="{Binding CloseCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                            FontSize="13"
+                            Padding="12,8" />
+                </HorizontalStackLayout>
             </VerticalStackLayout>
         </Border>
 
