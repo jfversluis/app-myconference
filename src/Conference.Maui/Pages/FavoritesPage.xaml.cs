@@ -32,4 +32,9 @@ public partial class FavoritesPage : ContentPage
         base.OnAppearing();
         await _viewModel.LoadDataCommand.ExecuteAsync(null);
     }
+
+    private async void OnConflictBadgeTapped(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(ConflictResolverPage));
+    }
 }

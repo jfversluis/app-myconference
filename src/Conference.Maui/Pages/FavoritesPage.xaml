@@ -29,11 +29,14 @@
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                         <HorizontalStackLayout Grid.Column="1" Spacing="4" IsVisible="{Binding HasConflict}" VerticalOptions="Center">
+                            <HorizontalStackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnConflictBadgeTapped" />
+                            </HorizontalStackLayout.GestureRecognizers>
                             <Image HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
-                                   mi:MauiIcon.Value="{mi:Fluent Icon=Warning24, IconColor={StaticResource Primary}}" />
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Warning24, IconColor=Orange}" />
                             <Label Text="{Binding ConflictText}"
                                    FontSize="12"
-                                   TextColor="{StaticResource Primary}"
+                                   TextColor="Orange"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
                     </Grid>
