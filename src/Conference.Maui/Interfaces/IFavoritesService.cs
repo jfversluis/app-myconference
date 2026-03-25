@@ -1,5 +1,3 @@
-using Conference.Maui.Models;
-
 namespace Conference.Maui.Interfaces;
 
 /// <summary>
@@ -8,9 +6,9 @@ namespace Conference.Maui.Interfaces;
 public interface IFavoritesService
 {
     /// <summary>
-    /// Gets all favorited session IDs.
+    /// Gets a snapshot of all favorited session IDs.
     /// </summary>
-    Task<HashSet<string>> GetFavoriteSessionIdsAsync();
+    Task<IReadOnlySet<string>> GetFavoriteSessionIdsAsync();
 
     /// <summary>
     /// Checks if a session is favorited.
@@ -31,9 +29,4 @@ public interface IFavoritesService
     /// Removes a session from favorites.
     /// </summary>
     Task RemoveFavoriteAsync(string sessionId);
-
-    /// <summary>
-    /// Event raised when favorites change.
-    /// </summary>
-    event EventHandler<string>? FavoritesChanged;
 }

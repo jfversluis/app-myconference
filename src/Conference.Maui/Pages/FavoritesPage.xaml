@@ -2,11 +2,123 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Pages.FavoritesPage"
              x:DataType="vm:FavoritesViewModel"
-             Title="{Binding Title}">
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Label Text="My Agenda" FontSize="24" />
-        <Label Text="Coming soon..." TextColor="Gray" />
-    </VerticalStackLayout>
+             Title="{Binding Title}"
+             Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
+
+    <Grid>
+        <!-- Favorites List -->
+        <CollectionView x:Name="FavoritesCollectionView"
+                        ItemsSource="{Binding FavoriteSlots}"
+                        IsGrouped="True"
+                        SelectionMode="Single"
+                        SelectionChanged="OnSessionSelected"
+                        IsVisible="{Binding HasFavorites}">
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate x:DataType="models:TimeSlotGroup">
+                    <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
+                          Padding="12,8">
+                        <Label Text="{Binding TimeDisplay}"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:SessionItem">
+                    <Grid Padding="16,4" BackgroundColor="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="Transparent" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="Transparent" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                Padding="16">
+                            <Grid RowDefinitions="Auto,Auto">
+                                <Label Grid.Row="0"
+                                       Text="{Binding Title}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2" />
+                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="16" VerticalOptions="Center">
+                                        <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
+                                            <Image Source="location_regular.png" HeightRequest="16" WidthRequest="16" VerticalOptions="Center" />
+                                            <Label Text="{Binding RoomName}" FontSize="13" VerticalOptions="Center"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Image Source="clock_regular.png" HeightRequest="16" WidthRequest="16" VerticalOptions="Center" />
+                                            <Label Text="{Binding DurationDisplay}" FontSize="13" VerticalOptions="Center"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <!-- Speaker Avatars -->
+                                    <HorizontalStackLayout Grid.Column="1" VerticalOptions="Center" IsVisible="{Binding HasSpeaker1}">
+                                        <Border StrokeShape="RoundRectangle 14" HeightRequest="28" WidthRequest="28"
+                                                StrokeThickness="2" Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                                                IsVisible="{Binding HasSpeaker1}">
+                                            <Image Source="{Binding Speaker1.ProfilePictureUrl}" Aspect="AspectFill" />
+                                        </Border>
+                                        <Border StrokeShape="RoundRectangle 14" HeightRequest="28" WidthRequest="28"
+                                                StrokeThickness="2" Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                                                Margin="-10,0,0,0" IsVisible="{Binding HasSpeaker2}">
+                                            <Image Source="{Binding Speaker2.ProfilePictureUrl}" Aspect="AspectFill" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="90" BackgroundColor="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+
+        <!-- Empty State -->
+        <VerticalStackLayout VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Padding="32"
+                             Spacing="12"
+                             IsVisible="{Binding HasFavorites, Converter={toolkit:InvertedBoolConverter}}">
+            <Label Text="☆" FontSize="48" HorizontalOptions="Center" />
+            <Label Text="No sessions in your agenda yet"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+            <Label Text="Browse sessions and tap ☆ Add to My Agenda to build your personal schedule."
+                   FontSize="14"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+        </VerticalStackLayout>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Color="{StaticResource Primary}" />
+    </Grid>
 </ContentPage>

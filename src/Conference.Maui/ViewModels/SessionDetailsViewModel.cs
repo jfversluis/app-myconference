@@ -1,30 +1,45 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Conference.Maui.Pages;
+using Microsoft.Extensions.Logging;
 
 namespace Conference.Maui.ViewModels;
 
 [QueryProperty(nameof(SessionId), "SessionId")]
-public partial class SessionDetailsViewModel : BaseViewModel
+[QueryProperty(nameof(SourceSpeakerId), "SourceSpeakerId")]
+public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<FavoriteChangedMessage>
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly ILogger<SessionDetailsViewModel> _logger;
 
     [ObservableProperty]
     private string _sessionId = string.Empty;
+
+    /// <summary>
+    /// When navigating from a SpeakerDetailsPage, this holds the source speaker ID
+    /// so we can pop back instead of pushing forward if the user taps that same speaker.
+    /// </summary>
+    [ObservableProperty]
+    private string _sourceSpeakerId = string.Empty;
 
     [ObservableProperty]
     private SessionItem? _session;
 
     public SessionDetailsViewModel(
         IConferenceDataService dataService,
-        IFavoritesService favoritesService)
+        IFavoritesService favoritesService,
+        ILogger<SessionDetailsViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _logger = logger;
         Title = "Session";
+
+        WeakReferenceMessenger.Default.Register<FavoriteChangedMessage>(this);
     }
 
     partial void OnSessionIdChanged(string value)
@@ -70,6 +85,10 @@ public partial class SessionDetailsViewModel : BaseViewModel
                 Title = Session.Title;
             }
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading session details for {SessionId}", SessionId);
+        }
         finally
         {
             IsBusy = false;
@@ -81,23 +100,31 @@ public partial class SessionDetailsViewModel : BaseViewModel
     {
         if (Session == null) return;
 
-        if (Session.IsFavorite)
-        {
-            await _favoritesService.RemoveFavoriteAsync(Session.Id);
-        }
-        else
-        {
-            await _favoritesService.AddFavoriteAsync(Session.Id);
-        }
-        Session.IsFavorite = !Session.IsFavorite;
+        Session.IsFavorite = await _favoritesService.ToggleFavoriteAsync(Session.Id);
     }
 
     [RelayCommand]
     private async Task NavigateToSpeakerAsync(SpeakerItem speaker)
     {
+        // If we came from this speaker, pop back instead of creating a loop
+        if (!string.IsNullOrEmpty(SourceSpeakerId) && speaker.Id == SourceSpeakerId)
+        {
+            await Shell.Current.GoToAsync("..");
+            return;
+        }
+
         await Shell.Current.GoToAsync(nameof(SpeakerDetailsPage), new Dictionary<string, object>
         {
-            ["SpeakerId"] = speaker.Id
+            ["SpeakerId"] = speaker.Id,
+            ["SourceSessionId"] = SessionId
         });
+    }
+
+    public void Receive(FavoriteChangedMessage message)
+    {
+        if (Session != null && Session.Id == message.SessionId)
+        {
+            Session.IsFavorite = message.IsFavorite;
+        }
     }
 }

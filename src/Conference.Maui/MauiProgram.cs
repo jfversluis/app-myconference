@@ -10,6 +10,10 @@ using Sessionize.Api.Client;
 using Sessionize.Api.Client.Abstractions;
 using Sessionize.Api.Client.Configuration;
 using Syncfusion.Maui.Toolkit.Hosting;
+using MauiIcons.Fluent;
+#if DEBUG
+using MauiDevFlow.Agent;
+#endif
 
 namespace Conference.Maui;
 
@@ -35,6 +39,7 @@ public static class MauiProgram
             })
 #endif
             .UseMauiCommunityToolkit()
+            .UseFluentMauiIcons()
             .ConfigureSyncfusionToolkit();
 
         // Remove native border from Entry on iOS
@@ -52,30 +57,37 @@ public static class MauiProgram
             options.ApiId = AppConfig.SessionizeApiId;
         });
         builder.Services.AddHttpClient<SessionizeApiClient>();
-        builder.Services.AddScoped<ISessionizeApiClient, SessionizeApiClient>();
+        builder.Services.AddSingleton<ISessionizeApiClient, SessionizeApiClient>();
 
         // Register services
         builder.Services.AddSingleton<IConferenceDataService, ConferenceDataService>();
         builder.Services.AddSingleton<IFavoritesService, FavoritesService>();
 
         // Register view models
+        builder.Services.AddTransient<MyEventViewModel>();
         builder.Services.AddTransient<SessionsViewModel>();
         builder.Services.AddTransient<SpeakersViewModel>();
         builder.Services.AddTransient<SessionDetailsViewModel>();
         builder.Services.AddTransient<SpeakerDetailsViewModel>();
         builder.Services.AddTransient<FavoritesViewModel>();
         builder.Services.AddTransient<AboutViewModel>();
+        builder.Services.AddTransient<SettingsViewModel>();
+        builder.Services.AddTransient<QuickPickViewModel>();
 
         // Register pages
+        builder.Services.AddTransient<MyEventPage>();
         builder.Services.AddTransient<SessionsPage>();
         builder.Services.AddTransient<SpeakersPage>();
         builder.Services.AddTransient<SessionDetailsPage>();
         builder.Services.AddTransient<SpeakerDetailsPage>();
         builder.Services.AddTransient<FavoritesPage>();
         builder.Services.AddTransient<AboutPage>();
+        builder.Services.AddTransient<SettingsPage>();
+        builder.Services.AddTransient<QuickPickPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
+        builder.AddMauiDevFlowAgent();
 #endif
 
         return builder.Build();

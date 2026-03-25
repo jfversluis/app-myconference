@@ -1,11 +1,141 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Conference.Maui.Interfaces;
+using Conference.Maui.Models;
+using Conference.Maui.Pages;
+using Microsoft.Extensions.Logging;
+using Sessionize.Api.Client.DataTransferObjects;
+using Sessionize.Api.Client.ValueObjects;
 
 namespace Conference.Maui.ViewModels;
 
-public partial class SpeakerDetailsViewModel : BaseViewModel
+[QueryProperty(nameof(SpeakerId), "SpeakerId")]
+[QueryProperty(nameof(SourceSessionId), "SourceSessionId")]
+public partial class SpeakerDetailsViewModel : BaseViewModel, IRecipient<FavoriteChangedMessage>
 {
-    public SpeakerDetailsViewModel()
+    private readonly IConferenceDataService _dataService;
+    private readonly IFavoritesService _favoritesService;
+    private readonly ILogger<SpeakerDetailsViewModel> _logger;
+
+    [ObservableProperty]
+    private string _speakerId = string.Empty;
+
+    /// <summary>
+    /// When navigating from a SessionDetailsPage, this holds the source session ID
+    /// so we can pop back instead of pushing forward if the user taps that same session.
+    /// </summary>
+    [ObservableProperty]
+    private string _sourceSessionId = string.Empty;
+
+    [ObservableProperty]
+    private SpeakerItem? _speaker;
+
+    [ObservableProperty]
+    private ObservableCollection<SessionItem> _sessions = [];
+
+    public SpeakerDetailsViewModel(
+        IConferenceDataService dataService,
+        IFavoritesService favoritesService,
+        ILogger<SpeakerDetailsViewModel> logger)
     {
-        Title = "Speaker Details";
+        _dataService = dataService;
+        _favoritesService = favoritesService;
+        _logger = logger;
+        Title = "Speaker";
+
+        WeakReferenceMessenger.Default.Register<FavoriteChangedMessage>(this);
+    }
+
+    partial void OnSpeakerIdChanged(string value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            _ = LoadSpeakerAsync();
+        }
+    }
+
+    private async Task LoadSpeakerAsync()
+    {
+        if (IsBusy) return;
+
+        try
+        {
+            IsBusy = true;
+            var allData = await _dataService.GetAllDataAsync();
+            var speakerData = allData?.Speakers.FirstOrDefault(s => s.Id == SpeakerId);
+
+            if (speakerData != null)
+            {
+                Speaker = SpeakerItem.FromSpeakerDetails(speakerData);
+                Title = Speaker.FullName;
+
+                var favorites = await _favoritesService.GetFavoriteSessionIdsAsync();
+                var speakerSessions = allData!.Sessions
+                    .Where(s => s.Speakers.Contains(speakerData.Id))
+                    .OrderBy(s => s.StartsAt)
+                    .Select(s => CreateSessionItem(s, allData, favorites))
+                    .ToList();
+
+                Sessions = new ObservableCollection<SessionItem>(speakerSessions);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading speaker details for {SpeakerId}", SpeakerId);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private static SessionItem CreateSessionItem(SessionDetails session, AllDataResponse allData, IReadOnlySet<string> favorites)
+    {
+        var speakers = session.Speakers
+            .Select(speakerId => allData.Speakers.FirstOrDefault(s => s.Id == speakerId))
+            .Where(s => s != null)
+            .Select(s => SpeakerItem.FromSpeakerDetails(s!))
+            .ToList();
+
+        return new SessionItem
+        {
+            Id = session.Id,
+            Title = session.Title,
+            Description = session.Description,
+            StartsAt = session.StartsAt,
+            EndsAt = session.EndsAt,
+            RoomId = session.RoomId,
+            RoomName = allData.Rooms.FirstOrDefault(r => r.Id == session.RoomId)?.Name,
+            Speakers = speakers,
+            IsFavorite = favorites.Contains(session.Id)
+        };
+    }
+
+    [RelayCommand]
+    private async Task NavigateToSessionAsync(SessionItem session)
+    {
+        // If we came from this session, pop back instead of creating a loop
+        if (!string.IsNullOrEmpty(SourceSessionId) && session.Id == SourceSessionId)
+        {
+            await Shell.Current.GoToAsync("..");
+            return;
+        }
+
+        await Shell.Current.GoToAsync(nameof(SessionDetailsPage), new Dictionary<string, object>
+        {
+            ["SessionId"] = session.Id,
+            ["SourceSpeakerId"] = SpeakerId
+        });
+    }
+
+    public void Receive(FavoriteChangedMessage message)
+    {
+        var session = Sessions.FirstOrDefault(s => s.Id == message.SessionId);
+        if (session != null)
+        {
+            session.IsFavorite = message.IsFavorite;
+        }
     }
 }

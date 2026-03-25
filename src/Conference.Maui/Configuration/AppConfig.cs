@@ -39,4 +39,35 @@ public static class AppConfig
     /// Timeout for API requests in seconds.
     /// </summary>
     public const int ApiTimeoutSeconds = 30;
+
+    /// <summary>
+    /// The name of the conference/event.
+    /// </summary>
+    public const string ConferenceName = ".NET MAUI Day 2025";
+
+    /// <summary>
+    /// A short description of the event.
+    /// </summary>
+    public const string EventDescription = "A full day of .NET MAUI content with world-class speakers, hands-on sessions, and community networking. Whether you're just getting started or building production apps, there's something for everyone.";
+
+    /// <summary>
+    /// Event venue name and location.
+    /// </summary>
+    public const string VenueName = "Online Event";
+    public const string VenueDetails = "Join from anywhere — all sessions are streamed live and available on-demand after the event.";
+
+    /// <summary>
+    /// Event date display string.
+    /// </summary>
+    public const string EventDate = "September 10, 2025";
+
+    /// <summary>
+    /// Conference website URL.
+    /// </summary>
+    public const string ConferenceWebsite = "https://mauiday.net";
+
+    /// <summary>
+    /// GitHub repository URL for this open-source app.
+    /// </summary>
+    public const string GitHubRepo = "https://github.com/jfversluis/app-myconference";
 }

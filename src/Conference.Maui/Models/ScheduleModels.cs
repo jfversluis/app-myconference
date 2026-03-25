@@ -65,6 +65,8 @@ public partial class SessionItem : ObservableObject
     public bool HasSpeaker4 => Speakers.Count > 3;
     public bool HasMoreSpeakers => Speakers.Count > 4;
     public string MoreSpeakersText => $"+{Speakers.Count - 4}";
+    public bool HasExtraSpeakers => Speakers.Count > 2;
+    public string ExtraSpeakersText => $"+{Speakers.Count - 2}";
 }
 
 /// <summary>

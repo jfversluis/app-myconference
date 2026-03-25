@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Conference.Maui.Pages;
@@ -10,7 +11,7 @@ using Sessionize.Api.Client.ValueObjects;
 
 namespace Conference.Maui.ViewModels;
 
-public partial class SessionsViewModel : BaseViewModel
+public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChangedMessage>
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
@@ -53,7 +54,7 @@ public partial class SessionsViewModel : BaseViewModel
         _logger = logger;
         Title = "Sessions";
 
-        _favoritesService.FavoritesChanged += OnFavoritesChanged;
+        WeakReferenceMessenger.Default.Register<FavoriteChangedMessage>(this);
     }
 
     [RelayCommand]
@@ -90,15 +91,24 @@ public partial class SessionsViewModel : BaseViewModel
     [RelayCommand]
     private async Task RefreshDataAsync()
     {
-        IsRefreshing = true;
-        _allData = await _dataService.GetAllDataAsync(forceRefresh: true);
-        
-        if (_allData != null)
+        try
         {
-            await ProcessDataAsync();
+            IsRefreshing = true;
+            _allData = await _dataService.GetAllDataAsync(forceRefresh: true);
+            
+            if (_allData != null)
+            {
+                await ProcessDataAsync();
+            }
         }
-        
-        IsRefreshing = false;
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing sessions");
+        }
+        finally
+        {
+            IsRefreshing = false;
+        }
     }
 
     private async Task ProcessDataAsync()
@@ -157,7 +167,7 @@ public partial class SessionsViewModel : BaseViewModel
         SelectAppropriateDay();
     }
 
-    private SessionItem CreateSessionItem(SessionDetails session, HashSet<string> favorites)
+    private SessionItem CreateSessionItem(SessionDetails session, IReadOnlySet<string> favorites)
     {
         var speakers = session.Speakers
             .Select(speakerId => _allData?.Speakers.FirstOrDefault(s => s.Id == speakerId))
@@ -270,17 +280,6 @@ public partial class SessionsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task NavigateToSessionDetailsAsync(SessionItem? session)
-    {
-        if (session == null) return;
-        
-        await Shell.Current.GoToAsync(nameof(SessionDetailsPage), new Dictionary<string, object>
-        {
-            ["SessionId"] = session.Id
-        });
-    }
-
-    [RelayCommand]
     private void SelectDay(ScheduleDay day)
     {
         // Clear all selections first
@@ -294,15 +293,21 @@ public partial class SessionsViewModel : BaseViewModel
         SelectedDay = day;
     }
 
-    private void OnFavoritesChanged(object? sender, string sessionId)
+    [RelayCommand]
+    private async Task NavigateToQuickPickAsync()
     {
-        // Update favorite status in current view
+        await Shell.Current.GoToAsync(nameof(Pages.QuickPickPage));
+    }
+
+    public void Receive(FavoriteChangedMessage message)
+    {
+        // Update favorite status in current view using the actual state from the message
         foreach (var slot in CurrentDaySlots)
         {
-            var session = slot.FirstOrDefault(s => s.Id == sessionId);
+            var session = slot.FirstOrDefault(s => s.Id == message.SessionId);
             if (session != null)
             {
-                session.IsFavorite = !session.IsFavorite;
+                session.IsFavorite = message.IsFavorite;
             }
         }
     }

@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Conference.Maui.Pages.MyEventPage"
+             x:DataType="vm:MyEventViewModel"
+             Title="{Binding Title}"
+             SafeAreaEdges="None"
+             Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
+
+    <Grid SafeAreaEdges="None">
+        <!-- Loading -->
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Color="{StaticResource Primary}" />
+
+        <!-- Content -->
+        <ScrollView IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Event Header -->
+                <Grid Padding="20,16" Background="{StaticResource Primary}"
+                      RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+                    <Label Grid.Row="0"
+                           Text="{Binding EventDateDisplay}"
+                           FontSize="13"
+                           TextColor="White"
+                           Opacity="0.8" />
+                    <Label Grid.Row="1"
+                           Text="Your Event Dashboard"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+                    <!-- Stats Row -->
+                    <HorizontalStackLayout Grid.Row="2" Spacing="16" Margin="0,4,0,0">
+                        <HorizontalStackLayout Spacing="4">
+                            <Label Text="{Binding TotalSessions}"
+                                   FontSize="14" FontAttributes="Bold" TextColor="White" />
+                            <Label Text="sessions" FontSize="13" TextColor="White" Opacity="0.8" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="4">
+                            <Label Text="{Binding TotalSpeakers}"
+                                   FontSize="14" FontAttributes="Bold" TextColor="White" />
+                            <Label Text="speakers" FontSize="13" TextColor="White" Opacity="0.8" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="4">
+                            <Label Text="{Binding AgendaCount}"
+                                   FontSize="14" FontAttributes="Bold" TextColor="White" />
+                            <Label Text="in your agenda" FontSize="13" TextColor="White" Opacity="0.8" />
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!-- Sections Container -->
+                <VerticalStackLayout Spacing="20" Padding="16,16">
+
+                    <!-- HAPPENING NOW Section -->
+                    <VerticalStackLayout Spacing="10" IsVisible="{Binding HasNowSessions}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                            <Border Grid.Column="0"
+                                    StrokeShape="RoundRectangle 4"
+                                    StrokeThickness="0"
+                                    Background="#E53935"
+                                    Padding="8,3"
+                                    VerticalOptions="Center">
+                                <Label Text="LIVE" FontSize="10" FontAttributes="Bold"
+                                       TextColor="White" CharacterSpacing="0.5" />
+                            </Border>
+                            <Label Grid.Column="1"
+                                   Text="HAPPENING NOW"
+                                   FontSize="11"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                   CharacterSpacing="0.5"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding NowSessions}"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnSessionSelected"
+                                        HeightRequest="130">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:SessionItem">
+                                    <Border StrokeShape="RoundRectangle 12"
+                                            Stroke="#E53935"
+                                            StrokeThickness="1.5"
+                                            Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                            Padding="14"
+                                            WidthRequest="260">
+                                        <VerticalStackLayout Spacing="6" VerticalOptions="Start">
+                                            <Label Text="{Binding Title}"
+                                                   FontSize="14" FontAttributes="Bold"
+                                                   LineBreakMode="TailTruncation" MaxLines="2" />
+                                            <HorizontalStackLayout Spacing="12">
+                                                <HorizontalStackLayout Spacing="4"
+                                                                       IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
+                                                    <Image Source="location_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                                    <Label Text="{Binding RoomName}" FontSize="12" FontAttributes="Bold"
+                                                           TextColor="{StaticResource Accent}"
+                                                           VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                                <HorizontalStackLayout Spacing="4">
+                                                    <Image Source="clock_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                                    <Label Text="{Binding TimeDisplay}" FontSize="11"
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                                           VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                            </HorizontalStackLayout>
+                                            <!-- Speaker avatars + names -->
+                                            <HorizontalStackLayout Spacing="6">
+                                                <HorizontalStackLayout Spacing="0">
+                                                    <Border StrokeShape="RoundRectangle 10"
+                                                            Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                            StrokeThickness="1.5"
+                                                            HeightRequest="20" WidthRequest="20"
+                                                            Background="{StaticResource Primary}"
+                                                            IsVisible="{Binding HasSpeaker1}">
+                                                        <Image Source="{Binding Speaker1.ProfilePictureUrl}"
+                                                               Aspect="AspectFill"
+                                                               HeightRequest="20" WidthRequest="20">
+                                                            <Image.Clip>
+                                                                <EllipseGeometry Center="10,10" RadiusX="10" RadiusY="10" />
+                                                            </Image.Clip>
+                                                        </Image>
+                                                    </Border>
+                                                    <Border StrokeShape="RoundRectangle 10"
+                                                            Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                            StrokeThickness="1.5"
+                                                            HeightRequest="20" WidthRequest="20"
+                                                            Background="{StaticResource PrimaryDark}"
+                                                            Margin="-6,0,0,0"
+                                                            IsVisible="{Binding HasSpeaker2}">
+                                                        <Image Source="{Binding Speaker2.ProfilePictureUrl}"
+                                                               Aspect="AspectFill"
+                                                               HeightRequest="20" WidthRequest="20">
+                                                            <Image.Clip>
+                                                                <EllipseGeometry Center="10,10" RadiusX="10" RadiusY="10" />
+                                                            </Image.Clip>
+                                                        </Image>
+                                                    </Border>
+                                                </HorizontalStackLayout>
+                                                <Border StrokeShape="RoundRectangle 10"
+                                                        StrokeThickness="0"
+                                                        HeightRequest="20" WidthRequest="20"
+                                                        Background="{StaticResource Primary}"
+                                                        Margin="-6,0,0,0"
+                                                        IsVisible="{Binding HasExtraSpeakers}">
+                                                    <Label Text="{Binding ExtraSpeakersText}"
+                                                           FontSize="9" FontAttributes="Bold"
+                                                           TextColor="White"
+                                                           HorizontalTextAlignment="Center"
+                                                           VerticalTextAlignment="Center" />
+                                                </Border>
+                                                <Label Text="{Binding SpeakerNames}" FontSize="12"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                                       LineBreakMode="TailTruncation" MaxLines="1"
+                                                       VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <!-- UP NEXT Section -->
+                    <VerticalStackLayout Spacing="10" IsVisible="{Binding HasUpNext}">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                            <Label Grid.Column="0"
+                                   Text="UP NEXT"
+                                   FontSize="11"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                   CharacterSpacing="0.5"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding UpNextTimeDisplay}"
+                                   FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   VerticalOptions="Center" />
+                            <Border Grid.Column="2"
+                                    StrokeShape="RoundRectangle 4"
+                                    StrokeThickness="0"
+                                    Background="{StaticResource Primary}"
+                                    Padding="8,3"
+                                    VerticalOptions="Center"
+                                    IsVisible="{Binding HasCountdown}">
+                                <Label Text="{Binding CountdownText}" FontSize="10" FontAttributes="Bold"
+                                       TextColor="White" />
+                            </Border>
+                        </Grid>
+
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding UpNextSessions}"
+                                             Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:SessionItem">
+                                    <Border StrokeShape="RoundRectangle 12"
+                                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                            StrokeThickness="1"
+                                            Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                            Padding="14">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnSessionTapped" />
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                                <Label Text="{Binding Title}"
+                                                       FontSize="14" FontAttributes="Bold"
+                                                       LineBreakMode="TailTruncation" MaxLines="2" />
+                                                <HorizontalStackLayout Spacing="8">
+                                                    <HorizontalStackLayout Spacing="4"
+                                                                           IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
+                                                        <Image Source="location_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                                        <Label Text="{Binding RoomName}" FontSize="12" FontAttributes="Bold"
+                                                               TextColor="{StaticResource Accent}"
+                                                               VerticalOptions="Center" />
+                                                    </HorizontalStackLayout>
+                                                </HorizontalStackLayout>
+                                                <!-- Speaker avatars + names -->
+                                                <HorizontalStackLayout Spacing="6">
+                                                    <HorizontalStackLayout Spacing="0">
+                                                        <Border StrokeShape="RoundRectangle 10"
+                                                                Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                                StrokeThickness="1.5"
+                                                                HeightRequest="20" WidthRequest="20"
+                                                                Background="{StaticResource Primary}"
+                                                                IsVisible="{Binding HasSpeaker1}">
+                                                            <Image Source="{Binding Speaker1.ProfilePictureUrl}"
+                                                                   Aspect="AspectFill"
+                                                                   HeightRequest="20" WidthRequest="20">
+                                                                <Image.Clip>
+                                                                    <EllipseGeometry Center="10,10" RadiusX="10" RadiusY="10" />
+                                                                </Image.Clip>
+                                                            </Image>
+                                                        </Border>
+                                                        <Border StrokeShape="RoundRectangle 10"
+                                                                Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                                StrokeThickness="1.5"
+                                                                HeightRequest="20" WidthRequest="20"
+                                                                Background="{StaticResource PrimaryDark}"
+                                                                Margin="-6,0,0,0"
+                                                                IsVisible="{Binding HasSpeaker2}">
+                                                            <Image Source="{Binding Speaker2.ProfilePictureUrl}"
+                                                                   Aspect="AspectFill"
+                                                                   HeightRequest="20" WidthRequest="20">
+                                                                <Image.Clip>
+                                                                    <EllipseGeometry Center="10,10" RadiusX="10" RadiusY="10" />
+                                                                </Image.Clip>
+                                                            </Image>
+                                                        </Border>
+                                                    </HorizontalStackLayout>
+                                                    <Border StrokeShape="RoundRectangle 10"
+                                                            StrokeThickness="0"
+                                                            HeightRequest="20" WidthRequest="20"
+                                                            Background="{StaticResource Primary}"
+                                                            Margin="-6,0,0,0"
+                                                            IsVisible="{Binding HasExtraSpeakers}">
+                                                        <Label Text="{Binding ExtraSpeakersText}"
+                                                               FontSize="9" FontAttributes="Bold"
+                                                               TextColor="White"
+                                                               HorizontalTextAlignment="Center"
+                                                               VerticalTextAlignment="Center" />
+                                                    </Border>
+                                                    <Label Text="{Binding SpeakerNames}" FontSize="11"
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                                           LineBreakMode="TailTruncation" MaxLines="1"
+                                                           VerticalOptions="Center" />
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1" Text="›" FontSize="20"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                        <!-- See all sessions link -->
+                        <Label IsVisible="{Binding ShowSeeAllUpNext}"
+                               FontSize="13" FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,4,0,0">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="See all " />
+                                    <Span Text="{Binding UpNextTotalCount}" />
+                                    <Span Text=" sessions ›" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding NavigateToSessionsCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </VerticalStackLayout>
+
+                    <!-- Onboarding Card -->
+                    <Border StrokeShape="RoundRectangle 12"
+                            Stroke="{StaticResource Primary}"
+                            StrokeThickness="1"
+                            Background="{AppThemeBinding Light=#F3E5F5, Dark=#2D1B33}"
+                            Padding="16"
+                            IsVisible="{Binding ShowOnboarding}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="👋 Build your personal agenda"
+                                   FontSize="16" FontAttributes="Bold" />
+                            <Label Text="Tap ☆ on sessions you'd like to attend. Your favorites will appear here so you never miss a talk."
+                                   FontSize="13"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                   LineBreakMode="WordWrap" />
+                            <HorizontalStackLayout Spacing="6" IsVisible="{Binding HasWifi}">
+                                <Image Source="wifi_regular.png" HeightRequest="14" WidthRequest="14"
+                                       VerticalOptions="Center" />
+                                <Label FontSize="13"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="📶 WiFi available: " />
+                                            <Span Text="{Binding WifiNetworkName}" FontAttributes="Bold" />
+                                            <Span Text=" — check About for details" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="8">
+                                <Button Text="⚡ Quick Pick"
+                                        Command="{Binding NavigateToQuickPickCommand}"
+                                        BackgroundColor="{StaticResource Primary}"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        CornerRadius="8"
+                                        HorizontalOptions="Start"
+                                        Padding="20,10" />
+                                <Button Text="Browse Sessions"
+                                        Command="{Binding NavigateToSessionsCommand}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource Primary}"
+                                        FontAttributes="Bold"
+                                        CornerRadius="8"
+                                        HorizontalOptions="Start"
+                                        Padding="20,10" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- MY AGENDA TODAY Section -->
+                    <VerticalStackLayout Spacing="10" IsVisible="{Binding HasTodayAgenda}">
+                        <Label Text="YOUR AGENDA TODAY"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               CharacterSpacing="0.5" />
+
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding TodayAgenda}"
+                                             Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:SessionItem">
+                                    <Grid ColumnDefinitions="56,Auto,*" ColumnSpacing="12"
+                                          Padding="0,10" MinimumHeightRequest="56">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnSessionTapped" />
+                                        </Grid.GestureRecognizers>
+                                        <!-- Time -->
+                                        <Label Grid.Column="0"
+                                               Text="{Binding StartsAt.LocalDateTime, StringFormat='{0:h:mm tt}'}"
+                                               FontSize="12" FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                               VerticalOptions="Start" />
+                                        <!-- Timeline dot + line -->
+                                        <Grid Grid.Column="1" WidthRequest="12" VerticalOptions="Fill">
+                                            <BoxView HeightRequest="1" WidthRequest="12"
+                                                     Color="{StaticResource Primary}"
+                                                     VerticalOptions="Start" Margin="0,6,0,0"
+                                                     CornerRadius="6" />
+                                            <BoxView WidthRequest="2"
+                                                     Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                                                     HorizontalOptions="Center"
+                                                     VerticalOptions="Fill"
+                                                     Margin="0,12,0,0" />
+                                        </Grid>
+                                        <!-- Session info -->
+                                        <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Start">
+                                            <Label Text="{Binding Title}" FontSize="14" FontAttributes="Bold"
+                                                   LineBreakMode="TailTruncation" MaxLines="2" />
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label Text="{Binding RoomName}" FontSize="11"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                                       IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
+                                                <Label Text="{Binding DurationDisplay}" FontSize="11"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Empty State: No live content for today -->
+                    <VerticalStackLayout Spacing="12" IsVisible="{Binding ShowEmptyState}"
+                                         Padding="16,40" HorizontalOptions="Center">
+                        <Image Source="calendar_regular.png" HeightRequest="48" WidthRequest="48"
+                               HorizontalOptions="Center" Opacity="0.4" />
+                        <Label Text="{Binding EmptyStateTitle}"
+                               FontSize="18" FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        <Label Text="{Binding EmptyStateMessage}"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                        <Button Text="Browse Sessions"
+                                Command="{Binding NavigateToSessionsCommand}"
+                                BackgroundColor="{StaticResource Primary}"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="8"
+                                Margin="0,8,0,0"
+                                HorizontalOptions="Center"
+                                Padding="24,12" />
+                    </VerticalStackLayout>
+
+                    <!-- Error State: Failed to load data -->
+                    <VerticalStackLayout Spacing="12" IsVisible="{Binding HasLoadError}"
+                                         Padding="16,40" HorizontalOptions="Center">
+                        <Image Source="info_regular.png" HeightRequest="48" WidthRequest="48"
+                               HorizontalOptions="Center" Opacity="0.4" />
+                        <Label Text="Couldn't load event data"
+                               FontSize="18" FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        <Label Text="Check your internet connection and try again."
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                        <Button Text="Retry"
+                                Command="{Binding RetryLoadCommand}"
+                                BackgroundColor="{StaticResource Primary}"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="8"
+                                Margin="0,8,0,0"
+                                HorizontalOptions="Center"
+                                Padding="24,12" />
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="100" BackgroundColor="Transparent" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

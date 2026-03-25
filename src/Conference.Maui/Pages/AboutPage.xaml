@@ -2,11 +2,173 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Pages.AboutPage"
              x:DataType="vm:AboutViewModel"
-             Title="{Binding Title}">
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Label Text="About" FontSize="24" />
-        <Label Text="Coming soon..." TextColor="Gray" />
-    </VerticalStackLayout>
+             Title="{Binding Title}"
+             SafeAreaEdges="None"
+             Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Settings"
+                     IconImageSource="settings_regular.png"
+                     Command="{Binding NavigateToSettingsCommand}"
+                     Order="Primary" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- Hero Header -->
+            <Grid Padding="24,20" Background="{StaticResource Primary}" RowDefinitions="Auto,Auto,Auto">
+                <Label Grid.Row="0"
+                       Text="{Binding ConferenceName}"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center" />
+                <Label Grid.Row="1"
+                       Text="{Binding EventDate}"
+                       FontSize="15"
+                       TextColor="White"
+                       Opacity="0.9"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,6,0,0" />
+                <Button Grid.Row="2"
+                        Text="Visit Website ↗"
+                        Command="{Binding OpenConferenceWebsiteCommand}"
+                        BackgroundColor="White"
+                        TextColor="{StaticResource Primary}"
+                        CornerRadius="10"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        HeightRequest="40"
+                        Margin="40,16,40,0" />
+            </Grid>
+
+            <!-- Content -->
+            <VerticalStackLayout Spacing="20" Padding="16,20">
+
+                <!-- About the Event -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="ABOUT THE EVENT"
+                           FontSize="11"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                           CharacterSpacing="0.5" />
+                    <Label Text="{Binding EventDescription}"
+                           FontSize="15"
+                           LineHeight="1.5"
+                           LineBreakMode="WordWrap"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray800}, Dark={StaticResource Gray200}}" />
+                </VerticalStackLayout>
+
+                <!-- Venue Info -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeThickness="1"
+                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="16">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Grid.Column="0" Text="📍" FontSize="24" VerticalOptions="Start" Margin="0,2,0,0" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="{Binding VenueName}"
+                                   FontSize="16"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding VenueDetails}"
+                                   FontSize="13"
+                                   LineHeight="1.4"
+                                   LineBreakMode="WordWrap"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- WiFi Info (only shown when configured) -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeThickness="1"
+                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="16"
+                        IsVisible="{Binding HasWifi}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Image Grid.Column="0" Source="wifi_regular.png"
+                               HeightRequest="24" WidthRequest="24"
+                               VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding WifiNetworkName}"
+                                   FontSize="15"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding WifiPassword, StringFormat='Password: {0}'}"
+                                   FontSize="13"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2"
+                                Text="Connect"
+                                Command="{Binding ConnectToWifiCommand}"
+                                BackgroundColor="{StaticResource Primary}"
+                                TextColor="White"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                CornerRadius="8"
+                                Padding="12,6"
+                                VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <!-- Sponsors Section -->
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="OUR SPONSORS"
+                           FontSize="11"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                           CharacterSpacing="0.5" />
+                    <Label Text="Thank you to our amazing sponsors who make this event possible!"
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+
+                    <FlexLayout BindableLayout.ItemsSource="{Binding Sponsors}"
+                                Wrap="Wrap"
+                                JustifyContent="SpaceEvenly"
+                                AlignItems="Center">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:Sponsor">
+                                <Border StrokeShape="RoundRectangle 12"
+                                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                        StrokeThickness="1"
+                                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                        Padding="12"
+                                        Margin="4,4"
+                                        WidthRequest="155"
+                                        HeightRequest="120">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AboutViewModel}}, Path=OpenSponsorWebsiteCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="8"
+                                                         VerticalOptions="Center"
+                                                         HorizontalOptions="Center">
+                                        <Image Source="{Binding ImageUrl}"
+                                               Aspect="AspectFit"
+                                               HeightRequest="50"
+                                               WidthRequest="110"
+                                               HorizontalOptions="Center" />
+                                        <Label Text="{Binding Name}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               HorizontalTextAlignment="Center"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </VerticalStackLayout>
+
+                <BoxView HeightRequest="80" BackgroundColor="Transparent" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

@@ -2,11 +2,165 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Conference.Maui.Pages.SpeakersPage"
              x:DataType="vm:SpeakersViewModel"
-             Title="{Binding Title}">
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Label Text="Speakers" FontSize="24" />
-        <Label Text="Coming soon..." TextColor="Gray" />
-    </VerticalStackLayout>
+             Title="{Binding Title}"
+             Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
+             SafeAreaEdges="None"
+             x:Name="ThisPage">
+
+    <Grid RowDefinitions="Auto,*" SafeAreaEdges="None">
+        <!-- Search Bar -->
+        <Border Grid.Row="0"
+                Margin="16,8"
+                StrokeShape="RoundRectangle 12"
+                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                StrokeThickness="1"
+                Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                Padding="0">
+            <Grid ColumnDefinitions="Auto,*" Padding="12,0">
+                <Label Grid.Column="0"
+                       Text="🔍"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       Margin="0,0,8,0" />
+                <Entry Grid.Column="1"
+                       Placeholder="Search speakers..."
+                       Text="{Binding SearchText}"
+                       ClearButtonVisibility="WhileEditing"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       BackgroundColor="Transparent"
+                       PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}">
+                    <Entry.Style>
+                        <Style TargetType="Entry">
+                            <Setter Property="VisualStateManager.VisualStateGroups">
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Focused">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </Setter>
+                        </Style>
+                    </Entry.Style>
+                </Entry>
+            </Grid>
+        </Border>
+
+        <!-- Speakers Grid -->
+        <CollectionView Grid.Row="1"
+                        x:Name="SpeakersCollectionView"
+                        ItemsSource="{Binding Speakers}"
+                        SelectionMode="Single"
+                        SelectionChanged="OnSpeakerSelected">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="2"
+                                 HorizontalItemSpacing="8"
+                                 VerticalItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:SpeakerItem">
+                    <Grid HeightRequest="170" Margin="8,0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="Transparent" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="Transparent" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border StrokeShape="RoundRectangle 12"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                StrokeThickness="1"
+                                Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                Padding="12">
+                            <Grid RowDefinitions="64,Auto,*" RowSpacing="6">
+                                <!-- Avatar -->
+                                <Border Grid.Row="0"
+                                        StrokeShape="RoundRectangle 32"
+                                        HeightRequest="64"
+                                        WidthRequest="64"
+                                        StrokeThickness="0"
+                                        Background="{StaticResource Primary}"
+                                        HorizontalOptions="Center">
+                                    <Grid>
+                                        <Label Text="{Binding Initials}"
+                                               TextColor="White"
+                                               FontSize="18"
+                                               FontAttributes="Bold"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center" />
+                                        <Image Source="{Binding ProfilePictureUrl}"
+                                               Aspect="AspectFill"
+                                               HeightRequest="64"
+                                               WidthRequest="64">
+                                            <Image.Clip>
+                                                <EllipseGeometry Center="32,32" RadiusX="32" RadiusY="32" />
+                                            </Image.Clip>
+                                        </Image>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Name -->
+                                <Label Grid.Row="1"
+                                       Text="{Binding FullName}"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       HorizontalTextAlignment="Center"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2" />
+
+                                <!-- Tagline -->
+                                <Label Grid.Row="2"
+                                       Text="{Binding TagLine}"
+                                       FontSize="11"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                       HorizontalTextAlignment="Center"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2"
+                                       VerticalOptions="Start" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="120" BackgroundColor="Transparent" />
+            </CollectionView.Footer>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32">
+                    <Label Text="No speakers found"
+                           FontSize="18"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Color="{StaticResource Primary}" />
+    </Grid>
 </ContentPage>

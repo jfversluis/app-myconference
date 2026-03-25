@@ -4,29 +4,36 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:Conference.Maui.Pages"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     Shell.FlyoutBehavior="Disabled"
     Title="MyConference">
 
     <TabBar>
-        <Tab Title="Sessions" Icon="calendar_regular.png">
+        <Tab Title="My Event" mi:MauiIcon.Value="{mi:Fluent Icon=Home28}">
+            <ShellContent
+                Title="My Event"
+                ContentTemplate="{DataTemplate pages:MyEventPage}"
+                Route="MyEvent" />
+        </Tab>
+        <Tab Title="Sessions" mi:MauiIcon.Value="{mi:Fluent Icon=CalendarLtr24}">
             <ShellContent
                 Title="Sessions"
                 ContentTemplate="{DataTemplate pages:SessionsPage}"
                 Route="Sessions" />
         </Tab>
-        <Tab Title="Speakers" Icon="people_regular.png">
+        <Tab Title="Speakers" mi:MauiIcon.Value="{mi:Fluent Icon=People28}">
             <ShellContent
                 Title="Speakers"
                 ContentTemplate="{DataTemplate pages:SpeakersPage}"
                 Route="Speakers" />
         </Tab>
-        <Tab Title="My Agenda" Icon="star.png">
+        <Tab Title="My Agenda" mi:MauiIcon.Value="{mi:Fluent Icon=Star12}">
             <ShellContent
                 Title="My Agenda"
                 ContentTemplate="{DataTemplate pages:FavoritesPage}"
                 Route="Favorites" />
         </Tab>
-        <Tab Title="About" Icon="info_regular.png">
+        <Tab Title="About" mi:MauiIcon.Value="{mi:Fluent Icon=Info28}">
             <ShellContent
                 Title="About"
                 ContentTemplate="{DataTemplate pages:AboutPage}"

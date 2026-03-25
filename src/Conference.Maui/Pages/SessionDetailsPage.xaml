@@ -7,7 +7,8 @@
              x:Class="Conference.Maui.Pages.SessionDetailsPage"
              x:DataType="vm:SessionDetailsViewModel"
              Title="Session"
-             SafeAreaEdges="None">
+             SafeAreaEdges="None"
+             x:Name="ThisPage">
 
     <Grid SafeAreaEdges="None">
         <!-- Loading State -->
@@ -233,9 +234,7 @@
                                             StrokeShape="RoundRectangle 12"
                                             Padding="12">
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer 
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SessionDetailsViewModel}}, Path=NavigateToSpeakerCommand}"
-                                                CommandParameter="{Binding .}" />
+                                            <TapGestureRecognizer Tapped="OnSpeakerTapped" />
                                         </Border.GestureRecognizers>
                                         <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
                                             <!-- Speaker Avatar -->

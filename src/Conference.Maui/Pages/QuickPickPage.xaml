@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:swipe="clr-namespace:Plugin.Maui.SwipeCardView;assembly=Plugin.Maui.SwipeCardView"
+             xmlns:core="clr-namespace:Plugin.Maui.SwipeCardView.Core;assembly=Plugin.Maui.SwipeCardView"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             x:Class="Conference.Maui.Pages.QuickPickPage"
+             x:DataType="vm:QuickPickViewModel"
+             Title="Quick Pick"
+             Shell.TabBarIsVisible="False"
+             Shell.NavBarIsVisible="False"
+             Background="{AppThemeBinding Light=#F8F7FA, Dark={StaticResource Gray950}}">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="0" SafeAreaEdges="Container"
+          Background="{AppThemeBinding Light=#F8F7FA, Dark={StaticResource Gray950}}">
+
+        <!-- Top Bar -->
+        <Grid Grid.Row="0" Padding="20,12,20,8" RowDefinitions="Auto,Auto" RowSpacing="6">
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="{Binding RemainingText}"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                       VerticalOptions="Center"
+                       SemanticProperties.Description="Sessions remaining to review" />
+                <Button Grid.Column="1" mi:MauiIcon.Value="{mi:Fluent Icon=Dismiss12}"
+                        Command="{Binding CloseCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                        FontSize="20"
+                        Padding="8,4"
+                        MinimumWidthRequest="48" MinimumHeightRequest="48"
+                        VerticalOptions="Center"
+                        SemanticProperties.Description="Close Quick Pick" />
+            </Grid>
+            <ProgressBar Grid.Row="1"
+                         x:Name="ProgressIndicator"
+                         Progress="{Binding Progress}"
+                         ProgressColor="{StaticResource Primary}"
+                         HeightRequest="3" />
+        </Grid>
+
+        <!-- Conflict note — calm, integrated -->
+        <Label Grid.Row="1"
+               Text="{Binding ConflictText}"
+               IsVisible="{Binding HasConflict}"
+               FontSize="12"
+               TextColor="{StaticResource Primary}"
+               HorizontalTextAlignment="Center"
+               Padding="20,4,20,2" />
+
+        <!-- Loading -->
+        <VerticalStackLayout Grid.Row="2"
+                             IsVisible="{Binding IsBusy}"
+                             VerticalOptions="Center" HorizontalOptions="Center"
+                             Spacing="16">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               Color="{StaticResource Primary}"
+                               HeightRequest="36" WidthRequest="36" />
+            <Label Text="Loading sessions…"
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                   HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <!-- Error State -->
+        <VerticalStackLayout Grid.Row="2"
+                             IsVisible="{Binding HasLoadError}"
+                             VerticalOptions="Center" HorizontalOptions="Center"
+                             Spacing="12" Padding="40">
+            <Label Text="Couldn't load sessions"
+                   FontSize="17" FontAttributes="Bold"
+                   HorizontalTextAlignment="Center" />
+            <Label Text="Check your connection and try again."
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                   HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <!-- Card Stack -->
+        <swipe:SwipeCardView Grid.Row="2"
+                             x:Name="SwipeCardView"
+                             ItemsSource="{Binding Cards}"
+                             Threshold="100"
+                             SupportedSwipeDirections="Left, Right"
+                             SupportedDraggingDirections="Left, Right"
+                             AnimationLength="200"
+                             CardRotation="8"
+                             BackCardScale="0.97"
+                             VerticalOptions="Fill"
+                             IsVisible="{Binding HasCards}"
+                             Margin="16,4">
+
+            <swipe:SwipeCardView.ItemTemplate>
+                <DataTemplate x:DataType="models:SessionItem">
+                    <Grid>
+                        <!-- Main Card -->
+                        <Border StrokeShape="RoundRectangle 16"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
+                                StrokeThickness="0.5"
+                                Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                Padding="0"
+                                Margin="8">
+                            <Border.Shadow>
+                                <Shadow Brush="{AppThemeBinding Light=#18000000, Dark=#30000000}"
+                                        Offset="0,8" Radius="24" Opacity="0.7" />
+                            </Border.Shadow>
+                            <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Padding="0">
+
+                                <!-- Speakers — promoted above title for visual anchoring -->
+                                <Grid Grid.Row="0" ColumnDefinitions="Auto,*"
+                                      Padding="24,22,24,0" ColumnSpacing="10">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Border StrokeShape="RoundRectangle 18"
+                                                Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                StrokeThickness="2"
+                                                HeightRequest="36" WidthRequest="36"
+                                                Background="{StaticResource Primary}"
+                                                IsVisible="{Binding HasSpeaker1}">
+                                            <Image Source="{Binding Speaker1.ProfilePictureUrl}"
+                                                   Aspect="AspectFill"
+                                                   HeightRequest="36" WidthRequest="36">
+                                                <Image.Clip>
+                                                    <EllipseGeometry Center="18,18" RadiusX="18" RadiusY="18" />
+                                                </Image.Clip>
+                                            </Image>
+                                        </Border>
+                                        <Border StrokeShape="RoundRectangle 18"
+                                                Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                                StrokeThickness="2"
+                                                HeightRequest="36" WidthRequest="36"
+                                                Background="{StaticResource PrimaryDark}"
+                                                Margin="-8,0,0,0"
+                                                IsVisible="{Binding HasSpeaker2}">
+                                            <Image Source="{Binding Speaker2.ProfilePictureUrl}"
+                                                   Aspect="AspectFill"
+                                                   HeightRequest="36" WidthRequest="36">
+                                                <Image.Clip>
+                                                    <EllipseGeometry Center="18,18" RadiusX="18" RadiusY="18" />
+                                                </Image.Clip>
+                                            </Image>
+                                        </Border>
+                                        <Border StrokeShape="RoundRectangle 18"
+                                                StrokeThickness="0"
+                                                HeightRequest="36" WidthRequest="36"
+                                                Background="{StaticResource Primary}"
+                                                Margin="-8,0,0,0"
+                                                IsVisible="{Binding HasExtraSpeakers}">
+                                            <Label Text="{Binding ExtraSpeakersText}"
+                                                   FontSize="11" FontAttributes="Bold"
+                                                   TextColor="White"
+                                                   HorizontalTextAlignment="Center"
+                                                   VerticalTextAlignment="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                    <Label Grid.Column="1" Text="{Binding SpeakerNames}" FontSize="14"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                           LineBreakMode="TailTruncation" MaxLines="1"
+                                           VerticalOptions="Center" />
+                                </Grid>
+
+                                <!-- Metadata row: date, time, room, duration — below speakers -->
+                                <HorizontalStackLayout Grid.Row="1" Spacing="6"
+                                                       Padding="24,8,24,0">
+                                    <Label Text="{Binding StartsAt, StringFormat='{0:ddd, MMM d}'}"
+                                           FontSize="12" FontAttributes="Bold"
+                                           TextColor="{StaticResource Primary}"
+                                           VerticalOptions="Center" />
+                                    <Label Text="·" FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding TimeDisplay}" FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                           VerticalOptions="Center" />
+                                    <Label Text="·" FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                           VerticalOptions="Center"
+                                           IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
+                                    <Label Text="{Binding RoomName}" FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                           VerticalOptions="Center" LineBreakMode="TailTruncation"
+                                           IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
+                                    <Label Text="·" FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding DurationDisplay}" FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+
+                                <!-- Title -->
+                                <Label Grid.Row="2" Text="{Binding Title}"
+                                       FontSize="22" FontAttributes="Bold"
+                                       LineBreakMode="WordWrap" MaxLines="3"
+                                       LineHeight="1.15"
+                                       Padding="24,12,24,0"
+                                       SemanticProperties.HeadingLevel="Level2" />
+
+                                <!-- Description -->
+                                <Label Grid.Row="3" Text="{Binding Description}"
+                                       FontSize="14" LineHeight="1.5"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                       LineBreakMode="WordWrap" MaxLines="4"
+                                       Padding="24,10,24,0" />
+
+                                <!-- Bottom: Details bar — full-width tappable -->
+                                <Border Grid.Row="4" StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 0,0,16,16"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray800}}"
+                                        Padding="24,16,24,16"
+                                        Margin="0,14,0,0">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnDetailsTapped" />
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="Session Details"
+                                               FontSize="14" FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}"
+                                               VerticalOptions="Center" />
+                                        <Label Grid.Column="1" Text="›"
+                                               FontSize="18"
+                                               TextColor="{StaticResource Primary}"
+                                               VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Add overlay — subtle purple tint, not a shout -->
+                        <Border x:Name="LikeFrame"
+                                StrokeShape="RoundRectangle 12"
+                                Stroke="{StaticResource Primary}" StrokeThickness="3"
+                                BackgroundColor="#15512BD4"
+                                HorizontalOptions="Start" VerticalOptions="Start"
+                                Margin="36,48" Rotation="-12" Opacity="0"
+                                Padding="14,6">
+                            <Label Text="ADD" TextColor="{StaticResource Primary}" FontSize="24" FontAttributes="Bold"
+                                   CharacterSpacing="2" />
+                        </Border>
+
+                        <!-- Skip overlay — quiet grey -->
+                        <Border x:Name="NopeFrame"
+                                StrokeShape="RoundRectangle 12"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                StrokeThickness="3"
+                                BackgroundColor="{AppThemeBinding Light=#10000000, Dark=#15FFFFFF}"
+                                HorizontalOptions="End" VerticalOptions="Start"
+                                Margin="36,48" Rotation="12" Opacity="0"
+                                Padding="14,6">
+                            <Label Text="SKIP"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   FontSize="24" FontAttributes="Bold"
+                                   CharacterSpacing="2" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </swipe:SwipeCardView.ItemTemplate>
+        </swipe:SwipeCardView>
+
+        <!-- Completion -->
+        <Border Grid.Row="2" StrokeThickness="0"
+                StrokeShape="RoundRectangle 20"
+                Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                Margin="28" Padding="0"
+                VerticalOptions="Center" HorizontalOptions="Fill"
+                IsVisible="{Binding IsComplete}">
+            <Border.Shadow>
+                <Shadow Brush="#15000000" Offset="0,6" Radius="20" Opacity="0.5" />
+            </Border.Shadow>
+            <VerticalStackLayout Spacing="6" Padding="32,44">
+                <Label Text="✓" FontSize="44"
+                       TextColor="{StaticResource Primary}"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="Done" FontSize="26" FontAttributes="Bold"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,4,0,0" />
+                <Label HorizontalTextAlignment="Center" FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                       LineBreakMode="WordWrap" Margin="0,4,0,20">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding AddedCount}" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                            <Span Text=" added · " />
+                            <Span Text="{Binding SkippedCount}" FontAttributes="Bold" />
+                            <Span Text=" skipped" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Button Text="View My Agenda"
+                        Command="{Binding ViewAgendaCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontSize="15" FontAttributes="Bold"
+                        CornerRadius="12"
+                        Padding="24,14"
+                        HorizontalOptions="Fill"
+                        Margin="4,0"
+                        SemanticProperties.Description="View your favorited sessions" />
+
+                <Button Text="Review Skipped"
+                        Command="{Binding ResetSkippedCommand}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
+                        TextColor="{StaticResource Primary}"
+                        FontSize="14"
+                        CornerRadius="12"
+                        Padding="20,12"
+                        HorizontalOptions="Fill"
+                        Margin="4,0" />
+
+                <Button Text="Close"
+                        Command="{Binding CloseCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                        FontSize="13"
+                        Padding="20,10"
+                        HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Bottom Action Bar: Skip / Undo / Add -->
+        <Grid Grid.Row="3"
+              BackgroundColor="{AppThemeBinding Light=#F8F7FA, Dark={StaticResource Gray950}}"
+              Padding="24,12,24,0"
+              IsVisible="{Binding HasCards}"
+              ColumnDefinitions="*,Auto,*">
+
+            <!-- Skip button -->
+            <Border x:Name="SkipButton"
+                    Grid.Column="0"
+                    AutomationId="SkipButton"
+                    StrokeShape="RoundRectangle 28"
+                    StrokeThickness="1.5"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                    HeightRequest="56" WidthRequest="56"
+                    HorizontalOptions="Center"
+                    SemanticProperties.Description="Skip this session">
+                <Border.Shadow>
+                    <Shadow Brush="#10000000" Offset="0,2" Radius="8" Opacity="0.5" />
+                </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSkipTapped" />
+                </Border.GestureRecognizers>
+                <Label mi:MauiIcon.Value="{mi:Fluent Icon=Dismiss12}" FontSize="22"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+            </Border>
+
+            <!-- Undo button (smaller, between the two) -->
+            <Border x:Name="UndoButton"
+                    Grid.Column="1"
+                    AutomationId="UndoButton"
+                    StrokeShape="RoundRectangle 20"
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                    HeightRequest="40" WidthRequest="40"
+                    HorizontalOptions="Center"
+                    Margin="20,0"
+                    Opacity="{Binding ShowUndo, Converter={toolkit:BoolToObjectConverter TrueObject=1, FalseObject=0}}"
+                    InputTransparent="{Binding ShowUndo, Converter={toolkit:InvertedBoolConverter}}"
+                    SemanticProperties.Description="Undo last swipe">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnUndoTapped" />
+                </Border.GestureRecognizers>
+                <Label mi:MauiIcon.Value="{mi:Fluent Icon=ArrowUndo24}" FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+            </Border>
+
+            <!-- Add button -->
+            <Border x:Name="AddButton"
+                    Grid.Column="2"
+                    AutomationId="AddButton"
+                    StrokeShape="RoundRectangle 28"
+                    StrokeThickness="1.5"
+                    Stroke="{StaticResource Primary}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                    HeightRequest="56" WidthRequest="56"
+                    HorizontalOptions="Center"
+                    SemanticProperties.Description="Add this session to favorites">
+                <Border.Shadow>
+                    <Shadow Brush="#10512BD4" Offset="0,2" Radius="8" Opacity="0.5" />
+                </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnAddTapped" />
+                </Border.GestureRecognizers>
+                <Label mi:MauiIcon.Value="{mi:Fluent Icon=Heart28}" FontSize="22"
+                       TextColor="{StaticResource Primary}"
+                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>
