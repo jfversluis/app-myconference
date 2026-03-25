@@ -301,6 +301,29 @@
                         Margin="4,0"
                         SemanticProperties.Description="View your favorited sessions" />
 
+                <Border StrokeThickness="1"
+                        Stroke="#E65100"
+                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#3E2723}"
+                        Padding="16,12"
+                        Margin="4,0"
+                        IsVisible="{Binding HasConflictsOnComplete}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ReviewConflictsCommand}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="⚠️" FontSize="15" VerticalOptions="Center" />
+                        <Label Text="{Binding ConflictSummaryText}"
+                               FontSize="14" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"
+                               VerticalOptions="Center" />
+                        <Label Text="— Review"
+                               FontSize="14"
+                               TextColor="{StaticResource Primary}"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
+
                 <Button Text="Review Skipped"
                         Command="{Binding ResetSkippedCommand}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"

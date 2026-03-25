@@ -74,6 +74,14 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
     [ObservableProperty]
     private bool _hasLoadError;
 
+    [ObservableProperty]
+    private int _totalConflictCount;
+
+    [ObservableProperty]
+    private string _conflictSummaryText = string.Empty;
+
+    public bool HasConflictsOnComplete => TotalConflictCount > 0;
+
     public int RemainingCount => TotalCount - SwipedCount;
     public double Progress => TotalCount > 0 ? (double)SwipedCount / TotalCount : 0;
     public string ProgressText => TotalCount > 0 ? $"{SwipedCount} / {TotalCount}" : string.Empty;
@@ -149,6 +157,7 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
             if (RemainingCount <= 0)
             {
                 IsComplete = true;
+                CountAllConflicts();
             }
             else
             {
@@ -211,9 +220,10 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
                 IsComplete = true;
                 ShowUndo = false;
                 HasConflict = false;
+                CountAllConflicts();
                 OnPropertyChanged(nameof(HasCards));
-                _logger.LogInformation("Quick Pick complete: {Added} added, {Skipped} skipped",
-                    AddedCount, SkippedCount);
+                _logger.LogInformation("Quick Pick complete: {Added} added, {Skipped} skipped, {Conflicts} conflicts",
+                    AddedCount, SkippedCount, TotalConflictCount);
             }
             else
             {
@@ -288,6 +298,49 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
     {
         // Don't clear — we want proactive conflict info to persist.
         // Only clear if there is no actual conflict on the current card.
+    }
+
+    /// <summary>
+    /// Counts all time-slot conflicts among favorited sessions for the completion summary.
+    /// </summary>
+    private void CountAllConflicts()
+    {
+        if (_allData == null) return;
+
+        var allFavIds = _favoriteIds.Union(_sessionFavoritedIds).ToHashSet();
+        var favSessions = _allData.Sessions
+            .Where(s => allFavIds.Contains(s.Id))
+            .OrderBy(s => s.StartsAt)
+            .ToList();
+
+        var conflictingIds = new HashSet<string>();
+        for (int i = 0; i < favSessions.Count; i++)
+        {
+            for (int j = i + 1; j < favSessions.Count; j++)
+            {
+                if (favSessions[i].StartsAt < favSessions[j].EndsAt &&
+                    favSessions[i].EndsAt > favSessions[j].StartsAt)
+                {
+                    conflictingIds.Add(favSessions[i].Id);
+                    conflictingIds.Add(favSessions[j].Id);
+                }
+            }
+        }
+
+        TotalConflictCount = conflictingIds.Count;
+        ConflictSummaryText = TotalConflictCount switch
+        {
+            0 => string.Empty,
+            1 => "1 session has a time conflict",
+            _ => $"{TotalConflictCount} sessions have time conflicts"
+        };
+        OnPropertyChanged(nameof(HasConflictsOnComplete));
+    }
+
+    [RelayCommand]
+    private async Task ReviewConflictsAsync()
+    {
+        await Shell.Current.GoToAsync("//Favorites");
     }
 
     [RelayCommand]
