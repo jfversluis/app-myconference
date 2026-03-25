@@ -203,7 +203,7 @@
                                 <Label Grid.Row="3" Text="{Binding Description}"
                                        FontSize="14" LineHeight="1.5"
                                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                                       LineBreakMode="WordWrap" MaxLines="20"
+                                       LineBreakMode="TailTruncation" MaxLines="20"
                                        Padding="24,10,24,0"
                                        VerticalOptions="Start" />
 
