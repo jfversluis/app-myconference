@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="Conference.Maui.Pages.AboutPage"
              x:DataType="vm:AboutViewModel"
              Title="{Binding Title}"
@@ -29,14 +30,14 @@
                        TextColor="White"
                        HorizontalTextAlignment="Center" />
                 <Label Grid.Row="1"
-                       Text="{Binding EventDate}"
+                       Text="{Binding EventDateRange}"
                        FontSize="15"
                        TextColor="White"
                        Opacity="0.9"
                        HorizontalTextAlignment="Center"
                        Margin="0,6,0,0" />
                 <Button Grid.Row="2"
-                        Text="Visit Website ↗"
+                        Text="Visit Website"
                         Command="{Binding OpenConferenceWebsiteCommand}"
                         BackgroundColor="White"
                         TextColor="{StaticResource Primary}"
@@ -44,7 +45,8 @@
                         FontAttributes="Bold"
                         FontSize="14"
                         HeightRequest="40"
-                        Margin="40,16,40,0" />
+                        Margin="40,16,40,0"
+                        mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Primary}}" />
             </Grid>
 
             <!-- Content -->
@@ -65,13 +67,15 @@
                 </VerticalStackLayout>
 
                 <!-- Venue Info -->
-                <Border StrokeShape="RoundRectangle 12"
+                <Border x:Name="VenueCard"
+                        StrokeShape="RoundRectangle 12"
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                         Padding="16">
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                        <Label Grid.Column="0" Text="📍" FontSize="24" VerticalOptions="Start" Margin="0,2,0,0" />
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Start" Margin="0,2,0,0"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Location24, IconColor={StaticResource Primary}}" />
                         <VerticalStackLayout Grid.Column="1" Spacing="4">
                             <Label Text="{Binding VenueName}"
                                    FontSize="16"
@@ -82,6 +86,9 @@
                                    LineBreakMode="WordWrap"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                         </VerticalStackLayout>
+                        <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
+                               IsVisible="{Binding IsPhysicalVenue}"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={StaticResource Gray400}}" />
                     </Grid>
                 </Border>
 
@@ -128,46 +135,13 @@
                            FontSize="13"
                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
 
-                    <FlexLayout BindableLayout.ItemsSource="{Binding Sponsors}"
+                    <FlexLayout x:Name="SponsorsLayout"
                                 Wrap="Wrap"
                                 JustifyContent="SpaceEvenly"
-                                AlignItems="Center">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate x:DataType="models:Sponsor">
-                                <Border StrokeShape="RoundRectangle 12"
-                                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
-                                        StrokeThickness="1"
-                                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                        Padding="12"
-                                        Margin="4,4"
-                                        WidthRequest="155"
-                                        HeightRequest="120">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AboutViewModel}}, Path=OpenSponsorWebsiteCommand}"
-                                                              CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <VerticalStackLayout Spacing="8"
-                                                         VerticalOptions="Center"
-                                                         HorizontalOptions="Center">
-                                        <Image Source="{Binding ImageUrl}"
-                                               Aspect="AspectFit"
-                                               HeightRequest="50"
-                                               WidthRequest="110"
-                                               HorizontalOptions="Center" />
-                                        <Label Text="{Binding Name}"
-                                               FontSize="12"
-                                               FontAttributes="Bold"
-                                               HorizontalTextAlignment="Center"
-                                               LineBreakMode="TailTruncation"
-                                               MaxLines="1" />
-                                    </VerticalStackLayout>
-                                </Border>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </FlexLayout>
+                                AlignItems="Center" />
                 </VerticalStackLayout>
 
-                <BoxView HeightRequest="80" BackgroundColor="Transparent" />
+                <BoxView HeightRequest="120" BackgroundColor="Transparent" />
             </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>

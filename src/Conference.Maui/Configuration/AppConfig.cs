@@ -51,15 +51,22 @@ public static class AppConfig
     public const string EventDescription = "A full day of .NET MAUI content with world-class speakers, hands-on sessions, and community networking. Whether you're just getting started or building production apps, there's something for everyone.";
 
     /// <summary>
-    /// Event venue name and location.
+    /// Whether the event is online-only (no physical venue).
+    /// When true, the venue address won't be tappable for maps.
     /// </summary>
-    public const string VenueName = "Online Event";
-    public const string VenueDetails = "Join from anywhere — all sessions are streamed live and available on-demand after the event.";
+    public const bool IsOnlineEvent = false;
 
     /// <summary>
-    /// Event date display string.
+    /// Event venue name and location.
     /// </summary>
-    public const string EventDate = "September 10, 2025";
+    public const string VenueName = "Microsoft Conference Center";
+    public const string VenueDetails = "Building 33, 16070 NE 36th Way, Redmond, WA 98052";
+
+    /// <summary>
+    /// Event start and end dates.
+    /// </summary>
+    public static readonly DateTime EventStartDate = new(2025, 9, 10);
+    public static readonly DateTime EventEndDate = new(2025, 9, 12);
 
     /// <summary>
     /// Conference website URL.

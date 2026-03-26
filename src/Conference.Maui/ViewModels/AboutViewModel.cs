@@ -15,9 +15,32 @@ public partial class AboutViewModel : BaseViewModel
 {
     public string ConferenceName => AppConfig.ConferenceName;
     public string EventDescription => AppConfig.EventDescription;
-    public string EventDate => AppConfig.EventDate;
     public string VenueName => AppConfig.VenueName;
     public string VenueDetails => AppConfig.VenueDetails;
+    public bool IsPhysicalVenue => !AppConfig.IsOnlineEvent;
+
+    public string EventDateRange
+    {
+        get
+        {
+            var start = AppConfig.EventStartDate;
+            var end = AppConfig.EventEndDate;
+
+            if (start == end)
+                return start.ToString("D");
+
+            // Same month: "September 10 – 12, 2025"
+            if (start.Year == end.Year && start.Month == end.Month)
+                return $"{start.ToString("MMMM d")} – {end.Day}, {end.Year}";
+
+            // Same year, different month: "September 10 – October 2, 2025"
+            if (start.Year == end.Year)
+                return $"{start.ToString("MMMM d")} – {end.ToString("MMMM d")}, {end.Year}";
+
+            // Different years
+            return $"{start.ToString("D")} – {end.ToString("D")}";
+        }
+    }
 
     [ObservableProperty]
     private ObservableCollection<Sponsor> _sponsors = [];
