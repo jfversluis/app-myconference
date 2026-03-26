@@ -270,9 +270,11 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         var today = DateOnly.FromDateTime(now.LocalDateTime);
 
         // Happening Now: sessions where StartsAt <= now < EndsAt
+        // Favorites first so the user's sessions are immediately visible
         var liveSessions = _allData.Sessions
             .Where(s => !s.IsServiceSession && s.StartsAt <= now && s.EndsAt > now)
-            .OrderBy(s => s.EndsAt)
+            .OrderByDescending(s => _favoriteIds.Contains(s.Id))
+            .ThenBy(s => s.EndsAt)
             .Select(s => CreateSessionItem(s))
             .ToList();
 

@@ -95,7 +95,20 @@
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                             Padding="14"
                                             WidthRequest="260">
-                                        <VerticalStackLayout Spacing="6" VerticalOptions="Start">
+                                        <Grid>
+                                            <!-- Favorite badge -->
+                                            <Border StrokeShape="RoundRectangle 4"
+                                                    StrokeThickness="0"
+                                                    Background="{StaticResource Primary}"
+                                                    Padding="6,2"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Start"
+                                                    Margin="0,-6,-6,0"
+                                                    IsVisible="{Binding IsFavorite}">
+                                                <Label Text="⭐ MY SESSION" FontSize="9" FontAttributes="Bold"
+                                                       TextColor="White" CharacterSpacing="0.3" />
+                                            </Border>
+                                            <VerticalStackLayout Spacing="6" VerticalOptions="Start">
                                             <Label Text="{Binding Title}"
                                                    FontSize="14" FontAttributes="Bold"
                                                    LineBreakMode="TailTruncation" MaxLines="2" />
@@ -165,6 +178,7 @@
                                                        VerticalOptions="Center" />
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
+                                        </Grid>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
