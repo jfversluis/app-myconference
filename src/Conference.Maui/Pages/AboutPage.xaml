@@ -74,7 +74,7 @@
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                         Padding="16">
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Start" Margin="0,2,0,0"
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
                                mi:MauiIcon.Value="{mi:Fluent Icon=Location24, IconColor={StaticResource Primary}}" />
                         <VerticalStackLayout Grid.Column="1" Spacing="4">
                             <Label Text="{Binding VenueName}"

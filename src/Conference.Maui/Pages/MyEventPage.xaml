@@ -94,20 +94,21 @@
                                             Stroke="#E53935"
                                             StrokeThickness="1.5"
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                            Padding="14"
+                                            Padding="16"
                                             WidthRequest="260">
-                                        <Grid>
-                                            <!-- Favorite star indicator -->
-                                            <Image HorizontalOptions="End"
-                                                   VerticalOptions="Start"
-                                                   Margin="0,-2,-2,0"
-                                                   HeightRequest="14" WidthRequest="14"
-                                                   IsVisible="{Binding IsFavorite}"
-                                                   mi:MauiIcon.Value="{mi:Fluent Icon=Star12, IconColor={StaticResource Primary}}" />
-                                            <VerticalStackLayout Spacing="6" VerticalOptions="Start">
-                                            <Label Text="{Binding Title}"
-                                                   FontSize="14" FontAttributes="Bold"
-                                                   LineBreakMode="TailTruncation" MaxLines="2" />
+                                        <VerticalStackLayout Spacing="6" VerticalOptions="Start">
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                                                <Label Grid.Column="0"
+                                                       Text="{Binding Title}"
+                                                       FontSize="14" FontAttributes="Bold"
+                                                       LineBreakMode="TailTruncation" MaxLines="2" />
+                                                <Image Grid.Column="1"
+                                                       VerticalOptions="Start"
+                                                       Margin="0,3,0,0"
+                                                       HeightRequest="12" WidthRequest="12"
+                                                       IsVisible="{Binding IsFavorite}"
+                                                       mi:MauiIcon.Value="{mi:Fluent Icon=Star12, IconColor={StaticResource Primary}}" />
+                                            </Grid>
                                             <HorizontalStackLayout Spacing="12">
                                                 <HorizontalStackLayout Spacing="4"
                                                                        IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
@@ -176,7 +177,6 @@
                                                        VerticalOptions="Center" />
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
-                                        </Grid>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
@@ -223,21 +223,21 @@
                                             Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                                             StrokeThickness="1"
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                            Padding="14"
+                                            Padding="16"
                                             WidthRequest="260">
-                                        <Grid WidthRequest="232">
-                                            <!-- Favorite star indicator -->
-                                            <Image HorizontalOptions="End"
-                                                   VerticalOptions="Start"
-                                                   Margin="0,-2,-2,0"
-                                                   HeightRequest="14" WidthRequest="14"
-                                                   IsVisible="{Binding IsFavorite}"
-                                                   mi:MauiIcon.Value="{mi:Fluent Icon=Star12, IconColor={StaticResource Primary}}" />
-                                            <VerticalStackLayout Spacing="6" VerticalOptions="Start">
-                                                <Label Text="{Binding Title}"
+                                        <VerticalStackLayout Spacing="6" VerticalOptions="Start">
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                                                <Label Grid.Column="0"
+                                                       Text="{Binding Title}"
                                                        FontSize="14" FontAttributes="Bold"
-                                                       LineBreakMode="TailTruncation" MaxLines="2"
-                                                       MaximumWidthRequest="220" />
+                                                       LineBreakMode="TailTruncation" MaxLines="2" />
+                                                <Image Grid.Column="1"
+                                                       VerticalOptions="Start"
+                                                       Margin="0,3,0,0"
+                                                       HeightRequest="12" WidthRequest="12"
+                                                       IsVisible="{Binding IsFavorite}"
+                                                       mi:MauiIcon.Value="{mi:Fluent Icon=Star12, IconColor={StaticResource Primary}}" />
+                                            </Grid>
                                                 <HorizontalStackLayout Spacing="12">
                                                     <HorizontalStackLayout Spacing="4"
                                                                            IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
@@ -307,7 +307,6 @@
                                                            VerticalOptions="Center" />
                                                 </HorizontalStackLayout>
                                             </VerticalStackLayout>
-                                        </Grid>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
