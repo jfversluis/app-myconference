@@ -3,6 +3,7 @@ using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Conference.Maui.Pages;
@@ -107,6 +108,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
     [ObservableProperty]
     private string _eventDateDisplay = string.Empty;
+
+    public string EventHeaderTitle => $"Your {AppConfig.ConferenceName}";
 
     [ObservableProperty]
     private bool _hasLoadError;

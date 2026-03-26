@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:config="clr-namespace:Conference.Maui.Configuration"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="Conference.Maui.Pages.MyEventPage"
@@ -32,7 +33,7 @@
                            TextColor="White"
                            Opacity="0.8" />
                     <Label Grid.Row="1"
-                           Text="Your Event Dashboard"
+                           Text="{Binding EventHeaderTitle}"
                            FontSize="22"
                            FontAttributes="Bold"
                            TextColor="White" />
