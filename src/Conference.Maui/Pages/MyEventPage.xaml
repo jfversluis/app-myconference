@@ -25,7 +25,7 @@
             <VerticalStackLayout Spacing="0">
 
                 <!-- Event Header -->
-                <Grid Padding="20,16" Background="{StaticResource Primary}"
+                <Grid Padding="20,16" Background="{StaticResource HeroGradient}"
                       RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
                     <Label Grid.Row="0"
                            Text="{Binding EventDateDisplay}"
@@ -322,9 +322,9 @@
                             Padding="16"
                             IsVisible="{Binding ShowOnboarding}">
                         <VerticalStackLayout Spacing="8">
-                            <Label Text="👋 Build your personal agenda"
+                            <Label Text="Build your personal agenda"
                                    FontSize="16" FontAttributes="Bold" />
-                            <Label Text="Tap ☆ on sessions you'd like to attend. Your favorites will appear here so you never miss a talk."
+                            <Label Text="Tap the star on sessions you'd like to attend. Your favorites will appear here so you never miss a talk."
                                    FontSize="13"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
                                    LineBreakMode="WordWrap" />
@@ -335,7 +335,7 @@
                                        TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="📶 WiFi available: " />
+                                            <Span Text="WiFi available: " />
                                             <Span Text="{Binding WifiNetworkName}" FontAttributes="Bold" />
                                             <Span Text=" — check About for details" />
                                         </FormattedString>

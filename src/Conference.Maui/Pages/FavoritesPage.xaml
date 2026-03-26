@@ -124,13 +124,14 @@
                              Padding="32"
                              Spacing="12"
                              IsVisible="{Binding ShowEmptyState}">
-            <Label Text="☆" FontSize="48" HorizontalOptions="Center" />
+            <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
+                   mi:MauiIcon.Value="{mi:Fluent Icon=Star24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
             <Label Text="No sessions in your agenda yet"
                    FontSize="18"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
-            <Label Text="Browse sessions and tap ☆ Add to My Agenda to build your personal schedule."
+            <Label Text="Browse sessions and tap the star icon to build your personal schedule."
                    FontSize="14"
                    HorizontalTextAlignment="Center"
                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />

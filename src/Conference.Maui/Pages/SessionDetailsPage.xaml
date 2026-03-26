@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="Conference.Maui.Pages.SessionDetailsPage"
              x:DataType="vm:SessionDetailsViewModel"
              Title="Session"
@@ -33,7 +34,7 @@
                 
                 <!-- Compact Header Section -->
                 <Grid Padding="16,16,16,14" 
-                      Background="{StaticResource Primary}"
+                      Background="{StaticResource HeroGradient}"
                       IsVisible="{Binding Session, Converter={toolkit:IsNotNullConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -193,7 +194,7 @@
                                      IsVisible="{Binding Session, Converter={toolkit:IsNotNullConverter}}">
                     
                     <!-- Favorite Button -->
-                    <Button Text="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='★ Added to My Agenda', FalseObject='☆ Add to My Agenda'}}"
+                    <Button Text="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='★  Added to My Agenda', FalseObject='☆  Add to My Agenda'}}"
                             Command="{Binding ToggleFavoriteCommand}"
                             BackgroundColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject=Transparent}}"
                             TextColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject=White, FalseObject={StaticResource Primary}}}"
@@ -281,11 +282,8 @@
                                             </VerticalStackLayout>
 
                                             <!-- Chevron -->
-                                            <Label Grid.Column="2"
-                                                   Text="›"
-                                                   FontSize="20"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
-                                                   VerticalOptions="Center" />
+                                            <Image Grid.Column="2" WidthRequest="16" HeightRequest="16" VerticalOptions="Center"
+                                                   mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconSize=16, IconColor={AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}}" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

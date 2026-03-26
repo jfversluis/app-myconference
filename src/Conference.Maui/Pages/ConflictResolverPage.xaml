@@ -48,7 +48,8 @@
         <VerticalStackLayout Grid.Row="1" Spacing="12" Padding="32"
                              VerticalOptions="Center" HorizontalOptions="Center"
                              IsVisible="{Binding AllResolved}">
-            <Label Text="🎉" FontSize="48" HorizontalTextAlignment="Center" />
+            <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
+                   mi:MauiIcon.Value="{mi:Fluent Icon=Sparkle24, IconSize=48, IconColor={StaticResource Primary}}" />
             <Label Text="All conflicts resolved!" FontSize="22" FontAttributes="Bold"
                    HorizontalTextAlignment="Center" />
             <Label Text="Your agenda is now conflict-free."
@@ -78,7 +79,8 @@
                                 BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3E2723}"
                                 Padding="16,10">
                             <HorizontalStackLayout Spacing="8">
-                                <Label Text="⚠️" FontSize="14" VerticalOptions="Center" />
+                                <Image HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=Warning16, IconSize=16, IconColor={AppThemeBinding Light=#E65100, Dark=#FFB74D}}" />
                                 <Label Text="{Binding TimeSlotLabel}"
                                        FontSize="14" FontAttributes="Bold"
                                        TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"

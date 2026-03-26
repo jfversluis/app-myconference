@@ -220,10 +220,8 @@
                                                FontSize="14" FontAttributes="Bold"
                                                TextColor="{StaticResource Primary}"
                                                VerticalOptions="Center" />
-                                        <Label Grid.Column="1" Text="›"
-                                               FontSize="18"
-                                               TextColor="{StaticResource Primary}"
-                                               VerticalOptions="Center" />
+                                        <Image Grid.Column="1" WidthRequest="16" HeightRequest="16" VerticalOptions="Center"
+                                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconSize=16, IconColor={StaticResource Primary}}" />
                                     </Grid>
                                 </Border>
                             </Grid>
@@ -271,9 +269,9 @@
                 <Shadow Brush="#15000000" Offset="0,6" Radius="20" Opacity="0.5" />
             </Border.Shadow>
             <VerticalStackLayout Spacing="4" Padding="28,32">
-                <Label Text="✓" FontSize="40"
-                       TextColor="{StaticResource Primary}"
-                       HorizontalTextAlignment="Center" />
+                <Image HeightRequest="40" WidthRequest="40"
+                       HorizontalOptions="Center"
+                       mi:MauiIcon.Value="{mi:Fluent Icon=CheckmarkCircle24, IconSize=40, IconColor={StaticResource Primary}}" />
                 <Label Text="Done" FontSize="24" FontAttributes="Bold"
                        HorizontalTextAlignment="Center"
                        Margin="0,2,0,0" />
@@ -305,7 +303,7 @@
                         Margin="4,0"
                         SemanticProperties.Description="View your favorited sessions" />
 
-                <Button Text="⚠️ Resolve Conflicts"
+                <Button Text="Resolve Conflicts"
                         Command="{Binding ReviewConflictsCommand}"
                         BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#3E2723}"
                         TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"
@@ -314,7 +312,8 @@
                         Padding="20,10"
                         HorizontalOptions="Fill"
                         Margin="4,0"
-                        IsVisible="{Binding HasConflictsOnComplete}" />
+                        IsVisible="{Binding HasConflictsOnComplete}"
+                        mi:MauiIcon.Value="{mi:Fluent Icon=Warning16, IconSize=16, IconColor={AppThemeBinding Light=#E65100, Dark=#FFB74D}}" />
 
                 <Button Text="Review Skipped"
                         Command="{Binding ResetSkippedCommand}"

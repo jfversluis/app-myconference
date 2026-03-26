@@ -13,6 +13,14 @@
     <Color x:Key="Primary">#0078D4</Color><!-- Default Azure Blue -->
     <Color x:Key="PrimaryDark">#106EBE</Color><!-- Darker Azure Blue -->
     <Color x:Key="PrimaryLight">#40E0FF</Color><!-- Light Azure -->
+    <Color x:Key="PrimaryDeep">#005A9E</Color><!-- Deep Azure for gradient start -->
+
+    <!-- Hero Banner Gradient -->
+    <LinearGradientBrush x:Key="HeroGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#005A9E" Offset="0.0" />
+        <GradientStop Color="#0078D4" Offset="0.5" />
+        <GradientStop Color="#2B88D8" Offset="1.0" />
+    </LinearGradientBrush>
     
     <!-- Theme-specific Primary Colors -->
     <Color x:Key="LightPrimary">#0078D4</Color><!-- Bright Azure Blue for light theme -->

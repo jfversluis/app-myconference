@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
              xmlns:models="clr-namespace:Conference.Maui.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
              x:Class="Conference.Maui.Pages.SpeakerDetailsPage"
              x:DataType="vm:SpeakerDetailsViewModel"
              Title="{Binding Title}"
@@ -33,7 +34,7 @@
 
                 <!-- Header -->
                 <VerticalStackLayout Padding="16,20"
-                                     Background="{StaticResource Primary}"
+                                     Background="{StaticResource HeroGradient}"
                                      Spacing="12"
                                      HorizontalOptions="Fill"
                                      IsVisible="{Binding Speaker, Converter={toolkit:IsNotNullConverter}}">
@@ -146,10 +147,8 @@
                                                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
                                                 </HorizontalStackLayout>
                                             </HorizontalStackLayout>
-                                            <Label Grid.Row="1" Grid.Column="1"
-                                                   Text="›" FontSize="20"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
-                                                   VerticalOptions="Center" />
+                                            <Image Grid.Row="1" Grid.Column="1" WidthRequest="16" HeightRequest="16" VerticalOptions="Center"
+                                                   mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconSize=16, IconColor={AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}}" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

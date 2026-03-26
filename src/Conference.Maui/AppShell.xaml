@@ -9,7 +9,7 @@
     Title="MyConference">
 
     <TabBar>
-        <Tab Title="My Event" mi:MauiIcon.Value="{mi:Fluent Icon=Home28}">
+        <Tab Title="My Event" mi:MauiIcon.Value="{mi:Fluent Icon=Home24}">
             <ShellContent
                 Title="My Event"
                 ContentTemplate="{DataTemplate pages:MyEventPage}"
@@ -21,19 +21,19 @@
                 ContentTemplate="{DataTemplate pages:SessionsPage}"
                 Route="Sessions" />
         </Tab>
-        <Tab Title="Speakers" mi:MauiIcon.Value="{mi:Fluent Icon=People28}">
+        <Tab Title="Speakers" mi:MauiIcon.Value="{mi:Fluent Icon=People24}">
             <ShellContent
                 Title="Speakers"
                 ContentTemplate="{DataTemplate pages:SpeakersPage}"
                 Route="Speakers" />
         </Tab>
-        <Tab Title="My Agenda" mi:MauiIcon.Value="{mi:Fluent Icon=Star12}">
+        <Tab Title="My Agenda" mi:MauiIcon.Value="{mi:Fluent Icon=Star24}">
             <ShellContent
                 Title="My Agenda"
                 ContentTemplate="{DataTemplate pages:FavoritesPage}"
                 Route="Favorites" />
         </Tab>
-        <Tab Title="About" mi:MauiIcon.Value="{mi:Fluent Icon=Info28}">
+        <Tab Title="About" mi:MauiIcon.Value="{mi:Fluent Icon=Info24}">
             <ShellContent
                 Title="About"
                 ContentTemplate="{DataTemplate pages:AboutPage}"

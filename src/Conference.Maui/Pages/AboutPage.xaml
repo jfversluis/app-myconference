@@ -22,7 +22,7 @@
         <VerticalStackLayout Spacing="0">
 
             <!-- Hero Header -->
-            <Grid Padding="24,20" Background="{StaticResource Primary}" RowDefinitions="Auto,Auto,Auto">
+            <Grid Padding="24,20" Background="{StaticResource HeroGradient}" RowDefinitions="Auto,Auto,Auto">
                 <Label Grid.Row="0"
                        Text="{Binding ConferenceName}"
                        FontSize="26"
