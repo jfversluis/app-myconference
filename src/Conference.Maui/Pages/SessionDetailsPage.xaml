@@ -233,10 +233,11 @@
                                              Spacing="8">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate x:DataType="models:SpeakerItem">
-                                    <Border Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
-                                            StrokeThickness="0"
+                                    <Border Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                            StrokeThickness="1"
                                             StrokeShape="RoundRectangle 12"
-                                            Padding="12">
+                                            Padding="16">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnSpeakerTapped" />
                                         </Border.GestureRecognizers>

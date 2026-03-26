@@ -67,7 +67,7 @@
                                     Grid.Column="0"
                                     StrokeShape="RoundRectangle 4"
                                     StrokeThickness="0"
-                                    Background="#E53935"
+                                    Background="{StaticResource ErrorRed}"
                                     Padding="8,3"
                                     VerticalOptions="Center">
                                 <Label Text="LIVE" FontSize="10" FontAttributes="Bold"
@@ -92,7 +92,7 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:SessionItem">
                                     <Border StrokeShape="RoundRectangle 12"
-                                            Stroke="#E53935"
+                                            Stroke="{StaticResource ErrorRed}"
                                             StrokeThickness="1.5"
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                             Padding="16"
@@ -318,7 +318,7 @@
                     <Border StrokeShape="RoundRectangle 12"
                             Stroke="{StaticResource Primary}"
                             StrokeThickness="1"
-                            Background="{AppThemeBinding Light=#F3E5F5, Dark=#2D1B33}"
+                            Background="{AppThemeBinding Light={StaticResource OnboardingBgLight}, Dark={StaticResource OnboardingBgDark}}"
                             Padding="16"
                             IsVisible="{Binding ShowOnboarding}">
                         <VerticalStackLayout Spacing="8">

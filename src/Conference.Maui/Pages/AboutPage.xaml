@@ -22,7 +22,7 @@
         <VerticalStackLayout Spacing="0">
 
             <!-- Hero Header -->
-            <Grid Padding="24,20" Background="{StaticResource HeroGradient}" RowDefinitions="Auto,Auto,Auto">
+            <Grid Padding="20,16" Background="{StaticResource HeroGradient}" RowDefinitions="Auto,Auto,Auto">
                 <Label Grid.Row="0"
                        Text="{Binding ConferenceName}"
                        FontSize="26"
@@ -44,7 +44,7 @@
                         CornerRadius="10"
                         FontAttributes="Bold"
                         FontSize="14"
-                        HeightRequest="40"
+                        HeightRequest="44"
                         Margin="40,16,40,0"
                         mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Primary}}" />
             </Grid>

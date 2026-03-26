@@ -9,7 +9,7 @@
              x:DataType="vm:ConflictResolverViewModel"
              Title="Resolve Conflicts"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="{AppThemeBinding Light=#F8F7FA, Dark={StaticResource Gray950}}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
              x:Name="resolver">
 
     <Grid RowDefinitions="Auto,*,Auto" SafeAreaEdges="Container">
@@ -76,14 +76,14 @@
                         <!-- Time slot header -->
                         <Border StrokeThickness="0"
                                 StrokeShape="RoundRectangle 12,12,0,0"
-                                BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3E2723}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource WarningLight}, Dark={StaticResource WarningDark}}"
                                 Padding="16,10">
                             <HorizontalStackLayout Spacing="8">
                                 <Image HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
-                                       mi:MauiIcon.Value="{mi:Fluent Icon=Warning16, IconSize=16, IconColor={AppThemeBinding Light=#E65100, Dark=#FFB74D}}" />
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=Warning16, IconSize=16, IconColor={AppThemeBinding Light={StaticResource WarningText}, Dark={StaticResource WarningTextDark}}}" />
                                 <Label Text="{Binding TimeSlotLabel}"
                                        FontSize="14" FontAttributes="Bold"
-                                       TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"
+                                       TextColor="{AppThemeBinding Light={StaticResource WarningText}, Dark={StaticResource WarningTextDark}}"
                                        VerticalOptions="Center" />
                                 <Label FontSize="12"
                                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
@@ -172,7 +172,7 @@
                         mi:MauiIcon.Value="{mi:Fluent Icon=ArrowUndo24, IconColor={StaticResource Primary}}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
                         CornerRadius="20"
-                        HeightRequest="40" WidthRequest="40"
+                        HeightRequest="44" WidthRequest="44"
                         Padding="0"
                         VerticalOptions="Center"
                         IsVisible="{Binding CanUndo}" />

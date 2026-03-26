@@ -102,7 +102,7 @@
                                 Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                                 StrokeThickness="1"
                                 Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                Padding="12">
+                                Padding="16">
                             <Grid RowDefinitions="64,Auto,*" RowSpacing="6">
                                 <!-- Avatar -->
                                 <Border Grid.Row="0"
@@ -157,22 +157,36 @@
                 <BoxView HeightRequest="120" BackgroundColor="Transparent" />
             </CollectionView.Footer>
             <CollectionView.EmptyView>
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32"
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32" Spacing="12"
                                      IsVisible="{Binding ShowEmptyState}">
+                    <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
+                           mi:MauiIcon.Value="{mi:Fluent Icon=People24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
                     <Label Text="No speakers found"
                            FontSize="18"
+                           FontAttributes="Bold"
                            HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                    <Label Text="Try adjusting your search or check back later."
+                           FontSize="14"
+                           HorizontalTextAlignment="Center"
                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
 
         <!-- Loading Indicator -->
-        <ActivityIndicator Grid.RowSpan="2"
-                           IsRunning="{Binding IsBusy}"
-                           IsVisible="{Binding IsBusy}"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           Color="{StaticResource Primary}" />
+        <VerticalStackLayout Grid.RowSpan="2"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="12"
+                             IsVisible="{Binding IsBusy}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               Color="{StaticResource Primary}" />
+            <Label Text="Loading speakers..."
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

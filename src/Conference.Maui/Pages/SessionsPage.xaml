@@ -253,11 +253,18 @@
                 <BoxView HeightRequest="90" BackgroundColor="Transparent" />
             </CollectionView.Footer>
             <CollectionView.EmptyView>
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32"
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32" Spacing="12"
                                      IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
+                    <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
+                           mi:MauiIcon.Value="{mi:Fluent Icon=CalendarLtr24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
                     <Label Text="No sessions found"
                            FontSize="18"
+                           FontAttributes="Bold"
                            HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                    <Label Text="Try adjusting your search or check back later for schedule updates."
+                           FontSize="14"
+                           HorizontalTextAlignment="Center"
                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
@@ -265,11 +272,18 @@
     </Grid>
 
         <!-- Loading Indicator -->
-        <ActivityIndicator Grid.RowSpan="3"
-                           IsRunning="{Binding IsBusy}"
-                           IsVisible="{Binding IsBusy}"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           Color="{StaticResource Primary}" />
+        <VerticalStackLayout Grid.RowSpan="3"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="12"
+                             IsVisible="{Binding IsBusy}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               Color="{StaticResource Primary}" />
+            <Label Text="Loading sessions..."
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

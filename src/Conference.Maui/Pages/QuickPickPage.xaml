@@ -12,10 +12,10 @@
              Title="Quick Pick"
              Shell.TabBarIsVisible="False"
              Shell.NavBarIsVisible="False"
-             Background="{AppThemeBinding Light=#F8F7FA, Dark={StaticResource Gray950}}">
+             Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
 
     <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="0" SafeAreaEdges="Container"
-          Background="{AppThemeBinding Light=#F8F7FA, Dark={StaticResource Gray950}}">
+          Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
 
         <!-- Top Bar -->
         <Grid Grid.Row="0" Padding="20,12,20,8" RowDefinitions="Auto,Auto" RowSpacing="6">
@@ -285,9 +285,9 @@
                             <Span Text="{Binding SkippedCount}" FontAttributes="Bold" />
                             <Span Text=" skipped · " />
                             <Span Text="{Binding TotalConflictCount}" FontAttributes="Bold"
-                                  TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}" />
+                                  TextColor="{AppThemeBinding Light={StaticResource WarningText}, Dark={StaticResource WarningTextDark}}" />
                             <Span Text=" conflicts"
-                                  TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}" />
+                                  TextColor="{AppThemeBinding Light={StaticResource WarningText}, Dark={StaticResource WarningTextDark}}" />
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
@@ -305,15 +305,15 @@
 
                 <Button Text="Resolve Conflicts"
                         Command="{Binding ReviewConflictsCommand}"
-                        BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#3E2723}"
-                        TextColor="{AppThemeBinding Light=#E65100, Dark=#FFB74D}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource WarningLightSubtle}, Dark={StaticResource WarningDark}}"
+                        TextColor="{AppThemeBinding Light={StaticResource WarningText}, Dark={StaticResource WarningTextDark}}"
                         FontSize="14" FontAttributes="Bold"
                         CornerRadius="12"
                         Padding="20,10"
                         HorizontalOptions="Fill"
                         Margin="4,0"
                         IsVisible="{Binding HasConflictsOnComplete}"
-                        mi:MauiIcon.Value="{mi:Fluent Icon=Warning16, IconSize=16, IconColor={AppThemeBinding Light=#E65100, Dark=#FFB74D}}" />
+                        mi:MauiIcon.Value="{mi:Fluent Icon=Warning16, IconSize=16, IconColor={AppThemeBinding Light={StaticResource WarningText}, Dark={StaticResource WarningTextDark}}}" />
 
                 <Button Text="Review Skipped"
                         Command="{Binding ResetSkippedCommand}"
@@ -344,7 +344,7 @@
 
         <!-- Bottom Action Bar: Skip / Undo / Add -->
         <Grid Grid.Row="3"
-              BackgroundColor="{AppThemeBinding Light=#F8F7FA, Dark={StaticResource Gray950}}"
+              BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
               Padding="24,12,24,0"
               IsVisible="{Binding HasCards}"
               ColumnDefinitions="*,Auto,*">
@@ -379,7 +379,7 @@
                     StrokeThickness="1"
                     Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                     BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                    HeightRequest="40" WidthRequest="40"
+                    HeightRequest="44" WidthRequest="44"
                     HorizontalOptions="Center"
                     Margin="20,0"
                     Opacity="{Binding ShowUndo, Converter={toolkit:BoolToObjectConverter TrueObject=1, FalseObject=0}}"

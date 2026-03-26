@@ -60,6 +60,17 @@
     <Color x:Key="LikeColor">#63DD99</Color><!-- Green for like/approve -->
     <Color x:Key="DislikeColor">#FF6A4F</Color><!-- Red for dislike/reject -->
 
+    <!-- Status / Warning Colors -->
+    <Color x:Key="WarningLight">#FFF3E0</Color>
+    <Color x:Key="WarningLightSubtle">#FFF8E1</Color>
+    <Color x:Key="WarningDark">#3E2723</Color>
+    <Color x:Key="WarningText">#E65100</Color>
+    <Color x:Key="WarningTextDark">#FFB74D</Color>
+    <Color x:Key="ErrorRed">#E53935</Color>
+    <Color x:Key="ConflictOrange">#F57C00</Color>
+    <Color x:Key="OnboardingBgLight">#F3E5F5</Color>
+    <Color x:Key="OnboardingBgDark">#2D1B33</Color>
+
     <!-- Neutral Colors -->
     <Color x:Key="White">#FFFFFF</Color>
     <Color x:Key="Black">#000000</Color>

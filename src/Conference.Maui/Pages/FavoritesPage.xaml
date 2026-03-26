@@ -33,10 +33,10 @@
                                 <TapGestureRecognizer Tapped="OnConflictBadgeTapped" />
                             </HorizontalStackLayout.GestureRecognizers>
                             <Image HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
-                                   mi:MauiIcon.Value="{mi:Fluent Icon=Warning24, IconColor=Orange}" />
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Warning24, IconColor={StaticResource ConflictOrange}}" />
                             <Label Text="{Binding ConflictText}"
                                    FontSize="12"
-                                   TextColor="Orange"
+                                   TextColor="{StaticResource ConflictOrange}"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
                     </Grid>
