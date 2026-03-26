@@ -28,6 +28,7 @@
                        Margin="0,0,8,0"
                        mi:MauiIcon.Value="{mi:Fluent Icon=Search24, IconSize=18, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
                 <Entry Grid.Column="1"
+                       x:Name="SpeakerSearchEntry"
                        Placeholder="Search speakers..."
                        Text="{Binding SearchText}"
                        ClearButtonVisibility="WhileEditing"
@@ -35,6 +36,14 @@
                        VerticalOptions="Center"
                        BackgroundColor="Transparent"
                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}">
+                    <Entry.Behaviors>
+                        <toolkit:UserStoppedTypingBehavior
+                            BindingContext="{Binding Path=BindingContext, Source={x:Reference SpeakerSearchEntry}, x:DataType=Entry}"
+                            Command="{Binding ApplySearchCommand}"
+                            StoppedTypingTimeThreshold="300"
+                            MinimumLengthThreshold="1"
+                            ShouldDismissKeyboardAutomatically="False" />
+                    </Entry.Behaviors>
                     <Entry.Style>
                         <Style TargetType="Entry">
                             <Setter Property="VisualStateManager.VisualStateGroups">

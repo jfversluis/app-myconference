@@ -19,7 +19,6 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
 
     private AllDataResponse? _allData;
     private List<ScheduleDay> _allDays = [];
-    private CancellationTokenSource? _searchCts;
 
     [ObservableProperty]
     private ObservableCollection<ScheduleDay> _days = [];
@@ -224,16 +223,12 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
 
     partial void OnSearchTextChanged(string value)
     {
-        _searchCts?.Cancel();
-        _searchCts = new CancellationTokenSource();
-        var token = _searchCts.Token;
-
-        _ = Task.Delay(300, token).ContinueWith(_ =>
-        {
-            MainThread.BeginInvokeOnMainThread(ApplySearch);
-        }, TaskContinuationOptions.OnlyOnRanToCompletion);
+        // Reset immediately when search is cleared (behavior won't fire below threshold)
+        if (string.IsNullOrWhiteSpace(value))
+            ApplySearch();
     }
 
+    [RelayCommand]
     private void ApplySearch()
     {
         if (string.IsNullOrWhiteSpace(SearchText))
