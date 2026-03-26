@@ -35,7 +35,8 @@ public static class MauiProgram
 #if IOS
             .ConfigureMauiHandlers(handlers =>
             {
-                handlers.AddHandler<CollectionView, Microsoft.Maui.Controls.Handlers.Items2.CollectionViewHandler2>();
+                // Use custom handler that enables sticky group headers + ScrollsToTop
+                handlers.AddHandler<CollectionView, Conference.Maui.Platforms.iOS.StickyHeaderCollectionViewHandler>();
             })
 #endif
             .UseMauiCommunityToolkit()
