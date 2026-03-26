@@ -43,12 +43,12 @@ public static class AppConfig
     /// <summary>
     /// The name of the conference/event.
     /// </summary>
-    public const string ConferenceName = ".NET MAUI Day 2025";
+    public const string ConferenceName = "NDC Copenhagen 2025";
 
     /// <summary>
     /// A short description of the event.
     /// </summary>
-    public const string EventDescription = "A full day of .NET MAUI content with world-class speakers, hands-on sessions, and community networking. Whether you're just getting started or building production apps, there's something for everyone.";
+    public const string EventDescription = "Three days of software development talks and workshops covering .NET, cloud, AI, architecture, security, and more. Join world-class speakers and the developer community in Copenhagen.";
 
     /// <summary>
     /// Whether the event is online-only (no physical venue).
@@ -59,8 +59,8 @@ public static class AppConfig
     /// <summary>
     /// Event venue name and location.
     /// </summary>
-    public const string VenueName = "Microsoft Conference Center";
-    public const string VenueDetails = "Building 33, 16070 NE 36th Way, Redmond, WA 98052";
+    public const string VenueName = "Bella Center Copenhagen";
+    public const string VenueDetails = "Center Boulevard 5, 2300 Copenhagen S, Denmark";
 
     /// <summary>
     /// Event start and end dates.
@@ -71,7 +71,7 @@ public static class AppConfig
     /// <summary>
     /// Conference website URL.
     /// </summary>
-    public const string ConferenceWebsite = "https://mauiday.net";
+    public const string ConferenceWebsite = "https://cphdevfest.com";
 
     /// <summary>
     /// GitHub repository URL for this open-source app.

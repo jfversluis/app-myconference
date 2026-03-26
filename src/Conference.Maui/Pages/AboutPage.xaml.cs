@@ -35,7 +35,7 @@ public partial class AboutPage : ContentPage
     {
         try
         {
-            var location = new Location(47.6423, -122.1391);
+            var location = new Location(55.6377, 12.5741); // Bella Center Copenhagen
             var options = new MapLaunchOptions
             {
                 Name = AppConfig.VenueName,
