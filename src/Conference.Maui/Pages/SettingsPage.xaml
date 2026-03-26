@@ -2,13 +2,86 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Conference.Maui.ViewModels"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             xmlns:conv="clr-namespace:Conference.Maui.Converters"
              x:Class="Conference.Maui.Pages.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              Title="{Binding Title}"
              Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
 
+    <ContentPage.Resources>
+        <conv:IndexToColorConverter x:Key="IndexToColorConverter" />
+        <conv:IndexToTextColorConverter x:Key="IndexToTextColorConverter" />
+    </ContentPage.Resources>
+
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="16,20">
+
+            <!-- Preferences Section -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="PREFERENCES"
+                       FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       CharacterSpacing="0.5" />
+
+                <!-- Theme Picker -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeThickness="1"
+                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="16">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=WeatherSunny24, IconColor={StaticResource Primary}}" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                            <Label Text="Appearance" FontSize="15" FontAttributes="Bold" />
+                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                                <Button Grid.Column="0" Text="System"
+                                        FontSize="12" CornerRadius="8" HeightRequest="34"
+                                        BackgroundColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=0}"
+                                        TextColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=0}"
+                                        Command="{Binding SetThemeCommand}"
+                                        CommandParameter="0" />
+                                <Button Grid.Column="1" Text="Light"
+                                        FontSize="12" CornerRadius="8" HeightRequest="34"
+                                        BackgroundColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=1}"
+                                        TextColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=1}"
+                                        Command="{Binding SetThemeCommand}"
+                                        CommandParameter="1" />
+                                <Button Grid.Column="2" Text="Dark"
+                                        FontSize="12" CornerRadius="8" HeightRequest="34"
+                                        BackgroundColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=2}"
+                                        TextColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=2}"
+                                        Command="{Binding SetThemeCommand}"
+                                        CommandParameter="2" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Clear Cache -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeThickness="1"
+                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="16">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ClearCacheCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Delete24, IconColor={StaticResource Primary}}" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Clear Cache" FontSize="15" FontAttributes="Bold" />
+                            <Label Text="Remove cached conference data" FontSize="12"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        </VerticalStackLayout>
+                        <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={StaticResource Gray400}}" />
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
 
             <!-- App Info Section -->
             <VerticalStackLayout Spacing="8">
@@ -18,14 +91,14 @@
                        TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
                        CharacterSpacing="0.5" />
 
-                <!-- App Name & Version -->
                 <Border StrokeShape="RoundRectangle 12"
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                         Padding="16">
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                        <Label Grid.Column="0" Text="📱" FontSize="20" VerticalOptions="Center" />
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Phone24, IconColor={StaticResource Primary}}" />
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                             <Label Text="{Binding AppName}" FontSize="16" FontAttributes="Bold" />
                             <Label Text="{Binding AppVersion}" FontSize="13"
@@ -34,14 +107,14 @@
                     </Grid>
                 </Border>
 
-                <!-- Framework -->
                 <Border StrokeShape="RoundRectangle 12"
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                         Padding="16">
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                        <Label Grid.Column="0" Text="🛠️" FontSize="20" VerticalOptions="Center" />
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Wrench24, IconColor={StaticResource Primary}}" />
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                             <Label Text="Built with" FontSize="12"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
@@ -63,36 +136,75 @@
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                        Padding="16">
-                    <VerticalStackLayout Spacing="14">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Grid.Column="0" Text="MAUI Community Toolkit" FontSize="14" />
-                            <Label Grid.Column="1" Text="UI Components" FontSize="12"
+                        Padding="0">
+                    <VerticalStackLayout Spacing="0">
+                        <!-- MAUI Community Toolkit -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
+                                                      CommandParameter="https://github.com/CommunityToolkit/Maui" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="MAUI Community Toolkit" FontSize="14" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="UI Components" FontSize="12" VerticalOptions="Center"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                            <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
                         </Grid>
-                        <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Grid.Column="0" Text="Syncfusion MAUI Toolkit" FontSize="14" />
-                            <Label Grid.Column="1" Text="Tab View" FontSize="12"
+                        <BoxView HeightRequest="1" Margin="16,0" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
+
+                        <!-- Syncfusion -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
+                                                      CommandParameter="https://github.com/syncfusion/maui-toolkit" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="Syncfusion MAUI Toolkit" FontSize="14" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="Tab View" FontSize="12" VerticalOptions="Center"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                            <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
                         </Grid>
-                        <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Grid.Column="0" Text="Akavache" FontSize="14" />
-                            <Label Grid.Column="1" Text="Offline Caching" FontSize="12"
+                        <BoxView HeightRequest="1" Margin="16,0" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
+
+                        <!-- Akavache -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
+                                                      CommandParameter="https://github.com/reactiveui/Akavache" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="Akavache" FontSize="14" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="Offline Caching" FontSize="12" VerticalOptions="Center"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                            <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
                         </Grid>
-                        <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Grid.Column="0" Text="Polly" FontSize="14" />
-                            <Label Grid.Column="1" Text="Resilient HTTP" FontSize="12"
+                        <BoxView HeightRequest="1" Margin="16,0" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
+
+                        <!-- Polly -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
+                                                      CommandParameter="https://github.com/App-vNext/Polly" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="Polly" FontSize="14" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="Resilient HTTP" FontSize="12" VerticalOptions="Center"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                            <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
                         </Grid>
-                        <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Grid.Column="0" Text="Sessionize API Client" FontSize="14" />
-                            <Label Grid.Column="1" Text="Conference Data" FontSize="12"
+                        <BoxView HeightRequest="1" Margin="16,0" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
+
+                        <!-- Sessionize -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
+                                                      CommandParameter="https://sessionize.com" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="Sessionize API Client" FontSize="14" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="Conference Data" FontSize="12" VerticalOptions="Center"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                            <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
@@ -106,7 +218,6 @@
                        TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
                        CharacterSpacing="0.5" />
 
-                <!-- View Source -->
                 <Border StrokeShape="RoundRectangle 12"
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
@@ -116,18 +227,18 @@
                         <TapGestureRecognizer Command="{Binding OpenGitHubCommand}" />
                     </Border.GestureRecognizers>
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <Label Grid.Column="0" Text="💻" FontSize="20" VerticalOptions="Center" />
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Code24, IconColor={StaticResource Primary}}" />
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                             <Label Text="View Source Code" FontSize="15" FontAttributes="Bold" />
                             <Label Text="Open-source on GitHub" FontSize="12"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                         </VerticalStackLayout>
-                        <Label Grid.Column="2" Text="↗" FontSize="18"
-                               TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+                        <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Primary}}" />
                     </Grid>
                 </Border>
 
-                <!-- Powered by Sessionize -->
                 <Border StrokeShape="RoundRectangle 12"
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
@@ -137,14 +248,15 @@
                         <TapGestureRecognizer Command="{Binding OpenSessionizeCommand}" />
                     </Border.GestureRecognizers>
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <Label Grid.Column="0" Text="⚡" FontSize="20" VerticalOptions="Center" />
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Flash24, IconColor={StaticResource Primary}}" />
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                             <Label Text="Powered by Sessionize" FontSize="15" FontAttributes="Bold" />
                             <Label Text="Conference management platform" FontSize="12"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                         </VerticalStackLayout>
-                        <Label Grid.Column="2" Text="↗" FontSize="18"
-                               TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+                        <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Primary}}" />
                     </Grid>
                 </Border>
             </VerticalStackLayout>
