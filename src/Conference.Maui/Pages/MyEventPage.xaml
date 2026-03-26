@@ -223,7 +223,7 @@
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                             Padding="14"
                                             WidthRequest="260">
-                                        <Grid>
+                                        <Grid WidthRequest="232">
                                             <!-- Favorite star indicator -->
                                             <Image HorizontalOptions="End"
                                                    VerticalOptions="Start"
@@ -234,7 +234,8 @@
                                             <VerticalStackLayout Spacing="6" VerticalOptions="Start">
                                                 <Label Text="{Binding Title}"
                                                        FontSize="14" FontAttributes="Bold"
-                                                       LineBreakMode="TailTruncation" MaxLines="2" />
+                                                       LineBreakMode="TailTruncation" MaxLines="2"
+                                                       MaximumWidthRequest="220" />
                                                 <HorizontalStackLayout Spacing="12">
                                                     <HorizontalStackLayout Spacing="4"
                                                                            IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
@@ -298,6 +299,7 @@
                                                     <Label Text="{Binding SpeakerNames}" FontSize="11"
                                                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
                                                            LineBreakMode="TailTruncation" MaxLines="1"
+                                                           MaximumWidthRequest="150"
                                                            VerticalOptions="Center" />
                                                 </HorizontalStackLayout>
                                             </VerticalStackLayout>
