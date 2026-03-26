@@ -65,6 +65,20 @@ public partial class SettingsViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task ReplayOnboardingAsync()
+    {
+        var confirm = await Shell.Current.DisplayAlertAsync(
+            "Replay Welcome",
+            "This will show the welcome experience again next time you open the app.",
+            "Replay", "Cancel");
+
+        if (!confirm) return;
+
+        OnboardingViewModel.ResetOnboarding();
+        await Shell.Current.DisplayAlertAsync("Done", "The welcome experience will show when you restart the app.", "OK");
+    }
+
+    [RelayCommand]
     private async Task OpenGitHubAsync()
     {
         await Browser.OpenAsync(AppConfig.GitHubRepo, BrowserLaunchMode.SystemPreferred);

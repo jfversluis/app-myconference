@@ -75,6 +75,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<QuickPickViewModel>();
         builder.Services.AddTransient<ConflictResolverViewModel>();
+        builder.Services.AddTransient<OnboardingViewModel>();
 
         // Register pages
         builder.Services.AddTransient<MyEventPage>();
@@ -87,6 +88,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<QuickPickPage>();
         builder.Services.AddTransient<ConflictResolverPage>();
+        builder.Services.AddTransient<OnboardingPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

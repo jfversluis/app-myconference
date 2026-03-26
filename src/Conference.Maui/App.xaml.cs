@@ -1,4 +1,6 @@
-﻿namespace Conference.Maui;
+﻿using Conference.Maui.ViewModels;
+
+namespace Conference.Maui;
 
 public partial class App : Application
 {
@@ -17,6 +19,7 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
+        // Always use AppShell — iOS requires Shell as root page
         return new Window(new AppShell());
     }
 }
