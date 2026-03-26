@@ -111,13 +111,15 @@
                                             <HorizontalStackLayout Spacing="12">
                                                 <HorizontalStackLayout Spacing="4"
                                                                        IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
-                                                    <Image Source="location_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                                    <Image HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                                           mi:MauiIcon.Value="{mi:Fluent Icon=Location24, IconSize=12, IconColor={StaticResource Primary}}" />
                                                     <Label Text="{Binding RoomName}" FontSize="12" FontAttributes="Bold"
                                                            TextColor="{StaticResource Primary}"
                                                            VerticalOptions="Center" />
                                                 </HorizontalStackLayout>
                                                 <HorizontalStackLayout Spacing="4">
-                                                    <Image Source="clock_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                                    <Image HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                                           mi:MauiIcon.Value="{mi:Fluent Icon=Clock24, IconSize=12, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                                                     <Label Text="{Binding TimeDisplay}" FontSize="11"
                                                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                            VerticalOptions="Center" />
@@ -239,13 +241,15 @@
                                                 <HorizontalStackLayout Spacing="12">
                                                     <HorizontalStackLayout Spacing="4"
                                                                            IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
-                                                        <Image Source="location_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                                        <Image HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                                               mi:MauiIcon.Value="{mi:Fluent Icon=Location24, IconSize=12, IconColor={StaticResource Primary}}" />
                                                         <Label Text="{Binding RoomName}" FontSize="12" FontAttributes="Bold"
                                                                TextColor="{StaticResource Primary}"
                                                                VerticalOptions="Center" />
                                                     </HorizontalStackLayout>
                                                     <HorizontalStackLayout Spacing="4">
-                                                        <Image Source="clock_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                                        <Image HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                                                               mi:MauiIcon.Value="{mi:Fluent Icon=Clock24, IconSize=12, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                                                         <Label Text="{Binding TimeDisplay}" FontSize="11"
                                                                TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                                VerticalOptions="Center" />
