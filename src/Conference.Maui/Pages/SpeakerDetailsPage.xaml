@@ -9,10 +9,11 @@
              x:DataType="vm:SpeakerDetailsViewModel"
              Title="{Binding Title}"
              SafeAreaEdges="None"
-             Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
+             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}"
              x:Name="ThisPage">
 
-    <Grid SafeAreaEdges="None">
+    <Grid SafeAreaEdges="None"
+          Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
         <!-- Loading State -->
         <VerticalStackLayout IsVisible="{Binding IsBusy}"
                              VerticalOptions="Center"
@@ -29,7 +30,8 @@
         </VerticalStackLayout>
 
         <!-- Content -->
-        <ScrollView IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
+        <ScrollView IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"
+                    Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
             <VerticalStackLayout Spacing="0">
 
                 <!-- Header -->
