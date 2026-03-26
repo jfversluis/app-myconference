@@ -127,12 +127,20 @@
                                                    MaxLines="2" />
                                             <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="16" Margin="0,6,0,0">
                                                 <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
-                                                    <Image Source="location_regular.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center" />
+                                                    <Image Source="location_regular.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center">
+                                                        <Image.Behaviors>
+                                                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                                        </Image.Behaviors>
+                                                    </Image>
                                                     <Label Text="{Binding RoomName}" FontSize="12"
                                                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
                                                 </HorizontalStackLayout>
                                                 <HorizontalStackLayout Spacing="4">
-                                                    <Image Source="clock_regular.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center" />
+                                                    <Image Source="clock_regular.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center">
+                                                        <Image.Behaviors>
+                                                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                                        </Image.Behaviors>
+                                                    </Image>
                                                     <Label Text="{Binding TimeDisplay}" FontSize="12"
                                                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
                                                 </HorizontalStackLayout>

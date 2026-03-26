@@ -421,7 +421,11 @@
                     <VerticalStackLayout Spacing="12" IsVisible="{Binding ShowEmptyState}"
                                          Padding="16,40" HorizontalOptions="Center">
                         <Image Source="calendar_regular.png" HeightRequest="48" WidthRequest="48"
-                               HorizontalOptions="Center" Opacity="0.4" />
+                               HorizontalOptions="Center" Opacity="0.4">
+                            <Image.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                            </Image.Behaviors>
+                        </Image>
                         <Label Text="{Binding EmptyStateTitle}"
                                FontSize="18" FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
@@ -446,7 +450,11 @@
                     <VerticalStackLayout Spacing="12" IsVisible="{Binding HasLoadError}"
                                          Padding="16,40" HorizontalOptions="Center">
                         <Image Source="info_regular.png" HeightRequest="48" WidthRequest="48"
-                               HorizontalOptions="Center" Opacity="0.4" />
+                               HorizontalOptions="Center" Opacity="0.4">
+                            <Image.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                            </Image.Behaviors>
+                        </Image>
                         <Label Text="Couldn't load event data"
                                FontSize="18" FontAttributes="Bold"
                                HorizontalTextAlignment="Center"

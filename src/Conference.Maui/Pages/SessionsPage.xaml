@@ -139,7 +139,11 @@
                                             <Image Source="location_regular.png" 
                                                    HeightRequest="16" 
                                                    WidthRequest="16"
-                                                   VerticalOptions="Center" />
+                                                   VerticalOptions="Center">
+                                                <Image.Behaviors>
+                                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                                </Image.Behaviors>
+                                            </Image>
                                             <Label Text="{Binding RoomName}"
                                                    FontSize="13"
                                                    VerticalOptions="Center"
@@ -149,7 +153,11 @@
                                             <Image Source="clock_regular.png" 
                                                    HeightRequest="16" 
                                                    WidthRequest="16"
-                                                   VerticalOptions="Center" />
+                                                   VerticalOptions="Center">
+                                                <Image.Behaviors>
+                                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+                                                </Image.Behaviors>
+                                            </Image>
                                             <Label Text="{Binding DurationDisplay}"
                                                    FontSize="13"
                                                    VerticalOptions="Center"
