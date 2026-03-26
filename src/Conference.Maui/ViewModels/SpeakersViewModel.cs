@@ -20,6 +20,8 @@ public partial class SpeakersViewModel : BaseViewModel
     [ObservableProperty]
     private string _searchText = string.Empty;
 
+    public bool ShowEmptyState => !IsBusy && Speakers.Count == 0;
+
     public SpeakersViewModel(
         IConferenceDataService dataService,
         ILogger<SpeakersViewModel> logger)
@@ -59,6 +61,7 @@ public partial class SpeakersViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+            OnPropertyChanged(nameof(ShowEmptyState));
         }
     }
 
@@ -72,6 +75,7 @@ public partial class SpeakersViewModel : BaseViewModel
         if (string.IsNullOrWhiteSpace(SearchText))
         {
             Speakers = new ObservableCollection<SpeakerItem>(_allSpeakers);
+            OnPropertyChanged(nameof(ShowEmptyState));
             return;
         }
 
@@ -82,6 +86,7 @@ public partial class SpeakersViewModel : BaseViewModel
             .ToList();
 
         Speakers = new ObservableCollection<SpeakerItem>(filtered);
+        OnPropertyChanged(nameof(ShowEmptyState));
     }
 
     [RelayCommand]

@@ -67,12 +67,12 @@
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical"
                                  Span="2"
-                                 HorizontalItemSpacing="8"
+                                 HorizontalItemSpacing="0"
                                  VerticalItemSpacing="8" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:SpeakerItem">
-                    <Grid HeightRequest="170" Margin="8,0">
+                    <Grid HeightRequest="170" Margin="4,0">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup Name="CommonStates">
                                 <VisualState Name="Normal">
@@ -146,7 +146,8 @@
                 <BoxView HeightRequest="120" BackgroundColor="Transparent" />
             </CollectionView.Footer>
             <CollectionView.EmptyView>
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32">
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32"
+                                     IsVisible="{Binding ShowEmptyState}">
                     <Label Text="No speakers found"
                            FontSize="18"
                            HorizontalOptions="Center"
