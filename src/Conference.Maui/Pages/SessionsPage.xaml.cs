@@ -29,7 +29,10 @@ public partial class SessionsPage : ContentPage
         DaySwitcher.Items.Clear();
         foreach (var day in _viewModel.Days)
         {
-            DaySwitcher.Items.Add(new SfTabItem { Header = day.DisplayName });
+            var tabItem = new SfTabItem { Header = day.DisplayName };
+            tabItem.SetAppTheme(SfTabItem.TextColorProperty,
+                Color.FromArgb("#333333"), Color.FromArgb("#D0D0D0"));
+            DaySwitcher.Items.Add(tabItem);
         }
     }
 
