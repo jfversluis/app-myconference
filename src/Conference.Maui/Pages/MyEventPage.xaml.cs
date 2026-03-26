@@ -80,12 +80,26 @@ public partial class MyEventPage : ContentPage
         base.OnAppearing();
         await _viewModel.LoadDataAsync();
         _viewModel.StartTimer();
+        StartLiveBadgePulse();
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
         _viewModel.StopTimer();
+        LiveBadge.CancelAnimations();
+    }
+
+    private void StartLiveBadgePulse()
+    {
+        LiveBadge.CancelAnimations();
+        // Gentle back-and-forth pulse: 1.0 → 0.6 → 1.0
+        var fadeOut = new Animation(v => LiveBadge.Opacity = v, 1.0, 0.6, Easing.SinInOut);
+        var fadeIn = new Animation(v => LiveBadge.Opacity = v, 0.6, 1.0, Easing.SinInOut);
+        var pulse = new Animation();
+        pulse.Add(0, 0.5, fadeOut);
+        pulse.Add(0.5, 1.0, fadeIn);
+        pulse.Commit(LiveBadge, "LivePulse", length: 2000, repeat: () => true);
     }
 
     private async void OnSessionSelected(object? sender, SelectionChangedEventArgs e)
