@@ -44,11 +44,11 @@
                 Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                 Padding="0">
             <Grid ColumnDefinitions="Auto,*" Padding="12,0">
-                <Label Grid.Column="0"
-                       Text="🔍"
-                       FontSize="16"
+                <Image Grid.Column="0"
+                       HeightRequest="18" WidthRequest="18"
                        VerticalOptions="Center"
-                       Margin="0,0,8,0" />
+                       Margin="0,0,8,0"
+                       mi:MauiIcon.Value="{mi:Fluent Icon=Search24, IconSize=18, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
                 <Entry Grid.Column="1"
                        Placeholder="Search sessions..."
                        Text="{Binding SearchText}"
