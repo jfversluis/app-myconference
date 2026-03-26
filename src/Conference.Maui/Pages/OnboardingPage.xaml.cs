@@ -7,16 +7,24 @@ public partial class OnboardingPage : ContentPage
 {
     private readonly OnboardingViewModel _viewModel;
 
+    // Circle borders and images for speaker photos (populated in code-behind)
+    private Border[] _speakerCircles = [];
+    private Image[] _speakerImages = [];
+
     public OnboardingPage(OnboardingViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = _viewModel = viewModel;
+
+        _speakerCircles = [SpeakerCircle1, SpeakerCircle2, SpeakerCircle3, SpeakerCircle4, SpeakerCircle5];
+        _speakerImages = [SpeakerImg1, SpeakerImg2, SpeakerImg3, SpeakerImg4, SpeakerImg5];
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
         await _viewModel.InitializeAsync();
+        PopulateSpeakerPhotos();
         UpdateStepVisibility();
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
@@ -28,6 +36,58 @@ public partial class OnboardingPage : ContentPage
     }
 
     protected override bool OnBackButtonPressed() => true;
+
+    private void PopulateSpeakerPhotos()
+    {
+        var speakers = _viewModel.FeaturedSpeakers;
+
+        // Show fallback if no speakers
+        if (speakers.Count == 0)
+        {
+            WelcomeFallback.IsVisible = true;
+            SpeakerPhotosLayout.IsVisible = false;
+            return;
+        }
+
+        WelcomeFallback.IsVisible = false;
+        SpeakerPhotosLayout.IsVisible = true;
+
+        for (int i = 0; i < Math.Min(speakers.Count, _speakerCircles.Length); i++)
+        {
+            _speakerImages[i].Source = ImageSource.FromUri(new Uri(speakers[i].ProfilePictureUrl));
+            _speakerCircles[i].Stroke = Color.FromArgb(speakers[i].CircleColor);
+            _speakerCircles[i].BackgroundColor = Color.FromArgb(speakers[i].CircleColor);
+            _speakerCircles[i].IsVisible = true;
+        }
+
+        // Hide unused circles
+        for (int i = speakers.Count; i < _speakerCircles.Length; i++)
+        {
+            _speakerCircles[i].IsVisible = false;
+        }
+
+        // Stagger entrance animations
+        AnimateSpeakerPhotos();
+    }
+
+    private async void AnimateSpeakerPhotos()
+    {
+        foreach (var circle in _speakerCircles)
+        {
+            if (!circle.IsVisible) continue;
+            circle.Opacity = 0;
+            circle.Scale = 0.6;
+        }
+
+        for (int i = 0; i < _speakerCircles.Length; i++)
+        {
+            if (!_speakerCircles[i].IsVisible) continue;
+            var circle = _speakerCircles[i];
+            _ = circle.FadeToAsync(1, 400, Easing.CubicOut);
+            _ = circle.ScaleToAsync(1, 500, Easing.SpringOut);
+            await Task.Delay(100);
+        }
+    }
 
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
@@ -44,11 +104,12 @@ public partial class OnboardingPage : ContentPage
     private void UpdateStepVisibility()
     {
         WelcomeStep.IsVisible = _viewModel.CurrentStep == 0;
-        InterestsStep.IsVisible = _viewModel.CurrentStep == 1;
-        QuickPickStep.IsVisible = _viewModel.CurrentStep == 2;
-        DoneStep.IsVisible = _viewModel.CurrentStep == 3;
+        NotificationStep.IsVisible = _viewModel.CurrentStep == 1;
+        InterestsStep.IsVisible = _viewModel.CurrentStep == 2;
+        QuickPickStep.IsVisible = _viewModel.CurrentStep == 3;
+        DoneStep.IsVisible = _viewModel.CurrentStep == 4;
 
-        if (_viewModel.CurrentStep == 3)
+        if (_viewModel.CurrentStep == 4)
             UpdateSummaryText();
     }
 
@@ -57,9 +118,10 @@ public partial class OnboardingPage : ContentPage
         var currentView = _viewModel.CurrentStep switch
         {
             0 => (View)WelcomeStep,
-            1 => InterestsStep,
-            2 => QuickPickStep,
-            3 => DoneStep,
+            1 => NotificationStep,
+            2 => InterestsStep,
+            3 => QuickPickStep,
+            4 => DoneStep,
             _ => WelcomeStep
         };
 

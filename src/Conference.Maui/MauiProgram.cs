@@ -6,6 +6,7 @@ using Conference.Maui.Pages;
 using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
 using Sessionize.Api.Client;
 using Sessionize.Api.Client.Abstractions;
 using Sessionize.Api.Client.Configuration;
@@ -41,6 +42,7 @@ public static class MauiProgram
 #endif
             .UseMauiCommunityToolkit()
             .UseFluentMauiIcons()
+            .UseLocalNotification()
             .ConfigureSyncfusionToolkit();
 
         // Remove native border from Entry on iOS

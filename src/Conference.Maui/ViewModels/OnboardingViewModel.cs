@@ -7,6 +7,7 @@ using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
 using Plugin.Maui.SwipeCardView.Core;
 using Sessionize.Api.Client.DataTransferObjects;
 using Sessionize.Api.Client.ValueObjects;
@@ -18,12 +19,15 @@ public partial class OnboardingViewModel : ObservableObject
     private const string OnboardingCompletedKey = "onboarding_completed_v1";
     private const int QuickPickCardLimit = 15;
 
+    // Vibrant colors for speaker photo circles on the welcome screen
+    private static readonly string[] CircleColors =
+        ["#FF6B35", "#FFC233", "#4ECDC4", "#C44DFF", "#FF4081", "#00BCD4"];
+
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly ILogger<OnboardingViewModel> _logger;
 
     private AllDataResponse? _allData;
-    // Map from category item id -> name for "Main tag" category
     private Dictionary<int, string> _mainTagMap = [];
     private readonly HashSet<string> _sessionFavoritedIds = [];
     private IReadOnlySet<string> _existingFavoriteIds = new HashSet<string>();
@@ -32,14 +36,28 @@ public partial class OnboardingViewModel : ObservableObject
     private SwipeCardDirection _lastSwipeDirection;
     private int _swipedThisSession;
 
+    // 0=Welcome, 1=Notifications, 2=Interests, 3=QuickPick, 4=Done
     [ObservableProperty]
-    private int _currentStep; // 0=Welcome, 1=Interests, 2=QuickPick, 3=Done
+    private int _currentStep;
 
     [ObservableProperty]
     private bool _isBusy;
 
     [ObservableProperty]
     private bool _hasLoadError;
+
+    // Welcome screen speaker photos
+    [ObservableProperty]
+    private ObservableCollection<FeaturedSpeaker> _featuredSpeakers = [];
+
+    public bool HasFeaturedSpeakers => FeaturedSpeakers.Count > 0;
+
+    // Notification permission
+    [ObservableProperty]
+    private bool _notificationsGranted;
+
+    [ObservableProperty]
+    private bool _notificationPermissionRequested;
 
     // Interest selection
     [ObservableProperty]
@@ -113,6 +131,7 @@ public partial class OnboardingViewModel : ObservableObject
                 return;
             }
 
+            BuildFeaturedSpeakers();
             _existingFavoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
             await FetchCategoryTagsAsync();
             BuildInterestTags();
@@ -125,6 +144,44 @@ public partial class OnboardingViewModel : ObservableObject
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private void BuildFeaturedSpeakers()
+    {
+        if (_allData?.Speakers == null) return;
+
+        try
+        {
+            // Pick 5 random speakers that have profile pictures
+            var speakersWithPhotos = _allData.Speakers
+                .Where(s => !string.IsNullOrEmpty(s.ProfilePicture))
+                .ToList();
+
+            if (speakersWithPhotos.Count == 0) return;
+
+            var random = new Random();
+            var picked = speakersWithPhotos
+                .OrderBy(_ => random.Next())
+                .Take(5)
+                .ToList();
+
+            var result = new ObservableCollection<FeaturedSpeaker>();
+            for (int i = 0; i < picked.Count; i++)
+            {
+                result.Add(new FeaturedSpeaker
+                {
+                    ProfilePictureUrl = picked[i].ProfilePicture ?? string.Empty,
+                    CircleColor = CircleColors[i % CircleColors.Length]
+                });
+            }
+
+            FeaturedSpeakers = result;
+            OnPropertyChanged(nameof(HasFeaturedSpeakers));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not load featured speakers for welcome screen");
         }
     }
 
@@ -215,9 +272,25 @@ public partial class OnboardingViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task RequestNotificationPermissionAsync()
+    {
+        try
+        {
+            NotificationPermissionRequested = true;
+            var result = await LocalNotificationCenter.Current.RequestNotificationPermission();
+            NotificationsGranted = result;
+            _logger.LogInformation("Notification permission result: {Granted}", result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not request notification permission");
+        }
+    }
+
+    [RelayCommand]
     private async Task StartQuickPickAsync()
     {
-        CurrentStep = 2;
+        CurrentStep = 3; // QuickPick step
         await BuildFilteredDeckAsync();
     }
 
@@ -333,7 +406,7 @@ public partial class OnboardingViewModel : ObservableObject
 
             if (!HasCards)
             {
-                CurrentStep = 3; // Done
+                CurrentStep = 4; // Done
             }
             else
             {
@@ -377,7 +450,7 @@ public partial class OnboardingViewModel : ObservableObject
     [RelayCommand]
     private void FinishQuickPick()
     {
-        CurrentStep = 3; // Go to done screen
+        CurrentStep = 4; // Done screen
     }
 
     private void UpdateConflictForCurrentCard()
@@ -452,4 +525,10 @@ public partial class InterestTag : ObservableObject
 
     [ObservableProperty]
     private bool _isSelected;
+}
+
+public class FeaturedSpeaker
+{
+    public string ProfilePictureUrl { get; set; } = string.Empty;
+    public string CircleColor { get; set; } = "#4ECDC4";
 }

@@ -15,15 +15,89 @@
              Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
 
     <Grid>
-        <!-- STEP 0: Welcome -->
+        <!-- STEP 0: Welcome with Speaker Photos -->
         <Grid IsVisible="False" x:Name="WelcomeStep" Padding="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.45*" />
                 <RowDefinition Height="0.55*" />
+                <RowDefinition Height="0.45*" />
             </Grid.RowDefinitions>
 
-            <Grid Background="{StaticResource HeroGradient}">
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8" Padding="32">
+            <!-- Speaker photos hero area -->
+            <Grid Background="{StaticResource HeroGradient}" Padding="0">
+                <!-- Scattered circular speaker photos -->
+                <AbsoluteLayout x:Name="SpeakerPhotosLayout"
+                                IsVisible="{Binding HasFeaturedSpeakers}"
+                                HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <!-- Photo 1: top-left, large -->
+                    <Border StrokeShape="RoundRectangle 55"
+                            StrokeThickness="4"
+                            HeightRequest="110" WidthRequest="110"
+                            AbsoluteLayout.LayoutBounds="0.15,0.12"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle1">
+                        <Border.Clip>
+                            <EllipseGeometry Center="55,55" RadiusX="55" RadiusY="55" />
+                        </Border.Clip>
+                        <Image x:Name="SpeakerImg1" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- Photo 2: top-right, large -->
+                    <Border StrokeShape="RoundRectangle 50"
+                            StrokeThickness="4"
+                            HeightRequest="100" WidthRequest="100"
+                            AbsoluteLayout.LayoutBounds="0.78,0.08"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle2">
+                        <Border.Clip>
+                            <EllipseGeometry Center="50,50" RadiusX="50" RadiusY="50" />
+                        </Border.Clip>
+                        <Image x:Name="SpeakerImg2" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- Photo 3: center, medium -->
+                    <Border StrokeShape="RoundRectangle 42"
+                            StrokeThickness="4"
+                            HeightRequest="84" WidthRequest="84"
+                            AbsoluteLayout.LayoutBounds="0.45,0.42"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle3">
+                        <Border.Clip>
+                            <EllipseGeometry Center="42,42" RadiusX="42" RadiusY="42" />
+                        </Border.Clip>
+                        <Image x:Name="SpeakerImg3" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- Photo 4: bottom-left, large -->
+                    <Border StrokeShape="RoundRectangle 48"
+                            StrokeThickness="4"
+                            HeightRequest="96" WidthRequest="96"
+                            AbsoluteLayout.LayoutBounds="0.08,0.75"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle4">
+                        <Border.Clip>
+                            <EllipseGeometry Center="48,48" RadiusX="48" RadiusY="48" />
+                        </Border.Clip>
+                        <Image x:Name="SpeakerImg4" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- Photo 5: bottom-right, large -->
+                    <Border StrokeShape="RoundRectangle 52"
+                            StrokeThickness="4"
+                            HeightRequest="104" WidthRequest="104"
+                            AbsoluteLayout.LayoutBounds="0.85,0.72"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle5">
+                        <Border.Clip>
+                            <EllipseGeometry Center="52,52" RadiusX="52" RadiusY="52" />
+                        </Border.Clip>
+                        <Image x:Name="SpeakerImg5" Aspect="AspectFill" />
+                    </Border>
+                </AbsoluteLayout>
+
+                <!-- Fallback: dotnet_bot when no speakers loaded -->
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
+                                     Spacing="8" Padding="32"
+                                     IsVisible="False" x:Name="WelcomeFallback">
                     <Image Source="dotnet_bot.png" HeightRequest="120" WidthRequest="120"
                            HorizontalOptions="Center" Opacity="0.95" />
                     <Label Text="MyConference"
@@ -32,21 +106,21 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <VerticalStackLayout Grid.Row="1" Spacing="16" Padding="32,40,32,32"
+            <VerticalStackLayout Grid.Row="1" Spacing="12" Padding="32,28,32,32"
                                  VerticalOptions="Start">
                 <Label Text="Welcome to NDC Copenhagen 2025!"
-                       FontSize="22" FontAttributes="Bold"
+                       FontSize="24" FontAttributes="Bold"
                        TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}"
                        HorizontalTextAlignment="Center" />
 
-                <Label Text="103 sessions. 3 days. Let's build your perfect schedule in under a minute."
+                <Label Text="95 speakers. 103 sessions. 3 days.&#10;Let's build your perfect schedule."
                        FontSize="15" LineBreakMode="WordWrap"
                        TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
-                       HorizontalTextAlignment="Center" />
+                       HorizontalTextAlignment="Center" LineHeight="1.4" />
 
-                <BoxView HeightRequest="1" Color="Transparent" />
+                <BoxView HeightRequest="8" Color="Transparent" />
 
-                <Button Text="Let's Go"
+                <Button Text="Get Started"
                         Command="{Binding GoToStepCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
@@ -71,6 +145,87 @@
                 <ActivityIndicator IsRunning="True" VerticalOptions="Center" HorizontalOptions="Center"
                                    HeightRequest="48" WidthRequest="48" />
             </Grid>
+        </Grid>
+
+        <!-- STEP 1: Notification Permission -->
+        <Grid IsVisible="False" x:Name="NotificationStep" Padding="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.4*" />
+                <RowDefinition Height="0.6*" />
+            </Grid.RowDefinitions>
+
+            <Grid Background="{StaticResource HeroGradient}">
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="12" Padding="32">
+                    <Label Text="🔔" FontSize="64" HorizontalTextAlignment="Center" />
+                    <Label Text="Stay in the loop"
+                           FontSize="28" FontAttributes="Bold" TextColor="White"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <VerticalStackLayout Grid.Row="1" Spacing="16" Padding="32,32"
+                                 VerticalOptions="Start">
+                <Label Text="Get reminders before your sessions start so you never miss a talk."
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="WordWrap" LineHeight="1.4" />
+
+                <Label Text="We'll only notify you about sessions on your agenda — nothing else."
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="WordWrap" />
+
+                <BoxView HeightRequest="12" Color="Transparent" />
+
+                <Button Text="Enable Notifications"
+                        Command="{Binding RequestNotificationPermissionCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontSize="16" FontAttributes="Bold"
+                        CornerRadius="12" Padding="24,14"
+                        HorizontalOptions="Fill"
+                        IsVisible="{Binding NotificationPermissionRequested, Converter={toolkit:InvertedBoolConverter}}" />
+
+                <!-- Show after permission is requested -->
+                <VerticalStackLayout IsVisible="{Binding NotificationPermissionRequested}" Spacing="8">
+                    <Label Text="✅ Notifications enabled — you're all set!"
+                           IsVisible="{Binding NotificationsGranted}"
+                           FontSize="15" FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="No worries — you can enable notifications later in Settings."
+                           IsVisible="{Binding NotificationsGranted, Converter={toolkit:InvertedBoolConverter}}"
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <Button Text="Continue"
+                        Command="{Binding GoToStepCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontSize="16" FontAttributes="Bold"
+                        CornerRadius="12" Padding="24,14"
+                        HorizontalOptions="Fill"
+                        IsVisible="{Binding NotificationPermissionRequested}">
+                    <Button.CommandParameter>
+                        <x:Int32>2</x:Int32>
+                    </Button.CommandParameter>
+                </Button>
+
+                <Button Text="Not now"
+                        Command="{Binding GoToStepCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                        FontSize="14"
+                        HorizontalOptions="Center">
+                    <Button.CommandParameter>
+                        <x:Int32>2</x:Int32>
+                    </Button.CommandParameter>
+                </Button>
+            </VerticalStackLayout>
         </Grid>
 
         <!-- STEP 1: Pick Interests -->
@@ -157,7 +312,7 @@
             </Grid>
         </Grid>
 
-        <!-- STEP 2: Quick Pick (mini) -->
+        <!-- STEP 3: Quick Pick (mini) -->
         <Grid IsVisible="False" x:Name="QuickPickStep"
               RowDefinitions="Auto,Auto,*,Auto" Padding="0"
               Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
@@ -282,7 +437,7 @@
             </Grid>
         </Grid>
 
-        <!-- STEP 3: Done / Celebration -->
+        <!-- STEP 4: Done / Celebration -->
         <Grid IsVisible="False" x:Name="DoneStep" Padding="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.4*" />
