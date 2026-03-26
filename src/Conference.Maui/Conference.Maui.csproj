@@ -25,6 +25,7 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 
 		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 	</PropertyGroup>
 
 	<ItemGroup>
