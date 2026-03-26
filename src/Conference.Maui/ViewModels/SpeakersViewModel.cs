@@ -13,6 +13,7 @@ public partial class SpeakersViewModel : BaseViewModel
     private readonly IConferenceDataService _dataService;
     private readonly ILogger<SpeakersViewModel> _logger;
     private List<SpeakerItem> _allSpeakers = [];
+    private CancellationTokenSource? _searchCts;
 
     [ObservableProperty]
     private ObservableCollection<SpeakerItem> _speakers = [];
@@ -67,7 +68,14 @@ public partial class SpeakersViewModel : BaseViewModel
 
     partial void OnSearchTextChanged(string value)
     {
-        ApplySearch();
+        _searchCts?.Cancel();
+        _searchCts = new CancellationTokenSource();
+        var token = _searchCts.Token;
+
+        _ = Task.Delay(300, token).ContinueWith(_ =>
+        {
+            MainThread.BeginInvokeOnMainThread(ApplySearch);
+        }, TaskContinuationOptions.OnlyOnRanToCompletion);
     }
 
     private void ApplySearch()
