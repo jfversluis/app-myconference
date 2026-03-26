@@ -307,18 +307,10 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
                 .Where(s => !s.IsServiceSession && s.StartsAt == nextSlotStart)
                 .ToList();
 
-            // Filter to favorites if user has an agenda, otherwise show all
-            var displaySessions = _favoriteIds.Count > 0
-                ? allNextSessions.Where(s => _favoriteIds.Contains(s.Id)).ToList()
-                : allNextSessions;
-
-            // If no favorites in this slot, show all
-            if (displaySessions.Count == 0)
-                displaySessions = allNextSessions;
-
             UpNextTotalCount = allNextSessions.Count;
 
-            var nextItems = displaySessions
+            // Show all sessions in the slot, favorites first
+            var nextItems = allNextSessions
                 .OrderByDescending(s => _favoriteIds.Contains(s.Id))
                 .ThenBy(s => GetRoomName(s.RoomId))
                 .Select(s => CreateSessionItem(s))

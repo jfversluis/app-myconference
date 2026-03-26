@@ -208,29 +208,45 @@
                             </Border>
                         </Grid>
 
-                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding UpNextSessions}"
-                                             Spacing="8">
-                            <BindableLayout.ItemTemplate>
+                        <CollectionView ItemsSource="{Binding UpNextSessions}"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnSessionSelected"
+                                        HeightRequest="130">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:SessionItem">
                                     <Border StrokeShape="RoundRectangle 12"
                                             Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                                             StrokeThickness="1"
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                            Padding="14">
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnSessionTapped" />
-                                        </Border.GestureRecognizers>
-                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            Padding="14"
+                                            WidthRequest="260">
+                                        <Grid>
+                                            <!-- Favorite star indicator -->
+                                            <Image HorizontalOptions="End"
+                                                   VerticalOptions="Start"
+                                                   Margin="0,-2,-2,0"
+                                                   HeightRequest="14" WidthRequest="14"
+                                                   IsVisible="{Binding IsFavorite}"
+                                                   mi:MauiIcon.Value="{mi:Fluent Icon=Star12, IconColor={StaticResource Primary}}" />
+                                            <VerticalStackLayout Spacing="6" VerticalOptions="Start">
                                                 <Label Text="{Binding Title}"
                                                        FontSize="14" FontAttributes="Bold"
                                                        LineBreakMode="TailTruncation" MaxLines="2" />
-                                                <HorizontalStackLayout Spacing="8">
+                                                <HorizontalStackLayout Spacing="12">
                                                     <HorizontalStackLayout Spacing="4"
                                                                            IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
                                                         <Image Source="location_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
                                                         <Label Text="{Binding RoomName}" FontSize="12" FontAttributes="Bold"
                                                                TextColor="{StaticResource Primary}"
+                                                               VerticalOptions="Center" />
+                                                    </HorizontalStackLayout>
+                                                    <HorizontalStackLayout Spacing="4">
+                                                        <Image Source="clock_regular.png" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                                        <Label Text="{Binding TimeDisplay}" FontSize="11"
+                                                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                                VerticalOptions="Center" />
                                                     </HorizontalStackLayout>
                                                 </HorizontalStackLayout>
@@ -285,32 +301,11 @@
                                                            VerticalOptions="Center" />
                                                 </HorizontalStackLayout>
                                             </VerticalStackLayout>
-                                            <Label Grid.Column="1" Text="›" FontSize="20"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
-                                                   VerticalOptions="Center" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
-                            </BindableLayout.ItemTemplate>
-                        </VerticalStackLayout>
-
-                        <!-- See all sessions link -->
-                        <Label IsVisible="{Binding ShowSeeAllUpNext}"
-                               FontSize="13" FontAttributes="Bold"
-                               TextColor="{StaticResource Primary}"
-                               HorizontalTextAlignment="Center"
-                               Margin="0,4,0,0">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="See all " />
-                                    <Span Text="{Binding UpNextTotalCount}" />
-                                    <Span Text=" sessions ›" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding NavigateToSessionsCommand}" />
-                            </Label.GestureRecognizers>
-                        </Label>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
                     </VerticalStackLayout>
 
                     <!-- Onboarding Card -->
