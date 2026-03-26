@@ -5,18 +5,19 @@ using UIKit;
 namespace Conference.Maui.Platforms.iOS;
 
 /// <summary>
-/// Custom CollectionView handler that enables:
-/// 1. Native iOS sticky (pinned) group headers for grouped CollectionViews
-/// 2. Status bar tap-to-scroll-to-top behavior
+/// Custom CollectionView handler that enables native iOS sticky (pinned) group headers
+/// for grouped CollectionViews.
 ///
-/// Sticky headers: MAUI's CollectionViewHandler2 creates a UICollectionViewCompositionalLayout
-/// but doesn't set PinToVisibleBounds on group header supplementary items.
-/// Since the internal CustomUICollectionViewCompositionalLayout and its section provider
-/// are inaccessible, we create a replacement layout with sticky headers enabled.
+/// MAUI's CollectionViewHandler2 creates a UICollectionViewCompositionalLayout but doesn't
+/// set PinToVisibleBounds on group header supplementary items. Since the internal
+/// CustomUICollectionViewCompositionalLayout and its section provider are inaccessible,
+/// we create a replacement layout with sticky headers enabled.
 /// See: https://github.com/dotnet/maui/issues/30756
 ///
-/// ScrollsToTop: MAUI doesn't set UICollectionView.ScrollsToTop = true.
-/// See: https://github.com/dotnet/maui/issues/19866
+/// Note: Status bar tap-to-scroll-to-top (dotnet/maui#19866) is not addressed here.
+/// Testing showed it doesn't work in MAUI Shell even with scrollsToTop correctly set,
+/// likely due to Shell's view hierarchy having multiple competing UIScrollViews.
+/// A proper fix requires changes in MAUI's Shell implementation.
 /// </summary>
 public class StickyHeaderCollectionViewHandler : CollectionViewHandler2
 {
@@ -68,30 +69,6 @@ public class StickyHeaderCollectionViewHandler : CollectionViewHandler2
         }, config);
 
         return stickyLayout;
-    }
-
-    protected override void ConnectHandler(UIView platformView)
-    {
-        base.ConnectHandler(platformView);
-
-        // Only set ScrollsToTop on grouped CollectionViews (primary page content).
-        // iOS ignores status bar tap if multiple UIScrollViews have scrollsToTop=true,
-        // so we avoid setting it on nested/non-grouped CollectionViews (e.g. in MyEvent).
-        if (Controller?.CollectionView is not null &&
-            VirtualView is GroupableItemsView { IsGrouped: true })
-        {
-            Controller.CollectionView.ScrollsToTop = true;
-        }
-    }
-
-    protected override void DisconnectHandler(UIView platformView)
-    {
-        if (Controller?.CollectionView is not null)
-        {
-            Controller.CollectionView.ScrollsToTop = false;
-        }
-
-        base.DisconnectHandler(platformView);
     }
 
     private static NSCollectionLayoutBoundarySupplementaryItem[] BuildBoundarySupplementaryItems(
