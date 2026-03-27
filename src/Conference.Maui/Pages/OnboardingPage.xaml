@@ -468,15 +468,15 @@
                                     </Border.Shadow>
                                     <Grid RowDefinitions="Auto,Auto,Auto,*">
                                         <!-- Speaker strip -->
-                                        <HorizontalStackLayout Grid.Row="0" Spacing="8" Padding="24,22,24,0"
-                                                                IsVisible="{Binding HasSpeaker1}">
+                                        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Padding="24,22,24,0" ColumnSpacing="10"
+                                              IsVisible="{Binding HasSpeaker1}">
                                             <Border StrokeShape="RoundRectangle 16" StrokeThickness="0"
                                                     HeightRequest="32" WidthRequest="32">
                                                 <Image Source="{Binding Speaker1.ProfilePictureUrl}"
                                                        Aspect="AspectFill" />
                                             </Border>
-                                            <VerticalStackLayout Spacing="0" VerticalOptions="Center">
-                                                <Label Text="{Binding SpeakerNames}" FontSize="13" FontAttributes="Bold"
+                                            <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                                <Label Text="{Binding SpeakerNames}" FontSize="14" FontAttributes="Bold"
                                                        TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
                                                        LineBreakMode="TailTruncation" MaxLines="1" />
                                                 <Label Text="{Binding Speaker1.TagLine}" FontSize="11"
@@ -484,7 +484,7 @@
                                                        LineBreakMode="TailTruncation" MaxLines="1"
                                                        IsVisible="{Binding Speaker1.TagLine, Converter={toolkit:IsNotNullConverter}}" />
                                             </VerticalStackLayout>
-                                        </HorizontalStackLayout>
+                                        </Grid>
 
                                         <!-- Metadata -->
                                         <HorizontalStackLayout Grid.Row="1" Padding="24,8,24,0" Spacing="6">
@@ -502,21 +502,24 @@
                                             <Label Text="{Binding RoomName}" FontSize="13"
                                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                    VerticalOptions="Center"
+                                                   LineBreakMode="TailTruncation"
                                                    IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                         </HorizontalStackLayout>
 
                                         <!-- Title -->
-                                        <Label Grid.Row="2" Text="{Binding Title}" FontSize="20" FontAttributes="Bold"
-                                               MaxLines="3" LineBreakMode="TailTruncation"
+                                        <Label Grid.Row="2" Text="{Binding Title}" FontSize="22" FontAttributes="Bold"
+                                               MaxLines="3" LineBreakMode="WordWrap"
+                                               LineHeight="1.15"
                                                Padding="24,12,24,0"
                                                TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
 
                                         <!-- Description -->
-                                        <Label Grid.Row="3" Text="{Binding Description}" FontSize="13"
-                                               MaxLines="4" LineBreakMode="TailTruncation"
+                                        <Label Grid.Row="3" Text="{Binding Description}" FontSize="14"
+                                               MaxLines="20" LineBreakMode="TailTruncation"
                                                Padding="24,10,24,16"
-                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
-                                               LineHeight="1.4" />
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                               LineHeight="1.5"
+                                               VerticalOptions="Start" />
 
                                     </Grid>
                                 </Border>
