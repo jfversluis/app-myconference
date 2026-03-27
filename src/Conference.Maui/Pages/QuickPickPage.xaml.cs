@@ -26,6 +26,11 @@ public partial class QuickPickPage : ContentPage
 
     private async void OnSwiped(object? sender, SwipedCardEventArgs e)
     {
+        if (Services.HapticService.IsEnabled)
+        {
+            try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); } catch { }
+        }
+
         await _viewModel.HandleSwipeAsync(e.Item as SessionItem, e.Direction);
     }
 

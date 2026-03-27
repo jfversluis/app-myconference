@@ -65,6 +65,7 @@ public static class MauiProgram
         // Register services
         builder.Services.AddSingleton<IConferenceDataService, ConferenceDataService>();
         builder.Services.AddSingleton<IFavoritesService, FavoritesService>();
+        builder.Services.AddSingleton<IHapticService, HapticService>();
 
         // Register view models
         builder.Services.AddTransient<MyEventViewModel>();

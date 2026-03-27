@@ -58,11 +58,11 @@
                 </Grid>
 
                 <!-- Sections Container -->
-                <VerticalStackLayout Spacing="20" Padding="16,16">
+                <VerticalStackLayout Spacing="20" Padding="0,16">
 
                     <!-- HAPPENING NOW Section -->
                     <VerticalStackLayout Spacing="10" IsVisible="{Binding HasNowSessions}">
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="16,0">
                             <Border x:Name="LiveBadge"
                                     Grid.Column="0"
                                     StrokeShape="RoundRectangle 4"
@@ -85,7 +85,8 @@
                         <CollectionView ItemsSource="{Binding NowSessions}"
                                         SelectionMode="Single"
                                         SelectionChanged="OnSessionSelected"
-                                        HeightRequest="130">
+                                        HeightRequest="130"
+                                        Margin="16,0,0,0">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                             </CollectionView.ItemsLayout>
@@ -186,7 +187,7 @@
 
                     <!-- UP NEXT Section -->
                     <VerticalStackLayout Spacing="10" IsVisible="{Binding HasUpNext}">
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Padding="16,0">
                             <Label Grid.Column="0"
                                    Text="UP NEXT"
                                    FontSize="11"
@@ -214,7 +215,8 @@
                         <CollectionView ItemsSource="{Binding UpNextSessions}"
                                         SelectionMode="Single"
                                         SelectionChanged="OnSessionSelected"
-                                        HeightRequest="130">
+                                        HeightRequest="130"
+                                        Margin="16,0,0,0">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                             </CollectionView.ItemsLayout>
@@ -320,6 +322,7 @@
                             StrokeThickness="1"
                             Background="{AppThemeBinding Light={StaticResource OnboardingBgLight}, Dark={StaticResource OnboardingBgDark}}"
                             Padding="16"
+                            Margin="16,0"
                             IsVisible="{Binding ShowOnboarding}">
                         <VerticalStackLayout Spacing="8">
                             <Label Text="Build your personal agenda"
@@ -365,7 +368,7 @@
                     </Border>
 
                     <!-- MY AGENDA TODAY Section -->
-                    <VerticalStackLayout Spacing="10" IsVisible="{Binding HasTodayAgenda}">
+                    <VerticalStackLayout Spacing="10" Padding="16,0" IsVisible="{Binding HasTodayAgenda}">
                         <Label Text="YOUR AGENDA TODAY"
                                FontSize="11"
                                FontAttributes="Bold"
@@ -419,7 +422,7 @@
 
                     <!-- Empty State: No live content for today -->
                     <VerticalStackLayout Spacing="12" IsVisible="{Binding ShowEmptyState}"
-                                         Padding="16,40" HorizontalOptions="Center">
+                                         Padding="32,40" HorizontalOptions="Center">
                         <Image Source="calendar_regular.png" HeightRequest="48" WidthRequest="48"
                                HorizontalOptions="Center" Opacity="0.4">
                             <Image.Behaviors>
@@ -448,7 +451,7 @@
 
                     <!-- Error State: Failed to load data -->
                     <VerticalStackLayout Spacing="12" IsVisible="{Binding HasLoadError}"
-                                         Padding="16,40" HorizontalOptions="Center">
+                                         Padding="32,40" HorizontalOptions="Center">
                         <Image Source="info_regular.png" HeightRequest="48" WidthRequest="48"
                                HorizontalOptions="Center" Opacity="0.4">
                             <Image.Behaviors>
