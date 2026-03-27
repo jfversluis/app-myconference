@@ -208,12 +208,12 @@
                     Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
                 <VerticalStackLayout Spacing="12" Padding="32,32,32,32"
                                      VerticalOptions="Start">
-                    <Label Text="Welcome to NDC Copenhagen 2026!"
+                    <Label Text="{Binding WelcomeTitle}"
                            FontSize="24" FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}"
                            HorizontalTextAlignment="Center" />
 
-                    <Label Text="56 speakers. 65 sessions. 4 days.&#10;Let's build your perfect schedule."
+                    <Label Text="{Binding WelcomeSubtitle}"
                            FontSize="15" LineBreakMode="WordWrap"
                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
                            HorizontalTextAlignment="Center" LineHeight="1.4"

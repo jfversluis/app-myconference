@@ -90,6 +90,11 @@ public partial class OnboardingViewModel : ObservableObject
     public string RemainingText => QuickPickTotal > 0 ? $"{_swipedThisSession} / {QuickPickTotal} sessions" : "Swipe to build your agenda";
     public bool HasCards => Cards.Count > _swipedThisSession;
 
+    [ObservableProperty]
+    private string _welcomeSubtitle = string.Empty;
+
+    public string WelcomeTitle => $"Welcome to {AppConfig.ConferenceName}!";
+
     public OnboardingViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
@@ -132,6 +137,7 @@ public partial class OnboardingViewModel : ObservableObject
                 return;
             }
 
+            UpdateWelcomeSubtitle();
             BuildFeaturedSpeakers();
             _existingFavoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
             await FetchCategoryTagsAsync();
@@ -146,6 +152,15 @@ public partial class OnboardingViewModel : ObservableObject
         {
             IsBusy = false;
         }
+    }
+
+    private void UpdateWelcomeSubtitle()
+    {
+        var speakerCount = _allData?.Speakers.Count ?? 0;
+        var sessionCount = _allData?.Sessions.Count(s => !s.IsServiceSession) ?? 0;
+        var days = (AppConfig.EventEndDate - AppConfig.EventStartDate).Days + 1;
+
+        WelcomeSubtitle = $"{speakerCount} speakers. {sessionCount} sessions. {days} days.\nLet's build your perfect schedule.";
     }
 
     private void BuildFeaturedSpeakers()
