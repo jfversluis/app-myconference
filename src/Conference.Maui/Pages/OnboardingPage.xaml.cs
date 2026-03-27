@@ -10,14 +10,17 @@ public partial class OnboardingPage : ContentPage
     // Circle borders and images for speaker photos (populated in code-behind)
     private Border[] _speakerCircles = [];
     private Image[] _speakerImages = [];
+    private CancellationTokenSource? _floatCts;
 
     public OnboardingPage(OnboardingViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = _viewModel = viewModel;
 
-        _speakerCircles = [SpeakerCircle1, SpeakerCircle2, SpeakerCircle3, SpeakerCircle4, SpeakerCircle5];
-        _speakerImages = [SpeakerImg1, SpeakerImg2, SpeakerImg3, SpeakerImg4, SpeakerImg5];
+        _speakerCircles = [SpeakerCircle1, SpeakerCircle2, SpeakerCircle3, SpeakerCircle4, SpeakerCircle5,
+                           SpeakerCircle6, SpeakerCircle7, SpeakerCircle8, SpeakerCircle9, SpeakerCircle10];
+        _speakerImages = [SpeakerImg1, SpeakerImg2, SpeakerImg3, SpeakerImg4, SpeakerImg5,
+                          SpeakerImg6, SpeakerImg7, SpeakerImg8, SpeakerImg9, SpeakerImg10];
     }
 
     protected override async void OnAppearing()
@@ -33,6 +36,7 @@ public partial class OnboardingPage : ContentPage
     {
         base.OnDisappearing();
         _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        _floatCts?.Cancel();
     }
 
     protected override bool OnBackButtonPressed() => true;
@@ -85,8 +89,43 @@ public partial class OnboardingPage : ContentPage
             var circle = _speakerCircles[i];
             _ = circle.FadeToAsync(1, 400, Easing.CubicOut);
             _ = circle.ScaleToAsync(1, 500, Easing.SpringOut);
-            await Task.Delay(100);
+            await Task.Delay(80);
         }
+
+        StartFloatingAnimation();
+    }
+
+    private void StartFloatingAnimation()
+    {
+        _floatCts?.Cancel();
+        _floatCts = new CancellationTokenSource();
+        var ct = _floatCts.Token;
+        var random = new Random();
+
+        for (int i = 0; i < _speakerCircles.Length; i++)
+        {
+            if (!_speakerCircles[i].IsVisible) continue;
+            var circle = _speakerCircles[i];
+            var amplitude = 4 + random.NextDouble() * 6; // 4-10 pts vertical drift
+            var duration = (uint)(2500 + random.Next(1500)); // 2.5-4s per cycle
+            var delay = random.Next(800); // stagger start
+            _ = FloatBubbleAsync(circle, amplitude, duration, delay, ct);
+        }
+    }
+
+    private static async Task FloatBubbleAsync(View view, double amplitude, uint duration, int initialDelay, CancellationToken ct)
+    {
+        try
+        {
+            await Task.Delay(initialDelay, ct);
+            while (!ct.IsCancellationRequested)
+            {
+                await view.TranslateToAsync(0, -amplitude, duration, Easing.SinInOut);
+                if (ct.IsCancellationRequested) break;
+                await view.TranslateToAsync(0, amplitude * 0.6, duration, Easing.SinInOut);
+            }
+        }
+        catch (TaskCanceledException) { }
     }
 
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -108,6 +147,10 @@ public partial class OnboardingPage : ContentPage
         InterestsStep.IsVisible = _viewModel.CurrentStep == 2;
         QuickPickStep.IsVisible = _viewModel.CurrentStep == 3;
         DoneStep.IsVisible = _viewModel.CurrentStep == 4;
+
+        // Stop floating animation when leaving welcome
+        if (_viewModel.CurrentStep != 0)
+            _floatCts?.Cancel();
 
         if (_viewModel.CurrentStep == 4)
             UpdateSummaryText();
