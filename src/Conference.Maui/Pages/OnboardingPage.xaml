@@ -418,7 +418,7 @@
 
         <!-- STEP 3: Quick Pick -->
         <Grid IsVisible="False" x:Name="QuickPickStep"
-              RowDefinitions="Auto,*" Padding="0"
+              RowDefinitions="Auto,*,Auto" Padding="0"
               Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
               SafeAreaEdges="Container">
 
@@ -554,6 +554,58 @@
                     </swipe:SwipeCardView.ItemTemplate>
                 </swipe:SwipeCardView>
 
+            </Grid>
+
+            <Grid x:Name="QuickPickBottomBar" Grid.Row="2" Padding="20,8,20,32" ColumnDefinitions="Auto,*,Auto">
+                <!-- Skip button -->
+                <Border x:Name="OnboardingSkipButton"
+                        StrokeShape="RoundRectangle 28"
+                        StrokeThickness="1.5"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        HeightRequest="56" WidthRequest="56"
+                        HorizontalOptions="Center" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnQuickPickSkipTapped" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{mi:Fluent Icon=Dismiss24, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}"
+                           HeightRequest="24" WidthRequest="24"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+
+                <!-- Undo button -->
+                <Border Grid.Column="1"
+                        StrokeShape="RoundRectangle 22"
+                        StrokeThickness="0"
+                        BackgroundColor="Transparent"
+                        HeightRequest="44" WidthRequest="44"
+                        HorizontalOptions="Center" VerticalOptions="Center"
+                        Opacity="{Binding ShowUndo, Converter={toolkit:BoolToObjectConverter TrueObject=1, FalseObject=0.3}}"
+                        InputTransparent="{Binding ShowUndo, Converter={toolkit:InvertedBoolConverter}}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnQuickPickUndoTapped" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{mi:Fluent Icon=ArrowUndo24, IconColor={StaticResource Primary}}"
+                           HeightRequest="22" WidthRequest="22"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+
+                <!-- Add button -->
+                <Border x:Name="OnboardingAddButton"
+                        Grid.Column="2"
+                        StrokeShape="RoundRectangle 28"
+                        StrokeThickness="1.5"
+                        Stroke="{StaticResource Primary}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        HeightRequest="56" WidthRequest="56"
+                        HorizontalOptions="Center" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnQuickPickAddTapped" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{mi:Fluent Icon=Heart24, IconColor={StaticResource Primary}}"
+                           HeightRequest="24" WidthRequest="24"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
             </Grid>
         </Grid>
 
