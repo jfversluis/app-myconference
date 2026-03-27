@@ -570,36 +570,6 @@
                     </swipe:SwipeCardView.ItemTemplate>
                 </swipe:SwipeCardView>
 
-                <!-- Limit reached message -->
-                <Border x:Name="QuickPickLimitReached" IsVisible="False"
-                        StrokeShape="RoundRectangle 16"
-                        StrokeThickness="0"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                        Padding="32" Margin="24"
-                        VerticalOptions="Center" HorizontalOptions="Fill">
-                    <Border.Shadow>
-                        <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
-                                Offset="0,8" Radius="24" Opacity="0.7" />
-                    </Border.Shadow>
-                    <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
-                        <Label Text="🎯" FontSize="48" HorizontalTextAlignment="Center" />
-                        <Label Text="Great taste!"
-                               FontSize="22" FontAttributes="Bold"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
-                        <Label Text="{Binding AddedCount, StringFormat='You added {0} sessions to your agenda. Head to the Sessions tab to discover even more!'}"
-                               FontSize="14" LineHeight="1.4"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
-                        <Button Text="Finish Setup"
-                                Command="{Binding FinishQuickPickCommand}"
-                                BackgroundColor="{StaticResource Primary}"
-                                TextColor="White"
-                                FontSize="16" FontAttributes="Bold"
-                                CornerRadius="12" Padding="24,14"
-                                HorizontalOptions="Fill" />
-                    </VerticalStackLayout>
-                </Border>
             </Grid>
 
             <Grid x:Name="QuickPickBottomBar" Grid.Row="2" Padding="20,8,20,32" ColumnDefinitions="Auto,*,Auto">

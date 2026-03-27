@@ -401,6 +401,11 @@ public partial class OnboardingViewModel : ObservableObject
             _swipedThisSession++;
             ShowUndo = true;
             NotifyQuickPickChanged();
+
+            if (!HasCards)
+            {
+                CurrentStep = 4; // Done
+            }
         }
         catch (Exception ex)
         {

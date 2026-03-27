@@ -191,10 +191,7 @@ public partial class OnboardingPage : ContentPage
     private async void OnSwiped(object sender, SwipedCardEventArgs e)
     {
         if (e.Item is Models.SessionItem session)
-        {
             await _viewModel.HandleSwipeAsync(session, e.Direction);
-            CheckQuickPickLimitReached();
-        }
     }
 
     private void OnDragging(object sender, DraggingCardEventArgs e)
@@ -257,22 +254,7 @@ public partial class OnboardingPage : ContentPage
     {
         var success = OnboardingSwipeCards.GoBack(animated: true);
         if (success)
-        {
             await _viewModel.UndoLastSwipeCommand.ExecuteAsync(null);
-            QuickPickLimitReached.IsVisible = false;
-            OnboardingSwipeCards.IsVisible = true;
-            QuickPickBottomBar.IsVisible = true;
-        }
-    }
-
-    private void CheckQuickPickLimitReached()
-    {
-        if (!_viewModel.HasCards)
-        {
-            OnboardingSwipeCards.IsVisible = false;
-            QuickPickLimitReached.IsVisible = true;
-            QuickPickBottomBar.IsVisible = false;
-        }
     }
 
     private void OnViewAgendaClicked(object? sender, EventArgs e)
