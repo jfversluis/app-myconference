@@ -466,7 +466,7 @@
                                         <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
                                                 Offset="0,8" Radius="24" Opacity="0.7" />
                                     </Border.Shadow>
-                                    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+                                    <Grid RowDefinitions="Auto,Auto,Auto,*">
                                         <!-- Speaker strip -->
                                         <HorizontalStackLayout Grid.Row="0" Spacing="8" Padding="24,22,24,0"
                                                                 IsVisible="{Binding HasSpeaker1}">
@@ -518,25 +518,6 @@
                                                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
                                                LineHeight="1.4" />
 
-                                        <!-- Hint bar -->
-                                        <Border Grid.Row="4"
-                                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray800}}"
-                                                StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 0,0,16,16"
-                                                Padding="24,14">
-                                            <Grid ColumnDefinitions="*,*">
-                                                <HorizontalStackLayout Spacing="4" HorizontalOptions="Start" Opacity="0.6">
-                                                    <Label Text="←" FontSize="16" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
-                                                    <Label Text="Skip" FontSize="13" FontAttributes="Bold"
-                                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
-                                                </HorizontalStackLayout>
-                                                <HorizontalStackLayout Grid.Column="1" Spacing="4" HorizontalOptions="End" Opacity="0.6">
-                                                    <Label Text="Add" FontSize="13" FontAttributes="Bold"
-                                                           TextColor="{StaticResource Primary}" />
-                                                    <Label Text="→" FontSize="16" TextColor="{StaticResource Primary}" />
-                                                </HorizontalStackLayout>
-                                            </Grid>
-                                        </Border>
                                     </Grid>
                                 </Border>
 
