@@ -94,6 +94,7 @@ public partial class OnboardingViewModel : ObservableObject
     private string _welcomeSubtitle = string.Empty;
 
     public string WelcomeTitle => $"Welcome to {AppConfig.ConferenceName}!";
+    public string ConferenceName => AppConfig.ConferenceName;
 
     public OnboardingViewModel(
         IConferenceDataService dataService,

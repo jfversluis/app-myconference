@@ -208,10 +208,17 @@
                     Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
                 <VerticalStackLayout Spacing="12" Padding="32,32,32,32"
                                      VerticalOptions="Start">
-                    <Label Text="{Binding WelcomeTitle}"
-                           FontSize="24" FontAttributes="Bold"
+                    <Label FontSize="24"
                            TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}"
-                           HorizontalTextAlignment="Center" />
+                           HorizontalTextAlignment="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Welcome to " />
+                                <Span Text="{Binding ConferenceName}" FontAttributes="Bold" />
+                                <Span Text="!" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
 
                     <Label Text="{Binding WelcomeSubtitle}"
                            FontSize="15" LineBreakMode="WordWrap"
