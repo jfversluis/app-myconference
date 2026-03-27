@@ -150,6 +150,14 @@ public partial class OnboardingPage : ContentPage
         QuickPickStep.IsVisible = _viewModel.CurrentStep == 3;
         DoneStep.IsVisible = _viewModel.CurrentStep == 4;
 
+        // Set page background to hero blue on welcome step so the safe area
+        // (status bar / Dynamic Island) shows blue instead of white
+        if (_viewModel.CurrentStep == 0)
+            Background = new SolidColorBrush(Color.FromArgb("#005A9E"));
+        else
+            Background = new SolidColorBrush(AppInfo.RequestedTheme == AppTheme.Dark
+                ? Colors.Black : Colors.White);
+
         // Stop floating animation when leaving welcome
         if (_viewModel.CurrentStep != 0)
             _floatCts?.Cancel();
