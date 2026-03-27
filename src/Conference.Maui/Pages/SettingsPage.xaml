@@ -81,6 +81,28 @@
                                mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={StaticResource Gray400}}" />
                     </Grid>
                 </Border>
+
+                <!-- Replay Welcome -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeThickness="1"
+                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="16">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ReplayOnboardingCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Play24, IconColor={StaticResource Primary}}" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Replay Welcome" FontSize="15" FontAttributes="Bold" />
+                            <Label Text="Show the onboarding experience again" FontSize="12"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        </VerticalStackLayout>
+                        <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={StaticResource Gray400}}" />
+                    </Grid>
+                </Border>
             </VerticalStackLayout>
 
             <!-- App Info Section -->

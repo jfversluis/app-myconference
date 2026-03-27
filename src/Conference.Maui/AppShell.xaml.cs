@@ -1,4 +1,4 @@
-﻿using Conference.Maui.Pages;
+using Conference.Maui.Pages;
 
 namespace Conference.Maui;
 

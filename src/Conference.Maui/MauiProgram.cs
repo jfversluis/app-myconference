@@ -6,6 +6,7 @@ using Conference.Maui.Pages;
 using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
 using Sessionize.Api.Client;
 using Sessionize.Api.Client.Abstractions;
 using Sessionize.Api.Client.Configuration;
@@ -41,6 +42,7 @@ public static class MauiProgram
 #endif
             .UseMauiCommunityToolkit()
             .UseFluentMauiIcons()
+            .UseLocalNotification()
             .ConfigureSyncfusionToolkit();
 
         // Remove native border from Entry on iOS
@@ -75,6 +77,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<QuickPickViewModel>();
         builder.Services.AddTransient<ConflictResolverViewModel>();
+        builder.Services.AddTransient<OnboardingViewModel>();
 
         // Register pages
         builder.Services.AddTransient<MyEventPage>();
@@ -87,6 +90,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<QuickPickPage>();
         builder.Services.AddTransient<ConflictResolverPage>();
+        builder.Services.AddTransient<OnboardingPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
