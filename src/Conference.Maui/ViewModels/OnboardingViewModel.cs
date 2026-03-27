@@ -308,13 +308,10 @@ public partial class OnboardingViewModel : ObservableObject
         await CloseOnboardingAsync();
     }
 
-    private async Task CloseOnboardingAsync()
+    private Task CloseOnboardingAsync()
     {
-        // Dismiss the modal onboarding page
-        if (Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation is { } nav)
-        {
-            await nav.PopModalAsync(animated: true);
-        }
+        App.TransitionToShell();
+        return Task.CompletedTask;
     }
 
     private async Task BuildFilteredDeckAsync()

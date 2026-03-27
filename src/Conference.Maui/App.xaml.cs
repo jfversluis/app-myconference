@@ -1,4 +1,5 @@
-﻿using Conference.Maui.ViewModels;
+﻿using Conference.Maui.Pages;
+using Conference.Maui.ViewModels;
 
 namespace Conference.Maui;
 
@@ -19,7 +20,34 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        // Always use AppShell — iOS requires Shell as root page
-        return new Window(new AppShell());
+        if (OnboardingViewModel.IsOnboardingCompleted())
+            return new Window(new AppShell());
+
+        // Show onboarding directly as the root page — no Shell, no flash
+        var sp = IPlatformApplication.Current?.Services;
+        var onboardingPage = sp!.GetRequiredService<OnboardingPage>();
+        return new Window(onboardingPage);
+    }
+
+    /// <summary>
+    /// Transitions from onboarding to the main Shell.
+    /// </summary>
+    public static void TransitionToShell()
+    {
+        if (Current?.Windows.FirstOrDefault() is Window window)
+            window.Page = new AppShell();
+    }
+
+    /// <summary>
+    /// Transitions from onboarding to the main Shell, navigating to a specific route.
+    /// </summary>
+    public static async void TransitionToShell(string route)
+    {
+        if (Current?.Windows.FirstOrDefault() is Window window)
+        {
+            window.Page = new AppShell();
+            await Task.Delay(300); // Let Shell initialize
+            await Shell.Current.GoToAsync(route);
+        }
     }
 }

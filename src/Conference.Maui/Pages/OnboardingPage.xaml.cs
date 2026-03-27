@@ -198,12 +198,9 @@ public partial class OnboardingPage : ContentPage
     {
     }
 
-    private async void OnViewAgendaClicked(object? sender, EventArgs e)
+    private void OnViewAgendaClicked(object? sender, EventArgs e)
     {
         OnboardingViewModel.MarkOnboardingCompleted();
-        if (Navigation.ModalStack.Count > 0)
-            await Navigation.PopModalAsync(animated: true);
-        await Task.Delay(200);
-        await Shell.Current.GoToAsync("//Favorites");
+        App.TransitionToShell("//Favorites");
     }
 }
