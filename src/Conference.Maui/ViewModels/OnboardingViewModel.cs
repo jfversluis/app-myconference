@@ -401,15 +401,6 @@ public partial class OnboardingViewModel : ObservableObject
             _swipedThisSession++;
             ShowUndo = true;
             NotifyQuickPickChanged();
-
-            if (!HasCards)
-            {
-                // Don't auto-advance to Done — the page shows limit-reached card
-            }
-            else
-            {
-                UpdateConflictForCurrentCard();
-            }
         }
         catch (Exception ex)
         {

@@ -418,7 +418,7 @@
 
         <!-- STEP 3: Quick Pick -->
         <Grid IsVisible="False" x:Name="QuickPickStep"
-              RowDefinitions="Auto,Auto,*,Auto" Padding="0"
+              RowDefinitions="Auto,*,Auto" Padding="0"
               Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
               SafeAreaEdges="Container">
 
@@ -441,15 +441,7 @@
                              HeightRequest="3" />
             </Grid>
 
-            <Label Grid.Row="1"
-                   Text="{Binding ConflictText}"
-                   IsVisible="{Binding HasConflict}"
-                   FontSize="12"
-                   TextColor="{StaticResource Primary}"
-                   HorizontalTextAlignment="Center"
-                   Padding="16,4" />
-
-            <Grid Grid.Row="2" Padding="16,0">
+            <Grid Grid.Row="1" Padding="16,0">
                 <swipe:SwipeCardView x:Name="OnboardingSwipeCards"
                                      ItemsSource="{Binding Cards}"
                                      Threshold="100"
@@ -467,12 +459,12 @@
                                 <!-- Main card -->
                                 <Border StrokeShape="RoundRectangle 16"
                                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
-                                        StrokeThickness="1"
+                                        StrokeThickness="0.5"
                                         BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                         Padding="0" Margin="8">
                                     <Border.Shadow>
                                         <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
-                                                Offset="0,4" Radius="12" Opacity="0.8" />
+                                                Offset="0,8" Radius="24" Opacity="0.7" />
                                     </Border.Shadow>
                                     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
                                         <!-- Speaker strip -->
@@ -587,7 +579,7 @@
                         VerticalOptions="Center" HorizontalOptions="Fill">
                     <Border.Shadow>
                         <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
-                                Offset="0,4" Radius="12" Opacity="0.8" />
+                                Offset="0,8" Radius="24" Opacity="0.7" />
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
                         <Label Text="🎯" FontSize="48" HorizontalTextAlignment="Center" />
@@ -610,9 +602,10 @@
                 </Border>
             </Grid>
 
-            <Grid Grid.Row="3" Padding="20,8,20,32" ColumnDefinitions="Auto,*,Auto">
+            <Grid x:Name="QuickPickBottomBar" Grid.Row="2" Padding="20,8,20,32" ColumnDefinitions="Auto,*,Auto">
                 <!-- Skip button -->
-                <Border StrokeShape="RoundRectangle 28"
+                <Border x:Name="OnboardingSkipButton"
+                        StrokeShape="RoundRectangle 28"
                         StrokeThickness="1.5"
                         Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
@@ -644,7 +637,8 @@
                 </Border>
 
                 <!-- Add button -->
-                <Border Grid.Column="2"
+                <Border x:Name="OnboardingAddButton"
+                        Grid.Column="2"
                         StrokeShape="RoundRectangle 28"
                         StrokeThickness="1.5"
                         Stroke="{StaticResource Primary}"

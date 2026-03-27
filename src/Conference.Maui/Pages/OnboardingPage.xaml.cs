@@ -199,6 +199,48 @@ public partial class OnboardingPage : ContentPage
 
     private void OnDragging(object sender, DraggingCardEventArgs e)
     {
+        if (e.CardView == null) return;
+
+        var likeFrame = e.CardView.FindByName<Border>("LikeFrame");
+        var nopeFrame = e.CardView.FindByName<Border>("NopeFrame");
+        if (likeFrame == null || nopeFrame == null) return;
+
+        const double threshold = 100.0;
+        var dragPercent = e.DistanceDraggedX / threshold;
+
+        switch (e.Position)
+        {
+            case DraggingCardPosition.Start:
+                likeFrame.Opacity = 0;
+                nopeFrame.Opacity = 0;
+                break;
+
+            case DraggingCardPosition.UnderThreshold:
+            case DraggingCardPosition.OverThreshold:
+                if (dragPercent > 0)
+                {
+                    likeFrame.Opacity = Math.Min(dragPercent, 1.0);
+                    nopeFrame.Opacity = 0;
+                    OnboardingAddButton.Scale = 1.0 + (Math.Min(dragPercent, 1.0) * 0.15);
+                    OnboardingSkipButton.Scale = 1.0;
+                }
+                else if (dragPercent < 0)
+                {
+                    nopeFrame.Opacity = Math.Min(Math.Abs(dragPercent), 1.0);
+                    likeFrame.Opacity = 0;
+                    OnboardingSkipButton.Scale = 1.0 + (Math.Min(Math.Abs(dragPercent), 1.0) * 0.15);
+                    OnboardingAddButton.Scale = 1.0;
+                }
+                break;
+
+            case DraggingCardPosition.FinishedOverThreshold:
+            case DraggingCardPosition.FinishedUnderThreshold:
+                likeFrame.Opacity = 0;
+                nopeFrame.Opacity = 0;
+                OnboardingAddButton.ScaleTo(1.0, 150, Easing.CubicOut);
+                OnboardingSkipButton.ScaleTo(1.0, 150, Easing.CubicOut);
+                break;
+        }
     }
 
     private void OnQuickPickSkipTapped(object? sender, TappedEventArgs e)
@@ -219,6 +261,7 @@ public partial class OnboardingPage : ContentPage
             await _viewModel.UndoLastSwipeCommand.ExecuteAsync(null);
             QuickPickLimitReached.IsVisible = false;
             OnboardingSwipeCards.IsVisible = true;
+            QuickPickBottomBar.IsVisible = true;
         }
     }
 
@@ -228,6 +271,7 @@ public partial class OnboardingPage : ContentPage
         {
             OnboardingSwipeCards.IsVisible = false;
             QuickPickLimitReached.IsVisible = true;
+            QuickPickBottomBar.IsVisible = false;
         }
     }
 
