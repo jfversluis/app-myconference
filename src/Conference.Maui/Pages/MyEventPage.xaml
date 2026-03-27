@@ -90,10 +90,10 @@
                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                             </CollectionView.ItemsLayout>
                             <CollectionView.Header>
-                                <BoxView WidthRequest="16" Color="Transparent" />
+                                <ContentView WidthRequest="16" />
                             </CollectionView.Header>
                             <CollectionView.Footer>
-                                <BoxView WidthRequest="16" Color="Transparent" />
+                                <ContentView WidthRequest="16" />
                             </CollectionView.Footer>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:SessionItem">
@@ -225,10 +225,10 @@
                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                             </CollectionView.ItemsLayout>
                             <CollectionView.Header>
-                                <BoxView WidthRequest="16" Color="Transparent" />
+                                <ContentView WidthRequest="16" />
                             </CollectionView.Header>
                             <CollectionView.Footer>
-                                <BoxView WidthRequest="16" Color="Transparent" />
+                                <ContentView WidthRequest="16" />
                             </CollectionView.Footer>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:SessionItem">
