@@ -85,11 +85,16 @@
                         <CollectionView ItemsSource="{Binding NowSessions}"
                                         SelectionMode="Single"
                                         SelectionChanged="OnSessionSelected"
-                                        HeightRequest="130"
-                                        Margin="16,0,0,0">
+                                        HeightRequest="130">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                             </CollectionView.ItemsLayout>
+                            <CollectionView.Header>
+                                <BoxView WidthRequest="16" Color="Transparent" />
+                            </CollectionView.Header>
+                            <CollectionView.Footer>
+                                <BoxView WidthRequest="16" Color="Transparent" />
+                            </CollectionView.Footer>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:SessionItem">
                                     <Border StrokeShape="RoundRectangle 12"
@@ -215,11 +220,16 @@
                         <CollectionView ItemsSource="{Binding UpNextSessions}"
                                         SelectionMode="Single"
                                         SelectionChanged="OnSessionSelected"
-                                        HeightRequest="130"
-                                        Margin="16,0,0,0">
+                                        HeightRequest="130">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                             </CollectionView.ItemsLayout>
+                            <CollectionView.Header>
+                                <BoxView WidthRequest="16" Color="Transparent" />
+                            </CollectionView.Header>
+                            <CollectionView.Footer>
+                                <BoxView WidthRequest="16" Color="Transparent" />
+                            </CollectionView.Footer>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:SessionItem">
                                     <Border StrokeShape="RoundRectangle 12"
