@@ -218,15 +218,11 @@ public partial class OnboardingPage : ContentPage
                 {
                     likeFrame.Opacity = Math.Min(dragPercent, 1.0);
                     nopeFrame.Opacity = 0;
-                    OnboardingAddButton.Scale = 1.0 + (Math.Min(dragPercent, 1.0) * 0.15);
-                    OnboardingSkipButton.Scale = 1.0;
                 }
                 else if (dragPercent < 0)
                 {
                     nopeFrame.Opacity = Math.Min(Math.Abs(dragPercent), 1.0);
                     likeFrame.Opacity = 0;
-                    OnboardingSkipButton.Scale = 1.0 + (Math.Min(Math.Abs(dragPercent), 1.0) * 0.15);
-                    OnboardingAddButton.Scale = 1.0;
                 }
                 break;
 
@@ -234,27 +230,8 @@ public partial class OnboardingPage : ContentPage
             case DraggingCardPosition.FinishedUnderThreshold:
                 likeFrame.Opacity = 0;
                 nopeFrame.Opacity = 0;
-                OnboardingAddButton.ScaleTo(1.0, 150, Easing.CubicOut);
-                OnboardingSkipButton.ScaleTo(1.0, 150, Easing.CubicOut);
                 break;
         }
-    }
-
-    private void OnQuickPickSkipTapped(object? sender, TappedEventArgs e)
-    {
-        OnboardingSwipeCards.InvokeSwipe(SwipeCardDirection.Left);
-    }
-
-    private void OnQuickPickAddTapped(object? sender, TappedEventArgs e)
-    {
-        OnboardingSwipeCards.InvokeSwipe(SwipeCardDirection.Right);
-    }
-
-    private async void OnQuickPickUndoTapped(object? sender, TappedEventArgs e)
-    {
-        var success = OnboardingSwipeCards.GoBack(animated: true);
-        if (success)
-            await _viewModel.UndoLastSwipeCommand.ExecuteAsync(null);
     }
 
     private void OnViewAgendaClicked(object? sender, EventArgs e)
