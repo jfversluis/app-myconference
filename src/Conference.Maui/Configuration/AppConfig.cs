@@ -43,12 +43,12 @@ public static class AppConfig
     /// <summary>
     /// The name of the conference/event.
     /// </summary>
-    public const string ConferenceName = "NDC Copenhagen 2025";
+    public const string ConferenceName = "NDC Copenhagen 2026";
 
     /// <summary>
     /// A short description of the event.
     /// </summary>
-    public const string EventDescription = "Three days of software development talks and workshops covering .NET, cloud, AI, architecture, security, and more. Join world-class speakers and the developer community in Copenhagen.";
+    public const string EventDescription = "Four days of software development talks and workshops covering .NET, cloud, AI, architecture, security, and more. Join world-class speakers and the developer community in Copenhagen.";
 
     /// <summary>
     /// Whether the event is online-only (no physical venue).
@@ -59,19 +59,19 @@ public static class AppConfig
     /// <summary>
     /// Event venue name and location.
     /// </summary>
-    public const string VenueName = "Bella Center Copenhagen";
-    public const string VenueDetails = "Center Boulevard 5, 2300 Copenhagen S, Denmark";
+    public const string VenueName = "Øksnehallen";
+    public const string VenueDetails = "Halmtorvet 11, 1700 København V, Denmark";
 
     /// <summary>
     /// Event start and end dates.
     /// </summary>
-    public static readonly DateTime EventStartDate = new(2025, 9, 10);
-    public static readonly DateTime EventEndDate = new(2025, 9, 12);
+    public static readonly DateTime EventStartDate = new(2026, 6, 1);
+    public static readonly DateTime EventEndDate = new(2026, 6, 4);
 
     /// <summary>
     /// Conference website URL.
     /// </summary>
-    public const string ConferenceWebsite = "https://cphdevfest.com";
+    public const string ConferenceWebsite = "https://ndccopenhagen.com";
 
     /// <summary>
     /// GitHub repository URL for this open-source app.

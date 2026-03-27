@@ -1,42 +1,17 @@
 [
   {
-    "Name": "Syncfusion",
-    "ImageUrl": "https://mauiday.net/images/sponsors/syncfusion.png",
-    "Website": "https://syncfusion.com/"
+    "Name": "Aikido",
+    "ImageUrl": "https://cdn.sanity.io/images/fhoo4r9z/production/5c5a577dcfdb2f14ad42368166c2aacb9beac298-600x280.png?w=300",
+    "Website": "https://www.aikido.dev/"
   },
   {
-    "Name": "Telerik",
-    "ImageUrl": "https://mauiday.net/images/sponsors/progress.png",
-    "Website": "https://www.telerik.com/maui-ui"
+    "Name": "PROSA",
+    "ImageUrl": "https://cdn.sanity.io/images/fhoo4r9z/production/475d078b4b4a9b5006315267ed8632eba1598ce5-600x280.png?w=300",
+    "Website": "https://www.prosa.dk/"
   },
   {
-    "Name": "Sentry",
-    "ImageUrl": "https://mauiday.net/images/sponsors/sentry.png",
-    "Website": "https://sentry.io/"
-  },
-  {
-    "Name": "Microsoft",
-    "ImageUrl": "https://mauiday.net/images/sponsors/microsoft.png",
-    "Website": "https://www.microsoft.com/"
-  },
-  {
-    "Name": "Sessionize",
-    "ImageUrl": "https://mauiday.net/images/sponsors/sessionize.png",
-    "Website": "https://sessionize.com/"
-  },
-  {
-    "Name": "Jetbrains",
-    "ImageUrl": "https://mauiday.net/images/sponsors/jetbrains.png",
-    "Website": "https://www.jetbrains.com/"
-  },
-  {
-    "Name": "JUST EAT",
-    "ImageUrl": "https://mauiday.net/images/sponsors/justeat.png",
-    "Website": "https://www.just-eat.co.uk/"
-  },
-  {
-    "Name": "UXDIVERS",
-    "ImageUrl": "https://mauiday.net/images/sponsors/ux-divers.png",
-    "Website": "https://uxdivers.com/"
+    "Name": "Text Control",
+    "ImageUrl": "https://cdn.sanity.io/images/fhoo4r9z/production/5a492ac78b90c9d505f80b8608f3ff72a6a6d11c-300x140.png?w=300",
+    "Website": "https://www.textcontrol.com/"
   }
 ]

@@ -31,15 +31,15 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
     private static readonly (string Label, DateTimeOffset Time)[] DebugPresets =
     [
-        ("Before event (8:30 AM)", new(2025, 9, 10, 8, 30, 0, DateTimeOffset.Now.Offset)),
-        ("Keynote live (9:30 AM)", new(2025, 9, 10, 9, 30, 0, DateTimeOffset.Now.Offset)),
-        ("Break (10:05 AM)", new(2025, 9, 10, 10, 5, 0, DateTimeOffset.Now.Offset)),
-        ("Sessions live (10:25 AM)", new(2025, 9, 10, 10, 25, 0, DateTimeOffset.Now.Offset)),
-        ("Lunch (12:30 PM)", new(2025, 9, 10, 12, 30, 0, DateTimeOffset.Now.Offset)),
-        ("Afternoon (3:00 PM)", new(2025, 9, 10, 15, 0, 0, DateTimeOffset.Now.Offset)),
-        ("End of day (6:15 PM)", new(2025, 9, 10, 18, 15, 0, DateTimeOffset.Now.Offset)),
-        ("Day 2 morning (9:15 AM)", new(2025, 9, 11, 9, 15, 0, DateTimeOffset.Now.Offset)),
-        ("After event", new(2025, 9, 12, 10, 0, 0, DateTimeOffset.Now.Offset)),
+        ("Before event (8:30 AM)", new(2026, 6, 1, 8, 30, 0, DateTimeOffset.Now.Offset)),
+        ("Keynote live (9:30 AM)", new(2026, 6, 1, 9, 30, 0, DateTimeOffset.Now.Offset)),
+        ("Break (10:05 AM)", new(2026, 6, 1, 10, 5, 0, DateTimeOffset.Now.Offset)),
+        ("Sessions live (10:25 AM)", new(2026, 6, 1, 10, 25, 0, DateTimeOffset.Now.Offset)),
+        ("Lunch (12:30 PM)", new(2026, 6, 1, 12, 30, 0, DateTimeOffset.Now.Offset)),
+        ("Afternoon (3:00 PM)", new(2026, 6, 1, 15, 0, 0, DateTimeOffset.Now.Offset)),
+        ("End of day (6:15 PM)", new(2026, 6, 1, 18, 15, 0, DateTimeOffset.Now.Offset)),
+        ("Day 2 morning (9:15 AM)", new(2026, 6, 2, 9, 15, 0, DateTimeOffset.Now.Offset)),
+        ("After event", new(2026, 6, 4, 10, 0, 0, DateTimeOffset.Now.Offset)),
         ("Real time (no offset)", default),
     ];
 #endif
