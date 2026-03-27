@@ -113,7 +113,7 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:SessionItem">
-                        <Grid Padding="16,4" BackgroundColor="Transparent">
+                        <Grid Padding="12,4" BackgroundColor="Transparent">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup Name="CommonStates">
                                     <VisualState Name="Normal">

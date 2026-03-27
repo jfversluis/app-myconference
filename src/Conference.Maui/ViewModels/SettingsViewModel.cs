@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
+using Conference.Maui.Services;
 
 namespace Conference.Maui.ViewModels;
 
@@ -16,6 +17,9 @@ public partial class SettingsViewModel : BaseViewModel
     [ObservableProperty]
     private int _selectedThemeIndex;
 
+    [ObservableProperty]
+    private bool _hapticFeedbackEnabled;
+
     public SettingsViewModel(IConferenceDataService dataService)
     {
         Title = "Settings";
@@ -27,6 +31,13 @@ public partial class SettingsViewModel : BaseViewModel
             AppTheme.Dark => 2,
             _ => 0
         };
+
+        _hapticFeedbackEnabled = HapticService.IsEnabled;
+    }
+
+    partial void OnHapticFeedbackEnabledChanged(bool value)
+    {
+        HapticService.IsEnabled = value;
     }
 
     partial void OnSelectedThemeIndexChanged(int value)

@@ -60,6 +60,25 @@
                     </Grid>
                 </Border>
 
+                <!-- Haptic Feedback -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeThickness="1"
+                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="16">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Phone24, IconColor={StaticResource Primary}}" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Haptic Feedback" FontSize="15" FontAttributes="Bold" />
+                            <Label Text="Vibration on swipes and actions" FontSize="12"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="2" IsToggled="{Binding HapticFeedbackEnabled}" VerticalOptions="Center"
+                                OnColor="{StaticResource Primary}" />
+                    </Grid>
+                </Border>
+
                 <!-- Clear Cache -->
                 <Border StrokeShape="RoundRectangle 12"
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"

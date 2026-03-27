@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Conference.Maui.Pages;
+using Conference.Maui.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Conference.Maui.ViewModels;
@@ -101,6 +102,11 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
         if (Session == null) return;
 
         Session.IsFavorite = await _favoritesService.ToggleFavoriteAsync(Session.Id);
+
+        if (HapticService.IsEnabled)
+        {
+            try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); } catch { }
+        }
     }
 
     [RelayCommand]

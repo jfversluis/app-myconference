@@ -190,6 +190,11 @@ public partial class OnboardingPage : ContentPage
 
     private async void OnSwiped(object sender, SwipedCardEventArgs e)
     {
+        if (Services.HapticService.IsEnabled)
+        {
+            try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); } catch { }
+        }
+
         if (e.Item is Models.SessionItem session)
             await _viewModel.HandleSwipeAsync(session, e.Direction);
     }
