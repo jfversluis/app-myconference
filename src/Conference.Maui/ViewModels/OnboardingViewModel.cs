@@ -163,7 +163,7 @@ public partial class OnboardingViewModel : ObservableObject
             var random = new Random();
             var picked = speakersWithPhotos
                 .OrderBy(_ => random.Next())
-                .Take(10)
+                .Take(16)
                 .ToList();
 
             var result = new ObservableCollection<FeaturedSpeaker>();

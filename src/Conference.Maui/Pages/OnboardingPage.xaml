@@ -121,11 +121,71 @@
                     <!-- 10: bottom-center, small -->
                     <Border StrokeShape="RoundRectangle 26" StrokeThickness="3"
                             HeightRequest="52" WidthRequest="52"
-                            AbsoluteLayout.LayoutBounds="0.55,0.88"
+                            AbsoluteLayout.LayoutBounds="0.50,0.80"
                             AbsoluteLayout.LayoutFlags="PositionProportional"
                             x:Name="SpeakerCircle10">
                         <Border.Clip><EllipseGeometry Center="26,26" RadiusX="26" RadiusY="26" /></Border.Clip>
                         <Image x:Name="SpeakerImg10" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- 11: top-center, tiny accent -->
+                    <Border StrokeShape="RoundRectangle 18" StrokeThickness="2"
+                            HeightRequest="36" WidthRequest="36"
+                            AbsoluteLayout.LayoutBounds="0.46,0.08"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle11">
+                        <Border.Clip><EllipseGeometry Center="18,18" RadiusX="18" RadiusY="18" /></Border.Clip>
+                        <Image x:Name="SpeakerImg11" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- 12: upper-right gap filler, medium -->
+                    <Border StrokeShape="RoundRectangle 35" StrokeThickness="3"
+                            HeightRequest="70" WidthRequest="70"
+                            AbsoluteLayout.LayoutBounds="0.68,0.18"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle12">
+                        <Border.Clip><EllipseGeometry Center="35,35" RadiusX="35" RadiusY="35" /></Border.Clip>
+                        <Image x:Name="SpeakerImg12" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- 13: right mid, tiny -->
+                    <Border StrokeShape="RoundRectangle 20" StrokeThickness="2"
+                            HeightRequest="40" WidthRequest="40"
+                            AbsoluteLayout.LayoutBounds="0.15,0.35"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle13">
+                        <Border.Clip><EllipseGeometry Center="20,20" RadiusX="20" RadiusY="20" /></Border.Clip>
+                        <Image x:Name="SpeakerImg13" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- 14: center-low, medium -->
+                    <Border StrokeShape="RoundRectangle 38" StrokeThickness="3"
+                            HeightRequest="76" WidthRequest="76"
+                            AbsoluteLayout.LayoutBounds="0.40,0.62"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle14">
+                        <Border.Clip><EllipseGeometry Center="38,38" RadiusX="38" RadiusY="38" /></Border.Clip>
+                        <Image x:Name="SpeakerImg14" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- 15: bottom-left, tiny -->
+                    <Border StrokeShape="RoundRectangle 17" StrokeThickness="2"
+                            HeightRequest="34" WidthRequest="34"
+                            AbsoluteLayout.LayoutBounds="0.08,0.78"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle15">
+                        <Border.Clip><EllipseGeometry Center="17,17" RadiusX="17" RadiusY="17" /></Border.Clip>
+                        <Image x:Name="SpeakerImg15" Aspect="AspectFill" />
+                    </Border>
+
+                    <!-- 16: lower-right, small -->
+                    <Border StrokeShape="RoundRectangle 24" StrokeThickness="3"
+                            HeightRequest="48" WidthRequest="48"
+                            AbsoluteLayout.LayoutBounds="0.58,0.72"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            x:Name="SpeakerCircle16">
+                        <Border.Clip><EllipseGeometry Center="24,24" RadiusX="24" RadiusY="24" /></Border.Clip>
+                        <Image x:Name="SpeakerImg16" Aspect="AspectFill" />
                     </Border>
                 </AbsoluteLayout>
 

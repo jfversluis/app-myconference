@@ -18,9 +18,11 @@ public partial class OnboardingPage : ContentPage
         BindingContext = _viewModel = viewModel;
 
         _speakerCircles = [SpeakerCircle1, SpeakerCircle2, SpeakerCircle3, SpeakerCircle4, SpeakerCircle5,
-                           SpeakerCircle6, SpeakerCircle7, SpeakerCircle8, SpeakerCircle9, SpeakerCircle10];
+                           SpeakerCircle6, SpeakerCircle7, SpeakerCircle8, SpeakerCircle9, SpeakerCircle10,
+                           SpeakerCircle11, SpeakerCircle12, SpeakerCircle13, SpeakerCircle14, SpeakerCircle15, SpeakerCircle16];
         _speakerImages = [SpeakerImg1, SpeakerImg2, SpeakerImg3, SpeakerImg4, SpeakerImg5,
-                          SpeakerImg6, SpeakerImg7, SpeakerImg8, SpeakerImg9, SpeakerImg10];
+                          SpeakerImg6, SpeakerImg7, SpeakerImg8, SpeakerImg9, SpeakerImg10,
+                          SpeakerImg11, SpeakerImg12, SpeakerImg13, SpeakerImg14, SpeakerImg15, SpeakerImg16];
     }
 
     protected override async void OnAppearing()
