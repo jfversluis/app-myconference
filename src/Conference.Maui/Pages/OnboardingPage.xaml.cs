@@ -191,11 +191,44 @@ public partial class OnboardingPage : ContentPage
     private async void OnSwiped(object sender, SwipedCardEventArgs e)
     {
         if (e.Item is Models.SessionItem session)
+        {
             await _viewModel.HandleSwipeAsync(session, e.Direction);
+            CheckQuickPickLimitReached();
+        }
     }
 
     private void OnDragging(object sender, DraggingCardEventArgs e)
     {
+    }
+
+    private void OnQuickPickSkipTapped(object? sender, TappedEventArgs e)
+    {
+        OnboardingSwipeCards.InvokeSwipe(SwipeCardDirection.Left);
+    }
+
+    private void OnQuickPickAddTapped(object? sender, TappedEventArgs e)
+    {
+        OnboardingSwipeCards.InvokeSwipe(SwipeCardDirection.Right);
+    }
+
+    private async void OnQuickPickUndoTapped(object? sender, TappedEventArgs e)
+    {
+        var success = OnboardingSwipeCards.GoBack(animated: true);
+        if (success)
+        {
+            await _viewModel.UndoLastSwipeCommand.ExecuteAsync(null);
+            QuickPickLimitReached.IsVisible = false;
+            OnboardingSwipeCards.IsVisible = true;
+        }
+    }
+
+    private void CheckQuickPickLimitReached()
+    {
+        if (!_viewModel.HasCards)
+        {
+            OnboardingSwipeCards.IsVisible = false;
+            QuickPickLimitReached.IsVisible = true;
+        }
     }
 
     private void OnViewAgendaClicked(object? sender, EventArgs e)

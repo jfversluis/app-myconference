@@ -17,7 +17,7 @@ namespace Conference.Maui.ViewModels;
 public partial class OnboardingViewModel : ObservableObject
 {
     private const string OnboardingCompletedKey = "onboarding_completed_v1";
-    private const int QuickPickCardLimit = 15;
+    private const int QuickPickCardLimit = 10;
 
     // Vibrant colors for speaker photo circles on the welcome screen
     private static readonly string[] CircleColors =
@@ -87,6 +87,7 @@ public partial class OnboardingViewModel : ObservableObject
 
     public double QuickPickProgress => QuickPickTotal > 0 ? (double)_swipedThisSession / QuickPickTotal : 0;
     public string QuickPickProgressText => QuickPickTotal > 0 ? $"{_swipedThisSession} / {QuickPickTotal}" : string.Empty;
+    public string RemainingText => QuickPickTotal > 0 ? $"{_swipedThisSession} / {QuickPickTotal} sessions" : "Swipe to build your agenda";
     public bool HasCards => Cards.Count > _swipedThisSession;
 
     public OnboardingViewModel(
@@ -403,7 +404,7 @@ public partial class OnboardingViewModel : ObservableObject
 
             if (!HasCards)
             {
-                CurrentStep = 4; // Done
+                // Don't auto-advance to Done — the page shows limit-reached card
             }
             else
             {
@@ -510,6 +511,7 @@ public partial class OnboardingViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(QuickPickProgress));
         OnPropertyChanged(nameof(QuickPickProgressText));
+        OnPropertyChanged(nameof(RemainingText));
         OnPropertyChanged(nameof(HasCards));
     }
 }

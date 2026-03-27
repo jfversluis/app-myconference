@@ -248,84 +248,88 @@
         </Grid>
 
         <!-- STEP 1: Notification Permission -->
-        <Grid IsVisible="False" x:Name="NotificationStep" Padding="0">
+        <Grid IsVisible="False" x:Name="NotificationStep" Padding="0" SafeAreaEdges="None">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.4*" />
                 <RowDefinition Height="0.6*" />
             </Grid.RowDefinitions>
 
             <Grid Background="{StaticResource HeroGradient}">
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="12" Padding="32">
-                    <Label Text="🔔" FontSize="64" HorizontalTextAlignment="Center" />
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="16" Padding="32">
+                    <Label Text="🔔" FontSize="56" HorizontalTextAlignment="Center" />
                     <Label Text="Stay in the loop"
                            FontSize="28" FontAttributes="Bold" TextColor="White"
                            HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </Grid>
 
-            <VerticalStackLayout Grid.Row="1" Spacing="16" Padding="32,32"
-                                 VerticalOptions="Start">
-                <Label Text="Get reminders before your sessions start so you never miss a talk."
-                       FontSize="16"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
-                       HorizontalTextAlignment="Center"
-                       LineBreakMode="WordWrap" LineHeight="1.4" />
+            <Border Grid.Row="1" Margin="0,-24,0,0"
+                    StrokeShape="RoundRectangle 24,24,0,0"
+                    StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
+                <VerticalStackLayout Spacing="16" Padding="32,32"
+                                     VerticalOptions="Start">
+                    <Label Text="Get reminders before your sessions start so you never miss a talk."
+                           FontSize="16"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="WordWrap" LineHeight="1.4" />
 
-                <Label Text="We'll only notify you about sessions on your agenda — nothing else."
-                       FontSize="14"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                       HorizontalTextAlignment="Center"
-                       LineBreakMode="WordWrap" />
-
-                <BoxView HeightRequest="12" Color="Transparent" />
-
-                <Button Text="Enable Notifications"
-                        Command="{Binding RequestNotificationPermissionCommand}"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        FontSize="16" FontAttributes="Bold"
-                        CornerRadius="12" Padding="24,14"
-                        HorizontalOptions="Fill"
-                        IsVisible="{Binding NotificationPermissionRequested, Converter={toolkit:InvertedBoolConverter}}" />
-
-                <!-- Show after permission is requested -->
-                <VerticalStackLayout IsVisible="{Binding NotificationPermissionRequested}" Spacing="8">
-                    <Label Text="✅ Notifications enabled — you're all set!"
-                           IsVisible="{Binding NotificationsGranted}"
-                           FontSize="15" FontAttributes="Bold"
-                           TextColor="{StaticResource Primary}"
-                           HorizontalTextAlignment="Center" />
-                    <Label Text="No worries — you can enable notifications later in Settings."
-                           IsVisible="{Binding NotificationsGranted, Converter={toolkit:InvertedBoolConverter}}"
+                    <Label Text="We'll only notify you about sessions on your agenda — nothing else."
                            FontSize="14"
                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                           HorizontalTextAlignment="Center" />
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="WordWrap"
+                           Margin="0,0,0,8" />
+
+                    <Button Text="Enable Notifications"
+                            Command="{Binding RequestNotificationPermissionCommand}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            FontSize="16" FontAttributes="Bold"
+                            CornerRadius="12" Padding="24,14"
+                            HorizontalOptions="Fill"
+                            IsVisible="{Binding NotificationPermissionRequested, Converter={toolkit:InvertedBoolConverter}}" />
+
+                    <!-- Show after permission is requested -->
+                    <VerticalStackLayout IsVisible="{Binding NotificationPermissionRequested}" Spacing="8">
+                        <Label Text="✅ Notifications enabled — you're all set!"
+                               IsVisible="{Binding NotificationsGranted}"
+                               FontSize="15" FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="No worries — you can enable notifications later in Settings."
+                               IsVisible="{Binding NotificationsGranted, Converter={toolkit:InvertedBoolConverter}}"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <Button Text="Continue"
+                            Command="{Binding GoToStepCommand}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            FontSize="16" FontAttributes="Bold"
+                            CornerRadius="12" Padding="24,14"
+                            HorizontalOptions="Fill"
+                            IsVisible="{Binding NotificationPermissionRequested}">
+                        <Button.CommandParameter>
+                            <x:Int32>2</x:Int32>
+                        </Button.CommandParameter>
+                    </Button>
+
+                    <Button Text="Not now"
+                            Command="{Binding GoToStepCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                            FontSize="14"
+                            HorizontalOptions="Center">
+                        <Button.CommandParameter>
+                            <x:Int32>2</x:Int32>
+                        </Button.CommandParameter>
+                    </Button>
                 </VerticalStackLayout>
-
-                <Button Text="Continue"
-                        Command="{Binding GoToStepCommand}"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        FontSize="16" FontAttributes="Bold"
-                        CornerRadius="12" Padding="24,14"
-                        HorizontalOptions="Fill"
-                        IsVisible="{Binding NotificationPermissionRequested}">
-                    <Button.CommandParameter>
-                        <x:Int32>2</x:Int32>
-                    </Button.CommandParameter>
-                </Button>
-
-                <Button Text="Not now"
-                        Command="{Binding GoToStepCommand}"
-                        BackgroundColor="Transparent"
-                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                        FontSize="14"
-                        HorizontalOptions="Center">
-                    <Button.CommandParameter>
-                        <x:Int32>2</x:Int32>
-                    </Button.CommandParameter>
-                </Button>
-            </VerticalStackLayout>
+            </Border>
         </Grid>
 
         <!-- STEP 1: Pick Interests -->
@@ -412,14 +416,15 @@
             </Grid>
         </Grid>
 
-        <!-- STEP 3: Quick Pick (mini) -->
+        <!-- STEP 3: Quick Pick -->
         <Grid IsVisible="False" x:Name="QuickPickStep"
               RowDefinitions="Auto,Auto,*,Auto" Padding="0"
-              Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}">
+              Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray950}}"
+              SafeAreaEdges="Container">
 
             <Grid Grid.Row="0" Padding="20,48,20,8" RowDefinitions="Auto,Auto" RowSpacing="6">
                 <Grid ColumnDefinitions="*,Auto">
-                    <Label Text="Swipe to build your agenda"
+                    <Label Text="{Binding RemainingText}"
                            FontSize="16" FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light={StaticResource Gray800}, Dark={StaticResource Gray200}}"
                            VerticalOptions="Center" />
@@ -448,142 +453,265 @@
                 <swipe:SwipeCardView x:Name="OnboardingSwipeCards"
                                      ItemsSource="{Binding Cards}"
                                      Threshold="100"
+                                     SupportedSwipeDirections="Left,Right"
                                      SupportedDraggingDirections="Left,Right"
+                                     AnimationLength="200"
+                                     CardRotation="8"
+                                     BackCardScale="0.97"
+                                     Margin="0,4"
                                      Swiped="OnSwiped"
                                      Dragging="OnDragging">
                     <swipe:SwipeCardView.ItemTemplate>
                         <DataTemplate x:DataType="models:SessionItem">
-                            <Border StrokeShape="RoundRectangle 16"
-                                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
-                                    StrokeThickness="1"
-                                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                    Padding="20" Margin="8">
-                                <VerticalStackLayout Spacing="12">
-                                    <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold"
-                                           MaxLines="3" LineBreakMode="TailTruncation"
-                                           TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
+                            <Grid>
+                                <!-- Main card -->
+                                <Border StrokeShape="RoundRectangle 16"
+                                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                                        StrokeThickness="1"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                                        Padding="0" Margin="8">
+                                    <Border.Shadow>
+                                        <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
+                                                Offset="0,4" Radius="12" Opacity="0.8" />
+                                    </Border.Shadow>
+                                    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+                                        <!-- Speaker strip -->
+                                        <HorizontalStackLayout Grid.Row="0" Spacing="8" Padding="24,22,24,0"
+                                                                IsVisible="{Binding HasSpeaker1}">
+                                            <Border StrokeShape="RoundRectangle 16" StrokeThickness="0"
+                                                    HeightRequest="32" WidthRequest="32">
+                                                <Image Source="{Binding Speaker1.ProfilePictureUrl}"
+                                                       Aspect="AspectFill" />
+                                            </Border>
+                                            <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                                                <Label Text="{Binding SpeakerNames}" FontSize="13" FontAttributes="Bold"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
+                                                       LineBreakMode="TailTruncation" MaxLines="1" />
+                                                <Label Text="{Binding Speaker1.TagLine}" FontSize="11"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                       LineBreakMode="TailTruncation" MaxLines="1"
+                                                       IsVisible="{Binding Speaker1.TagLine, Converter={toolkit:IsNotNullConverter}}" />
+                                            </VerticalStackLayout>
+                                        </HorizontalStackLayout>
 
-                                    <HorizontalStackLayout Spacing="12">
-                                        <HorizontalStackLayout Spacing="4">
+                                        <!-- Metadata -->
+                                        <HorizontalStackLayout Grid.Row="1" Padding="24,8,24,0" Spacing="6">
                                             <Image Source="clock_regular.png" HeightRequest="14" WidthRequest="14"
                                                    VerticalOptions="Center" />
                                             <Label Text="{Binding TimeDisplay}" FontSize="13"
                                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                    VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
-                                        <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
+                                            <Label Text="·" FontSize="13"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                   IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                             <Image Source="location_regular.png" HeightRequest="14" WidthRequest="14"
-                                                   VerticalOptions="Center" />
+                                                   VerticalOptions="Center"
+                                                   IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                             <Label Text="{Binding RoomName}" FontSize="13"
                                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                                                   VerticalOptions="Center" />
+                                                   VerticalOptions="Center"
+                                                   IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                         </HorizontalStackLayout>
-                                    </HorizontalStackLayout>
 
-                                    <Label Text="{Binding Description}" FontSize="13"
-                                           MaxLines="4" LineBreakMode="TailTruncation"
-                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
-                                           LineHeight="1.4" />
+                                        <!-- Title -->
+                                        <Label Grid.Row="2" Text="{Binding Title}" FontSize="20" FontAttributes="Bold"
+                                               MaxLines="3" LineBreakMode="TailTruncation"
+                                               Padding="24,12,24,0"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
 
-                                    <HorizontalStackLayout Spacing="8" IsVisible="{Binding HasSpeaker1}">
-                                        <Border StrokeShape="RoundRectangle 16" StrokeThickness="0"
-                                                HeightRequest="32" WidthRequest="32"
-                                                IsVisible="{Binding HasSpeaker1}">
-                                            <Image Source="{Binding Speaker1.ProfilePictureUrl}"
-                                                   Aspect="AspectFill" />
+                                        <!-- Description -->
+                                        <Label Grid.Row="3" Text="{Binding Description}" FontSize="13"
+                                               MaxLines="4" LineBreakMode="TailTruncation"
+                                               Padding="24,10,24,16"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                               LineHeight="1.4" />
+
+                                        <!-- Hint bar -->
+                                        <Border Grid.Row="4"
+                                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray800}}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 0,0,16,16"
+                                                Padding="24,14">
+                                            <Grid ColumnDefinitions="*,*">
+                                                <HorizontalStackLayout Spacing="4" HorizontalOptions="Start" Opacity="0.6">
+                                                    <Label Text="←" FontSize="16" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                                    <Label Text="Skip" FontSize="13" FontAttributes="Bold"
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                                </HorizontalStackLayout>
+                                                <HorizontalStackLayout Grid.Column="1" Spacing="4" HorizontalOptions="End" Opacity="0.6">
+                                                    <Label Text="Add" FontSize="13" FontAttributes="Bold"
+                                                           TextColor="{StaticResource Primary}" />
+                                                    <Label Text="→" FontSize="16" TextColor="{StaticResource Primary}" />
+                                                </HorizontalStackLayout>
+                                            </Grid>
                                         </Border>
-                                        <VerticalStackLayout Spacing="0" VerticalOptions="Center">
-                                            <Label Text="{Binding SpeakerNames}" FontSize="13" FontAttributes="Bold"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
-                                                   LineBreakMode="TailTruncation" MaxLines="1" />
-                                            <Label Text="{Binding Speaker1.TagLine}" FontSize="11"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                                                   LineBreakMode="TailTruncation" MaxLines="1"
-                                                   IsVisible="{Binding Speaker1.TagLine, Converter={toolkit:IsNotNullConverter}}" />
-                                        </VerticalStackLayout>
-                                    </HorizontalStackLayout>
-
-                                    <Grid ColumnDefinitions="*,*" Margin="0,8,0,0">
-                                        <HorizontalStackLayout Spacing="4" HorizontalOptions="Start" Opacity="0.5">
-                                            <Label Text="←" FontSize="16" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
-                                            <Label Text="Skip" FontSize="12"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
-                                        </HorizontalStackLayout>
-                                        <HorizontalStackLayout Grid.Column="1" Spacing="4" HorizontalOptions="End" Opacity="0.5">
-                                            <Label Text="Add" FontSize="12"
-                                                   TextColor="{StaticResource Primary}" />
-                                            <Label Text="→" FontSize="16" TextColor="{StaticResource Primary}" />
-                                        </HorizontalStackLayout>
                                     </Grid>
-                                </VerticalStackLayout>
-                            </Border>
+                                </Border>
+
+                                <!-- Swipe feedback: ADD overlay -->
+                                <Border x:Name="LikeFrame"
+                                        StrokeShape="RoundRectangle 16"
+                                        BackgroundColor="#1A6200EE"
+                                        StrokeThickness="0"
+                                        Margin="8" Opacity="0"
+                                        InputTransparent="True">
+                                    <Label Text="ADD" FontSize="48" FontAttributes="Bold"
+                                           TextColor="#6200EE" Opacity="0.7"
+                                           Rotation="-12"
+                                           HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+
+                                <!-- Swipe feedback: SKIP overlay -->
+                                <Border x:Name="NopeFrame"
+                                        StrokeShape="RoundRectangle 16"
+                                        BackgroundColor="#1A999999"
+                                        StrokeThickness="0"
+                                        Margin="8" Opacity="0"
+                                        InputTransparent="True">
+                                    <Label Text="SKIP" FontSize="48" FontAttributes="Bold"
+                                           TextColor="#999999" Opacity="0.7"
+                                           Rotation="12"
+                                           HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                            </Grid>
                         </DataTemplate>
                     </swipe:SwipeCardView.ItemTemplate>
                 </swipe:SwipeCardView>
+
+                <!-- Limit reached message -->
+                <Border x:Name="QuickPickLimitReached" IsVisible="False"
+                        StrokeShape="RoundRectangle 16"
+                        StrokeThickness="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="32" Margin="24"
+                        VerticalOptions="Center" HorizontalOptions="Fill">
+                    <Border.Shadow>
+                        <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
+                                Offset="0,4" Radius="12" Opacity="0.8" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+                        <Label Text="🎯" FontSize="48" HorizontalTextAlignment="Center" />
+                        <Label Text="Great taste!"
+                               FontSize="22" FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
+                        <Label Text="{Binding AddedCount, StringFormat='You added {0} sessions to your agenda. Head to the Sessions tab to discover even more!'}"
+                               FontSize="14" LineHeight="1.4"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+                        <Button Text="Finish Setup"
+                                Command="{Binding FinishQuickPickCommand}"
+                                BackgroundColor="{StaticResource Primary}"
+                                TextColor="White"
+                                FontSize="16" FontAttributes="Bold"
+                                CornerRadius="12" Padding="24,14"
+                                HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+                </Border>
             </Grid>
 
             <Grid Grid.Row="3" Padding="20,8,20,32" ColumnDefinitions="Auto,*,Auto">
-                <Button mi:MauiIcon.Value="{mi:Fluent Icon=ArrowUndo24, IconColor={StaticResource Primary}}"
-                        Command="{Binding UndoLastSwipeCommand}"
-                        IsVisible="{Binding ShowUndo}"
+                <!-- Skip button -->
+                <Border StrokeShape="RoundRectangle 28"
+                        StrokeThickness="1.5"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        HeightRequest="56" WidthRequest="56"
+                        HorizontalOptions="Center" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnQuickPickSkipTapped" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{mi:Fluent Icon=Dismiss24, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}"
+                           HeightRequest="24" WidthRequest="24"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+
+                <!-- Undo button -->
+                <Border Grid.Column="1"
+                        StrokeShape="RoundRectangle 22"
+                        StrokeThickness="0"
                         BackgroundColor="Transparent"
-                        Padding="12" />
-                <Label Grid.Column="1"
-                       Text="{Binding AddedCount, StringFormat='{0} added to agenda'}"
-                       FontSize="14" FontAttributes="Bold"
-                       TextColor="{StaticResource Primary}"
-                       HorizontalTextAlignment="Center"
-                       VerticalOptions="Center" />
+                        HeightRequest="44" WidthRequest="44"
+                        HorizontalOptions="Center" VerticalOptions="Center"
+                        Opacity="{Binding ShowUndo, Converter={toolkit:BoolToObjectConverter TrueObject=1, FalseObject=0.3}}"
+                        InputTransparent="{Binding ShowUndo, Converter={toolkit:InvertedBoolConverter}}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnQuickPickUndoTapped" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{mi:Fluent Icon=ArrowUndo24, IconColor={StaticResource Primary}}"
+                           HeightRequest="22" WidthRequest="22"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+
+                <!-- Add button -->
+                <Border Grid.Column="2"
+                        StrokeShape="RoundRectangle 28"
+                        StrokeThickness="1.5"
+                        Stroke="{StaticResource Primary}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        HeightRequest="56" WidthRequest="56"
+                        HorizontalOptions="Center" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnQuickPickAddTapped" />
+                    </Border.GestureRecognizers>
+                    <Image Source="{mi:Fluent Icon=Heart24, IconColor={StaticResource Primary}}"
+                           HeightRequest="24" WidthRequest="24"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
             </Grid>
         </Grid>
 
         <!-- STEP 4: Done / Celebration -->
-        <Grid IsVisible="False" x:Name="DoneStep" Padding="0">
+        <Grid IsVisible="False" x:Name="DoneStep" Padding="0" SafeAreaEdges="None">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.4*" />
                 <RowDefinition Height="0.6*" />
             </Grid.RowDefinitions>
 
             <Grid Background="{StaticResource HeroGradient}">
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="12" Padding="32">
-                    <Label Text="🎉" FontSize="64" HorizontalTextAlignment="Center" />
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="16" Padding="32">
+                    <Label Text="🎉" FontSize="56" HorizontalTextAlignment="Center" />
                     <Label Text="You're all set!"
                            FontSize="28" FontAttributes="Bold" TextColor="White"
                            HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </Grid>
 
-            <VerticalStackLayout Grid.Row="1" Spacing="16" Padding="32,32"
-                                 VerticalOptions="Start">
-                <Label x:Name="SummaryLabel"
-                       FontSize="16"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
-                       HorizontalTextAlignment="Center"
-                       LineBreakMode="WordWrap" />
+            <Border Grid.Row="1" Margin="0,-24,0,0"
+                    StrokeShape="RoundRectangle 24,24,0,0"
+                    StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
+                <VerticalStackLayout Spacing="16" Padding="32,32"
+                                     VerticalOptions="Start">
+                    <Label x:Name="SummaryLabel"
+                           FontSize="16"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="WordWrap" />
 
-                <Label Text="Your personalized agenda is ready. You can always add more sessions from the Sessions tab or try Quick Pick for more discoveries."
-                       FontSize="14"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                       HorizontalTextAlignment="Center"
-                       LineBreakMode="WordWrap" />
+                    <Label Text="Your personalized agenda is ready. You can always add more sessions from the Sessions tab or try Quick Pick for more discoveries."
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="WordWrap"
+                           Margin="0,0,0,8" />
 
-                <BoxView HeightRequest="8" Color="Transparent" />
+                    <Button Text="View My Agenda"
+                            Clicked="OnViewAgendaClicked"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            FontSize="16" FontAttributes="Bold"
+                            CornerRadius="12" Padding="24,14"
+                            HorizontalOptions="Fill" />
 
-                <Button Text="View My Agenda"
-                        Clicked="OnViewAgendaClicked"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        FontSize="16" FontAttributes="Bold"
-                        CornerRadius="12" Padding="24,14"
-                        HorizontalOptions="Fill" />
-
-                <Button Text="Explore the app"
-                        Command="{Binding FinishOnboardingCommand}"
-                        BackgroundColor="Transparent"
-                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                        FontSize="14"
-                        HorizontalOptions="Center" />
-            </VerticalStackLayout>
+                    <Button Text="Explore the app"
+                            Command="{Binding FinishOnboardingCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                            FontSize="14"
+                            HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
         </Grid>
     </Grid>
 </ContentPage>
