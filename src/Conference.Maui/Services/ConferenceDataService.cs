@@ -64,31 +64,50 @@ public class ConferenceDataService : IConferenceDataService
                 }
             }
 
-            // Fetch fresh data from API
+            // If we have cached data, return it immediately and refresh in background
+            if (cachedData != null && !forceRefresh)
+            {
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var freshData = await FetchFromApiAsync(cancellationToken);
+                        if (freshData != null)
+                        {
+                            await _cache.InsertObject(
+                                AllDataCacheKey,
+                                freshData,
+                                TimeSpan.FromHours(AppConfig.CacheExpirationHours));
+                            _logger.LogInformation("Conference data refreshed in background");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Background refresh failed");
+                    }
+                });
+                return cachedData;
+            }
+
+            // No cache — must fetch from API (blocks)
             try
             {
-                var freshData = await _retryPolicy.ExecuteAsync(async () =>
-                {
-                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                    cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
-                    return await _sessionizeClient.GetAllDataAsync(cancellationToken: cts.Token);
-                });
+                var freshData = await FetchFromApiAsync(cancellationToken);
 
                 if (freshData != null)
                 {
-                    // Cache the fresh data
                     await _cache.InsertObject(
                         AllDataCacheKey,
                         freshData,
                         TimeSpan.FromHours(AppConfig.CacheExpirationHours));
 
-                    _logger.LogInformation("Conference data refreshed and cached");
+                    _logger.LogInformation("Conference data fetched and cached");
                     return freshData;
                 }
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                _logger.LogWarning(ex, "Failed to fetch fresh data, using cached data");
+                _logger.LogWarning(ex, "Failed to fetch data from API");
             }
 
             return cachedData;
@@ -98,6 +117,16 @@ public class ConferenceDataService : IConferenceDataService
             _logger.LogError(ex, "Error getting conference data");
             return null;
         }
+    }
+
+    private async Task<AllDataResponse?> FetchFromApiAsync(CancellationToken cancellationToken)
+    {
+        return await _retryPolicy.ExecuteAsync(async () =>
+        {
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
+            return await _sessionizeClient.GetAllDataAsync(cancellationToken: cts.Token);
+        });
     }
 
     public async Task<List<ScheduleGridResponse>> GetScheduleGridAsync(bool forceRefresh = false, CancellationToken cancellationToken = default)

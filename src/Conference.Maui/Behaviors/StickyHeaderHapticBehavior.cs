@@ -127,15 +127,19 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
     {
         nfloat pinnedY = cv.ContentOffset.Y + cv.AdjustedContentInset.Top;
 
-        // Search rect covers both outgoing (above pinnedY) and incoming (below) headers
         var searchRect = new CGRect(0, pinnedY - 80, cv.Bounds.Width, 200);
 
         var attributes = cv.CollectionViewLayout.LayoutAttributesForElementsInRect(searchRect);
         if (attributes is null or { Length: 0 })
             return -1;
 
-        // Collect headers sorted by section index
-        var headers = new List<(int section, nfloat frameY, nfloat height)>();
+        // Single-pass: find the header spanning pinnedY with highest section index,
+        // or closest header as fallback. No allocations.
+        int pinnedSection = -1;
+        int nearestSection = -1;
+        nfloat nearestDist = nfloat.MaxValue;
+        int pinnedNextSection = -1;
+
         foreach (var attr in attributes)
         {
             if (attr.RepresentedElementCategory != UICollectionElementCategory.SupplementaryView)
@@ -143,47 +147,50 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
             if (attr.RepresentedElementKind != UICollectionElementKindSectionKey.Header)
                 continue;
 
-            headers.Add(((int)attr.IndexPath.Section, attr.Frame.Y, attr.Frame.Height));
-        }
+            int section = (int)attr.IndexPath.Section;
+            var frame = attr.Frame;
 
-        if (headers.Count == 0)
-            return -1;
-
-        headers.Sort((a, b) => a.section.CompareTo(b.section));
-
-        // Find the header whose frame spans the pinnedY line
-        for (int i = 0; i < headers.Count; i++)
-        {
-            var (section, frameY, height) = headers[i];
-
-            // Does this header span pinnedY? (top at/above, bottom below)
-            if (frameY > pinnedY + 1 || frameY + height < pinnedY - 1)
-                continue;
-
-            // Compute how far this header has been pushed above the pinned line
-            nfloat pushFraction = height > 0 ? (pinnedY - frameY) / height : 0;
-
-            // If pushed past the 50% crossover and there's a next section header,
-            // the incoming header is now visually dominant
-            if (pushFraction > 0.5f && i + 1 < headers.Count)
-                return headers[i + 1].section;
-
-            return section;
-        }
-
-        // No header spans pinnedY — find the nearest one
-        int bestSection = -1;
-        nfloat bestDist = nfloat.MaxValue;
-        foreach (var (section, frameY, _) in headers)
-        {
-            nfloat dist = (nfloat)Math.Abs(frameY - pinnedY);
-            if (dist < bestDist)
+            // Does this header span the pinnedY line?
+            if (frame.Y <= pinnedY + 1 && frame.Y + frame.Height >= pinnedY - 1)
             {
-                bestDist = dist;
-                bestSection = section;
+                nfloat pushFraction = frame.Height > 0 ? (pinnedY - frame.Y) / frame.Height : 0;
+
+                if (pushFraction > 0.5f)
+                {
+                    // This header is being pushed out — remember it but look for its successor
+                    pinnedSection = section;
+                }
+                else
+                {
+                    // This header is the dominant one at the pin position
+                    return section;
+                }
+            }
+            else
+            {
+                // Track nearest header for fallback
+                nfloat dist = (nfloat)Math.Min(
+                    Math.Abs(frame.Y - pinnedY),
+                    Math.Abs(frame.Y + frame.Height - pinnedY));
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearestSection = section;
+                }
+
+                // Track if this is the successor to a pushed-out header
+                if (pinnedSection >= 0 && section > pinnedSection &&
+                    (pinnedNextSection < 0 || section < pinnedNextSection))
+                {
+                    pinnedNextSection = section;
+                }
             }
         }
-        return bestSection;
+
+        // Return successor of pushed-out header, or pushed-out header itself, or nearest
+        if (pinnedNextSection >= 0) return pinnedNextSection;
+        if (pinnedSection >= 0) return pinnedSection;
+        return nearestSection;
     }
 
     private static T? FindDescendant<T>(UIView? root) where T : UIView

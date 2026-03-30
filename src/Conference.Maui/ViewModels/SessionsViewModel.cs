@@ -117,81 +117,84 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
 
         var favorites = await _favoritesService.GetFavoriteSessionIdsAsync();
 
-        // Group sessions by date
-        var sessionsByDate = _allData.Sessions
-            .GroupBy(s => 
-            {
-                // StartsAt is DateTimeOffset - extract the DateTime part
-                var dt = s.StartsAt;
-                return new DateOnly(dt.Year, dt.Month, dt.Day);
-            })
-            .OrderBy(g => g.Key)
-            .ToList();
-
-        _allDays.Clear();
-        
-        foreach (var dateGroup in sessionsByDate)
+        // Do heavy grouping/sorting work off the UI thread
+        var allData = _allData;
+        var days = await Task.Run(() =>
         {
-            var scheduleDay = new ScheduleDay { Date = dateGroup.Key };
+            var result = new List<ScheduleDay>();
 
-            // Group by time slot
-            var timeSlots = dateGroup
-                .GroupBy(s => (s.StartsAt, s.EndsAt))
-                .OrderBy(g => g.Key.StartsAt)
-                .Select(slotGroup =>
+            var sessionsByDate = allData.Sessions
+                .GroupBy(s =>
                 {
-                    var slot = new TimeSlotGroup
-                    {
-                        StartTime = slotGroup.Key.StartsAt,
-                        EndTime = slotGroup.Key.EndsAt
-                    };
-                    
-                    foreach (var session in slotGroup.OrderBy(s => GetRoomName(s.RoomId)))
-                    {
-                        slot.Add(CreateSessionItem(session, favorites));
-                    }
-                    
-                    return slot;
+                    var dt = s.StartsAt;
+                    return new DateOnly(dt.Year, dt.Month, dt.Day);
                 })
+                .OrderBy(g => g.Key)
                 .ToList();
 
-            scheduleDay.TimeSlots = timeSlots;
-            _allDays.Add(scheduleDay);
-        }
+            // Build room lookup once instead of O(n) scan per session
+            var roomLookup = allData.Rooms.ToDictionary(r => r.Id, r => r.Name);
+            // Build speaker lookup once instead of O(n) scan per session
+            var speakerLookup = allData.Speakers.ToDictionary(s => s.Id);
+
+            foreach (var dateGroup in sessionsByDate)
+            {
+                var scheduleDay = new ScheduleDay { Date = dateGroup.Key };
+
+                var timeSlots = dateGroup
+                    .GroupBy(s => (s.StartsAt, s.EndsAt))
+                    .OrderBy(g => g.Key.StartsAt)
+                    .Select(slotGroup =>
+                    {
+                        var slot = new TimeSlotGroup
+                        {
+                            StartTime = slotGroup.Key.StartsAt,
+                            EndTime = slotGroup.Key.EndsAt
+                        };
+
+                        foreach (var session in slotGroup.OrderBy(s => roomLookup.GetValueOrDefault(s.RoomId)))
+                        {
+                            var speakers = session.Speakers
+                                .Select(speakerId => speakerLookup.GetValueOrDefault(speakerId))
+                                .Where(s => s != null)
+                                .Select(s => SpeakerItem.FromSpeakerDetails(s!))
+                                .ToList();
+
+                            slot.Add(new SessionItem
+                            {
+                                Id = session.Id,
+                                Title = session.Title,
+                                Description = session.Description,
+                                StartsAt = session.StartsAt,
+                                EndsAt = session.EndsAt,
+                                RoomId = session.RoomId,
+                                RoomName = roomLookup.GetValueOrDefault(session.RoomId),
+                                Speakers = speakers,
+                                IsFavorite = favorites.Contains(session.Id)
+                            });
+                        }
+
+                        return slot;
+                    })
+                    .ToList();
+
+                scheduleDay.TimeSlots = timeSlots;
+                result.Add(scheduleDay);
+            }
+
+            return result;
+        });
+
+        // Back on UI thread for collection updates
+        _allDays.Clear();
+        foreach (var day in days)
+            _allDays.Add(day);
 
         Days = new ObservableCollection<ScheduleDay>(_allDays);
         _hasMultipleDays = _allDays.Count > 1;
         OnPropertyChanged(nameof(ShowDaySwitcher));
 
-        // Select appropriate day (today if within event dates, otherwise first day)
         SelectAppropriateDay();
-    }
-
-    private SessionItem CreateSessionItem(SessionDetails session, IReadOnlySet<string> favorites)
-    {
-        var speakers = session.Speakers
-            .Select(speakerId => _allData?.Speakers.FirstOrDefault(s => s.Id == speakerId))
-            .Where(s => s != null)
-            .Select(s => SpeakerItem.FromSpeakerDetails(s!))
-            .ToList();
-
-        return new SessionItem
-        {
-            Id = session.Id,
-            Title = session.Title,
-            Description = session.Description,
-            StartsAt = session.StartsAt,
-            EndsAt = session.EndsAt,
-            RoomId = session.RoomId,
-            RoomName = GetRoomName(session.RoomId),
-            Speakers = speakers,
-            IsFavorite = favorites.Contains(session.Id)
-        };
-    }
-
-    private string? GetRoomName(int roomId)
-    {
-        return _allData?.Rooms.FirstOrDefault(r => r.Id == roomId)?.Name;
     }
 
     private void SelectAppropriateDay()
