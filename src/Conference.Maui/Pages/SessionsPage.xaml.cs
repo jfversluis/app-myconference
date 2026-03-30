@@ -1,17 +1,12 @@
 using Conference.Maui.Models;
-using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
-#if IOS
-using UIKit;
-#endif
 
 namespace Conference.Maui.Pages;
 
 public partial class SessionsPage : ContentPage
 {
     private readonly SessionsViewModel _viewModel;
-    private int _lastStickySection = -1;
 
     public SessionsPage(SessionsViewModel viewModel)
     {
@@ -59,62 +54,10 @@ public partial class SessionsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        _lastStickySection = -1;
         
         if (_viewModel.Days.Count == 0)
         {
             await _viewModel.LoadDataCommand.ExecuteAsync(null);
         }
-    }
-
-    private void OnCollectionViewScrolled(object? sender, ItemsViewScrolledEventArgs e)
-    {
-        int section = -1;
-
-#if IOS
-        // Try native UICollectionView for precise section tracking
-        if (SessionsCollectionView.Handler?.PlatformView is UICollectionView cv)
-        {
-            var visiblePaths = cv.IndexPathsForVisibleItems;
-            if (visiblePaths is { Length: > 0 })
-            {
-                nint topSection = nint.MaxValue;
-                foreach (var path in visiblePaths)
-                {
-                    if (path.Section < topSection)
-                        topSection = path.Section;
-                }
-                if (topSection < nint.MaxValue)
-                    section = (int)topSection;
-            }
-        }
-#endif
-
-        // Fallback: map flat FirstVisibleItemIndex to section
-        if (section < 0)
-        {
-            var slots = _viewModel.CurrentDaySlots;
-            if (slots == null || slots.Count == 0) return;
-
-            int remaining = e.FirstVisibleItemIndex;
-            section = 0;
-            foreach (var group in slots)
-            {
-                if (remaining < group.Count) break;
-                remaining -= group.Count;
-                section++;
-            }
-            if (section >= slots.Count) section = slots.Count - 1;
-        }
-
-        if (section < 0) return;
-
-        if (_lastStickySection >= 0 && section != _lastStickySection)
-        {
-            if (HapticService.IsEnabled)
-                HapticFeedback.Default.Perform(HapticFeedbackType.Click);
-        }
-
-        _lastStickySection = section;
     }
 }

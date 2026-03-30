@@ -5,6 +5,7 @@
              xmlns:models="clr-namespace:Conference.Maui.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             xmlns:behaviors="clr-namespace:Conference.Maui.Behaviors"
              x:Class="Conference.Maui.Pages.FavoritesPage"
              x:DataType="vm:FavoritesViewModel"
              Title="{Binding Title}"
@@ -18,8 +19,10 @@
                         IsGrouped="True"
                         SelectionMode="Single"
                         SelectionChanged="OnSessionSelected"
-                        Scrolled="OnCollectionViewScrolled"
                         IsVisible="{Binding HasFavorites}">
+            <CollectionView.Behaviors>
+                <behaviors:StickyHeaderHapticBehavior />
+            </CollectionView.Behaviors>
             <CollectionView.GroupHeaderTemplate>
                 <DataTemplate x:DataType="models:TimeSlotGroup">
                     <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"

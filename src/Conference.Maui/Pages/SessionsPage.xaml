@@ -7,6 +7,7 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TabView;assembly=Syncfusion.Maui.Toolkit"
              xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             xmlns:behaviors="clr-namespace:Conference.Maui.Behaviors"
              x:Class="Conference.Maui.Pages.SessionsPage"
              x:Name="ThisPage"
              x:DataType="vm:SessionsViewModel"
@@ -96,8 +97,10 @@
                             ItemsSource="{Binding CurrentDaySlots}"
                             IsGrouped="True"
                             SelectionMode="Single"
-                            SelectionChanged="OnSessionSelected"
-                            Scrolled="OnCollectionViewScrolled">
+                            SelectionChanged="OnSessionSelected">
+                <CollectionView.Behaviors>
+                    <behaviors:StickyHeaderHapticBehavior />
+                </CollectionView.Behaviors>
                 <CollectionView.GroupHeaderTemplate>
                     <DataTemplate x:DataType="models:TimeSlotGroup">
                         <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
