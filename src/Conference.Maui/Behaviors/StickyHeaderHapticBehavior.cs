@@ -22,6 +22,7 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
     private UISelectionFeedbackGenerator? _feedbackGenerator;
     private int _lastPinnedSection = -1;
     private bool _hasUserScrolled;
+    private nfloat _initialContentOffsetY;
 #endif
 
     protected override void OnAttachedTo(CollectionView bindable)
@@ -74,20 +75,13 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
         _feedbackGenerator.Prepare();
         _lastPinnedSection = GetPinnedHeaderSection(native);
         _hasUserScrolled = false;
+        _initialContentOffsetY = native.ContentOffset.Y;
 
         // KVO on contentOffset fires every scroll frame (~60fps) — no MAUI throttle
         _contentOffsetObserver = native.AddObserver(
             "contentOffset",
             NSKeyValueObservingOptions.New,
             _ => OnNativeScrolled());
-
-        // Track user-initiated drags so we skip haptics on initial layout/programmatic scrolls
-        native.DraggingStarted += OnDraggingStarted;
-    }
-
-    private void OnDraggingStarted(object? sender, EventArgs e)
-    {
-        _hasUserScrolled = true;
     }
 
     private void OnNativeScrolled()
@@ -95,14 +89,23 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
         if (_nativeCollectionView is not { } cv)
             return;
 
+        // Detect user scroll: content offset moved >20pts from initial position.
+        // This avoids firing on layout passes and programmatic adjustments at page load.
+        if (!_hasUserScrolled)
+        {
+            if (Math.Abs(cv.ContentOffset.Y - _initialContentOffsetY) > 20)
+                _hasUserScrolled = true;
+            else
+                return;
+        }
+
         int section = GetPinnedHeaderSection(cv);
         if (section < 0 || section == _lastPinnedSection)
             return;
 
         _lastPinnedSection = section;
 
-        // Only fire haptic after user has physically scrolled (not on page load)
-        if (!_hasUserScrolled || !HapticService.IsEnabled)
+        if (!HapticService.IsEnabled)
             return;
 
         _feedbackGenerator?.SelectionChanged();
@@ -197,8 +200,6 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
 
     private void DetachNative()
     {
-        if (_nativeCollectionView is not null)
-            _nativeCollectionView.DraggingStarted -= OnDraggingStarted;
         _contentOffsetObserver?.Dispose();
         _contentOffsetObserver = null;
         _nativeCollectionView = null;
