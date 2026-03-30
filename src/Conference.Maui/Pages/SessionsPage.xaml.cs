@@ -2,6 +2,9 @@ using Conference.Maui.Models;
 using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
+#if IOS
+using UIKit;
+#endif
 
 namespace Conference.Maui.Pages;
 
@@ -66,21 +69,42 @@ public partial class SessionsPage : ContentPage
 
     private void OnCollectionViewScrolled(object? sender, ItemsViewScrolledEventArgs e)
     {
+        int section = -1;
+
+#if IOS
+        // Query native UICollectionView for the actual topmost visible section
+        if (SessionsCollectionView.Handler?.PlatformView is UICollectionView cv)
+        {
+            var visiblePaths = cv.IndexPathsForVisibleItems;
+            if (visiblePaths == null || visiblePaths.Length == 0) return;
+
+            nint topSection = nint.MaxValue;
+            foreach (var path in visiblePaths)
+            {
+                if (path.Section < topSection)
+                    topSection = path.Section;
+            }
+
+            if (topSection < nint.MaxValue)
+                section = (int)topSection;
+        }
+#else
+        // Fallback: map flat FirstVisibleItemIndex to section
         var slots = _viewModel.CurrentDaySlots;
         if (slots == null || slots.Count == 0) return;
 
-        // Map FirstVisibleItemIndex (flat index across all items) to a group/section index
-        int flatIndex = e.FirstVisibleItemIndex;
-        int section = 0;
-        int remaining = flatIndex;
+        int remaining = e.FirstVisibleItemIndex;
+        section = 0;
         foreach (var group in slots)
         {
-            if (remaining < group.Count)
-                break;
+            if (remaining < group.Count) break;
             remaining -= group.Count;
             section++;
         }
         if (section >= slots.Count) section = slots.Count - 1;
+#endif
+
+        if (section < 0) return;
 
         if (_lastStickySection >= 0 && section != _lastStickySection)
         {
