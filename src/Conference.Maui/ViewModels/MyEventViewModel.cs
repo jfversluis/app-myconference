@@ -169,8 +169,14 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         {
             IsBusy = true;
             HasLoadError = false;
-            _allData = await _dataService.GetAllDataAsync();
-            _favoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
+
+            // Fetch data and favorites in parallel
+            var dataTask = _dataService.GetAllDataAsync();
+            var favTask = _favoritesService.GetFavoriteSessionIdsAsync();
+            await Task.WhenAll(dataTask, favTask);
+
+            _allData = dataTask.Result;
+            _favoriteIds = favTask.Result;
 
             if (_allData != null)
             {

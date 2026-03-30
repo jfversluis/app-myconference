@@ -131,17 +131,23 @@ public partial class OnboardingViewModel : ObservableObject
             HasLoadError = false;
             CurrentStep = 0;
 
-            _allData = await _dataService.GetAllDataAsync();
+            // Fetch data and category tags in parallel (both hit network on first launch)
+            var dataTask = _dataService.GetAllDataAsync();
+            var tagsTask = FetchCategoryTagsAsync();
+            var favoritesTask = _favoritesService.GetFavoriteSessionIdsAsync();
+
+            await Task.WhenAll(dataTask, tagsTask, favoritesTask);
+
+            _allData = dataTask.Result;
             if (_allData == null)
             {
                 HasLoadError = true;
                 return;
             }
 
+            _existingFavoriteIds = favoritesTask.Result;
             UpdateWelcomeSubtitle();
             BuildFeaturedSpeakers();
-            _existingFavoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
-            await FetchCategoryTagsAsync();
             BuildInterestTags();
         }
         catch (Exception ex)

@@ -13,24 +13,26 @@ namespace Conference.Maui.Services;
 public class ConferenceDataService : IConferenceDataService
 {
     private readonly ISessionizeApiClient _sessionizeClient;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly IBlobCache _cache;
     private readonly ILogger<ConferenceDataService> _logger;
     private readonly AsyncRetryPolicy _retryPolicy;
 
     private const string AllDataCacheKey = "sessionize_all_data";
     private const string ScheduleGridCacheKey = "sessionize_schedule_grid";
-    private const string DataHashCacheKey = "sessionize_data_hash";
+    private const string LastModifiedCacheKey = "sessionize_last_modified";
 
     public ConferenceDataService(
         ISessionizeApiClient sessionizeClient,
+        IHttpClientFactory httpClientFactory,
         ILogger<ConferenceDataService> logger)
     {
         _sessionizeClient = sessionizeClient;
         _sessionizeClient.SessionizeApiId = AppConfig.SessionizeApiId;
+        _httpClientFactory = httpClientFactory;
         _cache = BlobCache.LocalMachine;
         _logger = logger;
 
-        // Configure Polly retry policy
         _retryPolicy = Policy
             .Handle<HttpRequestException>()
             .Or<TaskCanceledException>()
@@ -64,13 +66,20 @@ public class ConferenceDataService : IConferenceDataService
                 }
             }
 
-            // If we have cached data, return it immediately and refresh in background
+            // If we have cached data, return it immediately and refresh in background only if needed
             if (cachedData != null && !forceRefresh)
             {
                 _ = Task.Run(async () =>
                 {
                     try
                     {
+                        // Quick HEAD check: has data changed on the server?
+                        if (!await HasDataChangedAsync(cancellationToken))
+                        {
+                            _logger.LogDebug("Data unchanged on server, skipping background refresh");
+                            return;
+                        }
+
                         var freshData = await FetchFromApiAsync(cancellationToken);
                         if (freshData != null)
                         {
@@ -121,12 +130,38 @@ public class ConferenceDataService : IConferenceDataService
 
     private async Task<AllDataResponse?> FetchFromApiAsync(CancellationToken cancellationToken)
     {
-        return await _retryPolicy.ExecuteAsync(async () =>
+        var data = await _retryPolicy.ExecuteAsync(async () =>
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
             return await _sessionizeClient.GetAllDataAsync(cancellationToken: cts.Token);
         });
+
+        if (data != null)
+        {
+            // Store current server timestamp so HasDataChangedAsync can compare later
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                cts.CancelAfter(TimeSpan.FromSeconds(5));
+                var request = new HttpRequestMessage(HttpMethod.Head,
+                    $"{AppConfig.SessionizeBaseUrl}{AppConfig.SessionizeApiId}/view/All");
+                var response = await client.SendAsync(request, cts.Token);
+                if (response.Content.Headers.LastModified.HasValue)
+                {
+                    await _cache.InsertObject(LastModifiedCacheKey,
+                        response.Content.Headers.LastModified.Value.UtcTicks,
+                        TimeSpan.FromDays(30));
+                }
+            }
+            catch
+            {
+                // Non-critical — just means next check will re-download
+            }
+        }
+
+        return data;
     }
 
     public async Task<List<ScheduleGridResponse>> GetScheduleGridAsync(bool forceRefresh = false, CancellationToken cancellationToken = default)
@@ -215,28 +250,41 @@ public class ConferenceDataService : IConferenceDataService
     {
         try
         {
-            // Get stored hash
-            string? storedHash = null;
+            // Get stored Last-Modified timestamp
+            long storedTicks;
             try
             {
-                storedHash = await _cache.GetObject<string>(DataHashCacheKey);
+                storedTicks = await _cache.GetObject<long>(LastModifiedCacheKey);
             }
             catch (KeyNotFoundException)
             {
-                // No stored hash, data has "changed"
-                return true;
+                return true; // No stored timestamp = treat as changed
             }
 
-            // Fetch current hash from Sessionize (using ?hashOnly=true would require custom implementation)
-            // For now, we'll use a simple time-based check
-            // TODO: Implement hash-based checking when Sessionize API supports it properly
-            
-            return true; // Always refresh for now
+            // Quick HEAD request to get current Last-Modified (~50ms, no body)
+            var client = _httpClientFactory.CreateClient();
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            cts.CancelAfter(TimeSpan.FromSeconds(5));
+
+            var request = new HttpRequestMessage(HttpMethod.Head,
+                $"{AppConfig.SessionizeBaseUrl}{AppConfig.SessionizeApiId}/view/All");
+            var response = await client.SendAsync(request, cts.Token);
+
+            if (!response.Content.Headers.LastModified.HasValue)
+                return true; // Can't determine, assume changed
+
+            var serverTicks = response.Content.Headers.LastModified.Value.UtcTicks;
+            var hasChanged = serverTicks != storedTicks;
+
+            _logger.LogDebug("Data change check: stored={StoredTicks}, server={ServerTicks}, changed={Changed}",
+                storedTicks, serverTicks, hasChanged);
+
+            return hasChanged;
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error checking if data changed");
-            return true; // Assume changed on error
+            _logger.LogWarning(ex, "Error checking if data changed, assuming changed");
+            return true;
         }
     }
 
@@ -246,7 +294,7 @@ public class ConferenceDataService : IConferenceDataService
         {
             await _cache.InvalidateObject<AllDataResponse>(AllDataCacheKey);
             await _cache.InvalidateObject<List<ScheduleGridResponse>>(ScheduleGridCacheKey);
-            await _cache.InvalidateObject<string>(DataHashCacheKey);
+            await _cache.InvalidateObject<long>(LastModifiedCacheKey);
             _logger.LogInformation("Cache cleared");
         }
         catch (Exception ex)
