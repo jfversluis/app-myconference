@@ -21,6 +21,7 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
     private IDisposable? _contentOffsetObserver;
     private UISelectionFeedbackGenerator? _feedbackGenerator;
     private int _lastPinnedSection = -1;
+    private bool _hasUserScrolled;
 #endif
 
     protected override void OnAttachedTo(CollectionView bindable)
@@ -72,12 +73,21 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
         _feedbackGenerator = new UISelectionFeedbackGenerator();
         _feedbackGenerator.Prepare();
         _lastPinnedSection = GetPinnedHeaderSection(native);
+        _hasUserScrolled = false;
 
         // KVO on contentOffset fires every scroll frame (~60fps) — no MAUI throttle
         _contentOffsetObserver = native.AddObserver(
             "contentOffset",
             NSKeyValueObservingOptions.New,
             _ => OnNativeScrolled());
+
+        // Track user-initiated drags so we skip haptics on initial layout/programmatic scrolls
+        native.DraggingStarted += OnDraggingStarted;
+    }
+
+    private void OnDraggingStarted(object? sender, EventArgs e)
+    {
+        _hasUserScrolled = true;
     }
 
     private void OnNativeScrolled()
@@ -91,7 +101,8 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
 
         _lastPinnedSection = section;
 
-        if (!HapticService.IsEnabled)
+        // Only fire haptic after user has physically scrolled (not on page load)
+        if (!_hasUserScrolled || !HapticService.IsEnabled)
             return;
 
         _feedbackGenerator?.SelectionChanged();
@@ -186,11 +197,14 @@ public sealed class StickyHeaderHapticBehavior : Behavior<CollectionView>
 
     private void DetachNative()
     {
+        if (_nativeCollectionView is not null)
+            _nativeCollectionView.DraggingStarted -= OnDraggingStarted;
         _contentOffsetObserver?.Dispose();
         _contentOffsetObserver = null;
         _nativeCollectionView = null;
         _feedbackGenerator = null;
         _lastPinnedSection = -1;
+        _hasUserScrolled = false;
     }
 #endif
 }
