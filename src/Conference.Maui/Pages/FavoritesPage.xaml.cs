@@ -47,32 +47,35 @@ public partial class FavoritesPage : ContentPage
         if (FavoritesCollectionView.Handler?.PlatformView is UICollectionView cv)
         {
             var visiblePaths = cv.IndexPathsForVisibleItems;
-            if (visiblePaths == null || visiblePaths.Length == 0) return;
-
-            nint topSection = nint.MaxValue;
-            foreach (var path in visiblePaths)
+            if (visiblePaths is { Length: > 0 })
             {
-                if (path.Section < topSection)
-                    topSection = path.Section;
+                nint topSection = nint.MaxValue;
+                foreach (var path in visiblePaths)
+                {
+                    if (path.Section < topSection)
+                        topSection = path.Section;
+                }
+                if (topSection < nint.MaxValue)
+                    section = (int)topSection;
             }
-
-            if (topSection < nint.MaxValue)
-                section = (int)topSection;
         }
-#else
-        var slots = _viewModel.FavoriteSlots;
-        if (slots == null || slots.Count == 0) return;
-
-        int remaining = e.FirstVisibleItemIndex;
-        section = 0;
-        foreach (var group in slots)
-        {
-            if (remaining < group.Count) break;
-            remaining -= group.Count;
-            section++;
-        }
-        if (section >= slots.Count) section = slots.Count - 1;
 #endif
+
+        if (section < 0)
+        {
+            var slots = _viewModel.FavoriteSlots;
+            if (slots == null || slots.Count == 0) return;
+
+            int remaining = e.FirstVisibleItemIndex;
+            section = 0;
+            foreach (var group in slots)
+            {
+                if (remaining < group.Count) break;
+                remaining -= group.Count;
+                section++;
+            }
+            if (section >= slots.Count) section = slots.Count - 1;
+        }
 
         if (section < 0) return;
 
