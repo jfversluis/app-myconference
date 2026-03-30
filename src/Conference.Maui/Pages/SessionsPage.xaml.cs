@@ -1,4 +1,5 @@
 using Conference.Maui.Models;
+using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
 
@@ -7,6 +8,7 @@ namespace Conference.Maui.Pages;
 public partial class SessionsPage : ContentPage
 {
     private readonly SessionsViewModel _viewModel;
+    private int _lastStickySection = -1;
 
     public SessionsPage(SessionsViewModel viewModel)
     {
@@ -54,10 +56,38 @@ public partial class SessionsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        _lastStickySection = -1;
         
         if (_viewModel.Days.Count == 0)
         {
             await _viewModel.LoadDataCommand.ExecuteAsync(null);
         }
+    }
+
+    private void OnCollectionViewScrolled(object? sender, ItemsViewScrolledEventArgs e)
+    {
+        var slots = _viewModel.CurrentDaySlots;
+        if (slots == null || slots.Count == 0) return;
+
+        // Map FirstVisibleItemIndex (flat index across all items) to a group/section index
+        int flatIndex = e.FirstVisibleItemIndex;
+        int section = 0;
+        int remaining = flatIndex;
+        foreach (var group in slots)
+        {
+            if (remaining < group.Count)
+                break;
+            remaining -= group.Count;
+            section++;
+        }
+        if (section >= slots.Count) section = slots.Count - 1;
+
+        if (_lastStickySection >= 0 && section != _lastStickySection)
+        {
+            if (HapticService.IsEnabled)
+                HapticFeedback.Default.Perform(HapticFeedbackType.Click);
+        }
+
+        _lastStickySection = section;
     }
 }

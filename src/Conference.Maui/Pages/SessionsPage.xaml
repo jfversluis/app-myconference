@@ -96,7 +96,8 @@
                             ItemsSource="{Binding CurrentDaySlots}"
                             IsGrouped="True"
                             SelectionMode="Single"
-                            SelectionChanged="OnSessionSelected">
+                            SelectionChanged="OnSessionSelected"
+                            Scrolled="OnCollectionViewScrolled">
                 <CollectionView.GroupHeaderTemplate>
                     <DataTemplate x:DataType="models:TimeSlotGroup">
                         <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"

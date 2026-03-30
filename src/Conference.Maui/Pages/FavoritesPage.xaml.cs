@@ -1,4 +1,5 @@
 using Conference.Maui.Models;
+using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 
 namespace Conference.Maui.Pages;
@@ -6,6 +7,7 @@ namespace Conference.Maui.Pages;
 public partial class FavoritesPage : ContentPage
 {
     private readonly FavoritesViewModel _viewModel;
+    private int _lastStickySection = -1;
 
     public FavoritesPage(FavoritesViewModel viewModel)
     {
@@ -30,7 +32,34 @@ public partial class FavoritesPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        _lastStickySection = -1;
         await _viewModel.LoadDataCommand.ExecuteAsync(null);
+    }
+
+    private void OnCollectionViewScrolled(object? sender, ItemsViewScrolledEventArgs e)
+    {
+        var slots = _viewModel.FavoriteSlots;
+        if (slots == null || slots.Count == 0) return;
+
+        int flatIndex = e.FirstVisibleItemIndex;
+        int section = 0;
+        int remaining = flatIndex;
+        foreach (var group in slots)
+        {
+            if (remaining < group.Count)
+                break;
+            remaining -= group.Count;
+            section++;
+        }
+        if (section >= slots.Count) section = slots.Count - 1;
+
+        if (_lastStickySection >= 0 && section != _lastStickySection)
+        {
+            if (HapticService.IsEnabled)
+                HapticFeedback.Default.Perform(HapticFeedbackType.Click);
+        }
+
+        _lastStickySection = section;
     }
 
     private async void OnConflictBadgeTapped(object? sender, EventArgs e)
