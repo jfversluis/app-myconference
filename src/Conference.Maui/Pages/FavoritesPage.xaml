@@ -18,6 +18,7 @@
                         IsGrouped="True"
                         SelectionMode="Single"
                         SelectionChanged="OnSessionSelected"
+                        Scrolled="OnCollectionViewScrolled"
                         IsVisible="{Binding HasFavorites}">
             <CollectionView.GroupHeaderTemplate>
                 <DataTemplate x:DataType="models:TimeSlotGroup">
