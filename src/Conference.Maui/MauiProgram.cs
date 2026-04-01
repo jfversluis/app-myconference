@@ -22,9 +22,6 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-        // Initialize Akavache
-        Registrations.Start("Conference.Maui");
-
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
@@ -36,7 +33,6 @@ public static class MauiProgram
 #if IOS
             .ConfigureMauiHandlers(handlers =>
             {
-                // Use custom handler that enables sticky group headers + ScrollsToTop
                 handlers.AddHandler<CollectionView, Conference.Maui.Platforms.iOS.StickyHeaderCollectionViewHandler>();
             })
 #endif
@@ -97,6 +93,10 @@ public static class MauiProgram
         builder.Logging.AddDebug();
         builder.AddMauiDevFlowAgent();
 #endif
+
+        // Initialize Akavache after DI is configured but before Build
+        // (required before BlobCache is accessed in service constructors)
+        Registrations.Start("Conference.Maui");
 
         return builder.Build();
     }

@@ -28,6 +28,11 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 	</PropertyGroup>
 
+	<!-- Allow interpreter fallback for assemblies that fail AOT on iOS -->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+		<MtouchInterpreter>MauiIcons.FluentFilled,aot-instances</MtouchInterpreter>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
