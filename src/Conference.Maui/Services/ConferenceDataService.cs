@@ -1,4 +1,5 @@
 using System.Reactive.Linq;
+using System.Text.Json;
 using Akavache;
 using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
@@ -21,6 +22,7 @@ public class ConferenceDataService : IConferenceDataService
     private const string AllDataCacheKey = "sessionize_all_data";
     private const string ScheduleGridCacheKey = "sessionize_schedule_grid";
     private const string LastModifiedCacheKey = "sessionize_last_modified";
+    private const string CategoryTagsCacheKey = "sessionize_category_tags";
 
     public ConferenceDataService(
         ISessionizeApiClient sessionizeClient,
@@ -288,6 +290,67 @@ public class ConferenceDataService : IConferenceDataService
         }
     }
 
+    public async Task<Dictionary<int, string>> GetCategoryTagsAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Try cache first
+            try
+            {
+                var cached = await _cache.GetObject<Dictionary<int, string>>(CategoryTagsCacheKey);
+                if (cached is { Count: > 0 })
+                {
+                    _logger.LogDebug("Loaded {Count} category tags from cache", cached.Count);
+                    return cached;
+                }
+            }
+            catch (KeyNotFoundException) { }
+
+            // Fetch from API — uses the same /view/All endpoint, parse categories from raw JSON
+            var client = _httpClientFactory.CreateClient();
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
+
+            var url = $"{AppConfig.SessionizeBaseUrl}{AppConfig.SessionizeApiId}/view/All";
+            var json = await client.GetStringAsync(url, cts.Token);
+            using var doc = JsonDocument.Parse(json);
+
+            var tagMap = new Dictionary<int, string>();
+            if (doc.RootElement.TryGetProperty("categories", out var categories))
+            {
+                foreach (var cat in categories.EnumerateArray())
+                {
+                    var title = cat.GetProperty("title").GetString() ?? "";
+                    if (!title.Contains("tag", StringComparison.OrdinalIgnoreCase) ||
+                        title.Contains("other", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    foreach (var item in cat.GetProperty("items").EnumerateArray())
+                    {
+                        var id = item.GetProperty("id").GetInt32();
+                        var name = item.GetProperty("name").GetString() ?? "";
+                        tagMap[id] = name;
+                    }
+                    break; // Only the first "tag" category
+                }
+            }
+
+            if (tagMap.Count > 0)
+            {
+                await _cache.InsertObject(CategoryTagsCacheKey, tagMap,
+                    TimeSpan.FromHours(AppConfig.CacheExpirationHours));
+                _logger.LogInformation("Cached {Count} category tags", tagMap.Count);
+            }
+
+            return tagMap;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching category tags");
+            return [];
+        }
+    }
+
     public async Task ClearCacheAsync()
     {
         try
@@ -295,6 +358,7 @@ public class ConferenceDataService : IConferenceDataService
             await _cache.InvalidateObject<AllDataResponse>(AllDataCacheKey);
             await _cache.InvalidateObject<List<ScheduleGridResponse>>(ScheduleGridCacheKey);
             await _cache.InvalidateObject<long>(LastModifiedCacheKey);
+            await _cache.InvalidateObject<Dictionary<int, string>>(CategoryTagsCacheKey);
             _logger.LogInformation("Cache cleared");
         }
         catch (Exception ex)

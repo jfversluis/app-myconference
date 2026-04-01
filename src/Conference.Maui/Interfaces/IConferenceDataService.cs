@@ -24,6 +24,12 @@ public interface IConferenceDataService
     Task<bool> HasDataChangedAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Gets the category tag mapping (tag ID → name) from the Sessionize API.
+    /// Cached alongside conference data.
+    /// </summary>
+    Task<Dictionary<int, string>> GetCategoryTagsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Clears all cached data.
     /// </summary>
     Task ClearCacheAsync();

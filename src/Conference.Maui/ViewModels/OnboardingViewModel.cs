@@ -131,14 +131,16 @@ public partial class OnboardingViewModel : ObservableObject
             HasLoadError = false;
             CurrentStep = 0;
 
-            // Fetch data and category tags in parallel (both hit network on first launch)
+            // Fetch data, category tags, and favorites in parallel
             var dataTask = _dataService.GetAllDataAsync();
-            var tagsTask = FetchCategoryTagsAsync();
+            var tagsTask = _dataService.GetCategoryTagsAsync();
             var favoritesTask = _favoritesService.GetFavoriteSessionIdsAsync();
 
             await Task.WhenAll(dataTask, tagsTask, favoritesTask);
 
             _allData = dataTask.Result;
+            _mainTagMap = tagsTask.Result;
+
             if (_allData == null)
             {
                 HasLoadError = true;
@@ -205,43 +207,6 @@ public partial class OnboardingViewModel : ObservableObject
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Could not load featured speakers for welcome screen");
-        }
-    }
-
-    private async Task FetchCategoryTagsAsync()
-    {
-        try
-        {
-            using var http = new HttpClient();
-            var url = $"https://sessionize.com/api/v2/{AppConfig.SessionizeApiId}/view/All";
-            var json = await http.GetStringAsync(url);
-            using var doc = JsonDocument.Parse(json);
-
-            if (!doc.RootElement.TryGetProperty("categories", out var categories))
-                return;
-
-            foreach (var cat in categories.EnumerateArray())
-            {
-                var title = cat.GetProperty("title").GetString() ?? "";
-                if (!title.Contains("tag", StringComparison.OrdinalIgnoreCase) ||
-                    title.Contains("other", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                // This is the "Main tag" category
-                foreach (var item in cat.GetProperty("items").EnumerateArray())
-                {
-                    var id = item.GetProperty("id").GetInt32();
-                    var name = item.GetProperty("name").GetString() ?? "";
-                    _mainTagMap[id] = name;
-                }
-                break;
-            }
-
-            _logger.LogInformation("Loaded {Count} main tags for onboarding", _mainTagMap.Count);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Could not fetch category tags; interest selection will be skipped");
         }
     }
 

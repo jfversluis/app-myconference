@@ -1,4 +1,5 @@
-﻿using Conference.Maui.Pages;
+﻿using Conference.Maui.Interfaces;
+using Conference.Maui.Pages;
 using Conference.Maui.ViewModels;
 
 namespace Conference.Maui;
@@ -20,11 +21,23 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
+        var sp = IPlatformApplication.Current?.Services;
+
+        // Preload conference data in background so it's ready when pages appear
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                var dataService = sp?.GetService<IConferenceDataService>();
+                if (dataService != null)
+                    await dataService.GetAllDataAsync();
+            }
+            catch { /* Non-critical preload */ }
+        });
+
         if (OnboardingViewModel.IsOnboardingCompleted())
             return new Window(new AppShell());
 
-        // Show onboarding directly as the root page — no Shell, no flash
-        var sp = IPlatformApplication.Current?.Services;
         var onboardingPage = sp!.GetRequiredService<OnboardingPage>();
         return new Window(onboardingPage);
     }

@@ -28,10 +28,17 @@ public partial class OnboardingPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+
+        // Show welcome step immediately (static content)
+        UpdateStepVisibility();
+
+        // Load data in background — welcome step is visible while loading
         await _viewModel.InitializeAsync();
+
+        // Data is now available — update speaker photos and refresh step visibility
         PopulateSpeakerPhotos();
         UpdateStepVisibility();
-        _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
     protected override void OnDisappearing()
