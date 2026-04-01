@@ -182,6 +182,20 @@ public partial class AboutViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task OpenSessionizeAsync()
+    {
+        await Browser.OpenAsync("https://sessionize.com", BrowserLaunchMode.SystemPreferred);
+    }
+
+    [RelayCommand]
+    private async Task OpenSourceCodeAsync()
+    {
+        await Browser.OpenAsync(AppConfig.GitHubRepo, BrowserLaunchMode.SystemPreferred);
+    }
+
+    public string AppVersion => $"v{AppInfo.VersionString} (build {AppInfo.BuildString})";
+
+    [RelayCommand]
     private async Task OpenSponsorWebsiteAsync(Sponsor? sponsor)
     {
         if (sponsor == null || string.IsNullOrEmpty(sponsor.Website)) return;
