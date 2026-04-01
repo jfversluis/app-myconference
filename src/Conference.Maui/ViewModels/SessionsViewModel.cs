@@ -94,6 +94,13 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
         try
         {
             IsRefreshing = true;
+
+            if (!await _dataService.HasDataChangedAsync())
+            {
+                _logger.LogInformation("Data unchanged, skipping refresh");
+                return;
+            }
+
             _allData = await _dataService.GetAllDataAsync(forceRefresh: true);
             
             if (_allData != null)

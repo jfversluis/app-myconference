@@ -100,4 +100,39 @@ public partial class SpeakersViewModel : BaseViewModel
             ["SpeakerId"] = speaker.Id
         });
     }
+
+    [RelayCommand]
+    private async Task RefreshDataAsync()
+    {
+        try
+        {
+            IsRefreshing = true;
+
+            if (!await _dataService.HasDataChangedAsync())
+            {
+                _logger.LogInformation("Data unchanged, skipping refresh");
+                return;
+            }
+
+            var allData = await _dataService.GetAllDataAsync(forceRefresh: true);
+            if (allData != null)
+            {
+                _allSpeakers = allData.Speakers
+                    .Select(SpeakerItem.FromSpeakerDetails)
+                    .OrderBy(s => s.FullName)
+                    .ToList();
+
+                ApplySearch();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing speakers");
+        }
+        finally
+        {
+            IsRefreshing = false;
+            OnPropertyChanged(nameof(ShowEmptyState));
+        }
+    }
 }

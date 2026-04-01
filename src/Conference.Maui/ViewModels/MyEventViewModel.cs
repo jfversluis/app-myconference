@@ -421,6 +421,50 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     }
 
     [RelayCommand]
+    private async Task RefreshDataAsync()
+    {
+        try
+        {
+            IsRefreshing = true;
+
+            if (!await _dataService.HasDataChangedAsync())
+            {
+                // Data unchanged, just refresh favorites in case those changed locally
+                _favoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
+                AgendaCount = _favoriteIds.Count;
+                UpdateTimeSections();
+                _logger.LogInformation("Data unchanged, refreshed favorites only");
+                return;
+            }
+
+            var dataTask = _dataService.GetAllDataAsync(forceRefresh: true);
+            var favTask = _favoritesService.GetFavoriteSessionIdsAsync();
+            await Task.WhenAll(dataTask, favTask);
+
+            _allData = dataTask.Result;
+            _favoriteIds = favTask.Result;
+
+            if (_allData != null)
+            {
+                var sessions = _allData.Sessions.Where(s => !s.IsServiceSession).ToList();
+                TotalSessions = sessions.Count;
+                TotalSpeakers = _allData.Speakers.Count;
+                AgendaCount = _favoriteIds.Count;
+                UpdateTimeSections();
+                UpdateEmptyStateText();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing My Event data");
+        }
+        finally
+        {
+            IsRefreshing = false;
+        }
+    }
+
+    [RelayCommand]
     private async Task NavigateToAboutAsync()
     {
         await Shell.Current.GoToAsync("//About");

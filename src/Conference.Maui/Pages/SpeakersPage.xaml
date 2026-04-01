@@ -69,9 +69,12 @@
         </Border>
 
         <!-- Speakers Grid -->
-        <CollectionView Grid.Row="1"
-                        Margin="4,0"
-                        x:Name="SpeakersCollectionView"
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshDataCommand}">
+            <CollectionView
+                            Margin="4,0"
+                            x:Name="SpeakersCollectionView"
                         ItemsSource="{Binding Speakers}"
                         SelectionMode="Single"
                         SelectionChanged="OnSpeakerSelected">
@@ -173,8 +176,7 @@
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
-
-        <!-- Loading Indicator -->
+        </RefreshView>
         <VerticalStackLayout Grid.RowSpan="2"
                              VerticalOptions="Center"
                              HorizontalOptions="Center"

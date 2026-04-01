@@ -21,7 +21,9 @@
                            Color="{StaticResource Primary}" />
 
         <!-- Content -->
-        <ScrollView IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
+        <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshDataCommand}">
+            <ScrollView IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
             <VerticalStackLayout Spacing="0">
 
                 <!-- Event Header -->
@@ -491,5 +493,6 @@
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </ScrollView>
+        </RefreshView>
     </Grid>
 </ContentPage>

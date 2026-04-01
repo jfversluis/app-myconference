@@ -92,7 +92,9 @@
         </Border>
 
         <!-- Sessions CollectionView -->
-        <Grid Grid.Row="2" SafeAreaEdges="None">
+        <RefreshView Grid.Row="2"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshDataCommand}">
             <CollectionView x:Name="SessionsCollectionView"
                             ItemsSource="{Binding CurrentDaySlots}"
                             IsGrouped="True"
@@ -273,7 +275,7 @@
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
-    </Grid>
+        </RefreshView>
 
         <!-- Loading Indicator -->
         <VerticalStackLayout Grid.RowSpan="3"
