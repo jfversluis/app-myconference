@@ -77,6 +77,23 @@
                                        MaxLines="2" />
                                 <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,8,0,0">
                                     <HorizontalStackLayout Grid.Column="0" Spacing="16" VerticalOptions="Center">
+                                        <!-- Reminder bell badge -->
+                                        <Border StrokeShape="RoundRectangle 8"
+                                                BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#312E81}"
+                                                StrokeThickness="0"
+                                                Padding="5,2"
+                                                VerticalOptions="Center"
+                                                IsVisible="{Binding HasReminder}">
+                                            <HorizontalStackLayout Spacing="3">
+                                                <Image HeightRequest="11" WidthRequest="11"
+                                                       VerticalOptions="Center"
+                                                       mi:MauiIcon.Value="{mi:Fluent Icon=Alert16, IconColor={StaticResource Primary}}" />
+                                                <Label Text="{Binding StartsAt.LocalDateTime, StringFormat='{0:h:mm tt}'}"
+                                                       FontSize="10" FontAttributes="Bold"
+                                                       TextColor="{StaticResource Primary}"
+                                                       VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                        </Border>
                                         <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
                                             <Image Source="location_regular.png" HeightRequest="16" WidthRequest="16" VerticalOptions="Center">
                                                 <Image.Behaviors>

@@ -24,6 +24,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
     private AllDataResponse? _allData;
     private IReadOnlySet<string> _favoriteIds = new HashSet<string>();
+    private IReadOnlySet<string> _activeReminderIds = new HashSet<string>();
     private CancellationTokenSource? _timerCts;
 
 #if DEBUG
@@ -180,6 +181,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
             _allData = dataTask.Result;
             _favoriteIds = favTask.Result;
+            _activeReminderIds = await _reminderService.GetActiveReminderIdsAsync(_favoriteIds);
 
             if (_allData != null)
             {
@@ -255,9 +257,11 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
                 try
                 {
                     var favoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
+                    var reminderIds = await _reminderService.GetActiveReminderIdsAsync(favoriteIds);
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {
                         _favoriteIds = favoriteIds;
+                        _activeReminderIds = reminderIds;
                         AgendaCount = _favoriteIds.Count;
                         UpdateTimeSections();
 #if DEBUG
@@ -393,7 +397,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             RoomName = GetRoomName(session.RoomId),
             Speakers = speakers,
             IsFavorite = isFavorite,
-            HasReminder = isFavorite && _reminderService.IsGlobalRemindersEnabled
+            HasReminder = isFavorite && _activeReminderIds.Contains(session.Id)
         };
 
         return item;
@@ -436,6 +440,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             {
                 // Data unchanged, just refresh favorites in case those changed locally
                 _favoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
+                _activeReminderIds = await _reminderService.GetActiveReminderIdsAsync(_favoriteIds);
                 AgendaCount = _favoriteIds.Count;
                 UpdateTimeSections();
                 _logger.LogInformation("Data unchanged, refreshed favorites only");
@@ -448,6 +453,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
             _allData = dataTask.Result;
             _favoriteIds = favTask.Result;
+            _activeReminderIds = await _reminderService.GetActiveReminderIdsAsync(_favoriteIds);
 
             if (_allData != null)
             {
@@ -532,6 +538,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             try
             {
                 _favoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
+                _activeReminderIds = await _reminderService.GetActiveReminderIdsAsync(_favoriteIds);
                 AgendaCount = _favoriteIds.Count;
                 UpdateTimeSections();
             }

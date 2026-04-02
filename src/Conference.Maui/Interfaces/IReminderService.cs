@@ -33,6 +33,12 @@ public interface IReminderService
     Task<bool> IsReminderActiveAsync(string sessionId);
 
     /// <summary>
+    /// Returns the set of session IDs that have active reminders from the given candidates.
+    /// More efficient than calling IsReminderActiveAsync individually for each session.
+    /// </summary>
+    Task<IReadOnlySet<string>> GetActiveReminderIdsAsync(IEnumerable<string> sessionIds);
+
+    /// <summary>
     /// Toggles the per-session reminder override.
     /// Returns the new reminder active state.
     /// </summary>

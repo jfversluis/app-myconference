@@ -419,20 +419,33 @@
                                         </Grid>
                                         <!-- Session info -->
                                         <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Start">
-                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
-                                                <Label Text="{Binding Title}" FontSize="14" FontAttributes="Bold"
-                                                       LineBreakMode="TailTruncation" MaxLines="2" />
-                                                <Image Grid.Column="1" HeightRequest="14" WidthRequest="14"
-                                                       VerticalOptions="Start" Margin="0,3,0,0"
-                                                       IsVisible="{Binding HasReminder}"
-                                                       mi:MauiIcon.Value="{mi:Fluent Icon=Alert16, IconColor={StaticResource Primary}}" />
-                                            </Grid>
+                                            <Label Text="{Binding Title}" FontSize="14" FontAttributes="Bold"
+                                                   LineBreakMode="TailTruncation" MaxLines="2" />
                                             <HorizontalStackLayout Spacing="8">
+                                                <!-- Reminder bell badge -->
+                                                <Border StrokeShape="RoundRectangle 8"
+                                                        BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#312E81}"
+                                                        StrokeThickness="0"
+                                                        Padding="5,2"
+                                                        VerticalOptions="Center"
+                                                        IsVisible="{Binding HasReminder}">
+                                                    <HorizontalStackLayout Spacing="3">
+                                                        <Image HeightRequest="11" WidthRequest="11"
+                                                               VerticalOptions="Center"
+                                                               mi:MauiIcon.Value="{mi:Fluent Icon=Alert16, IconColor={StaticResource Primary}}" />
+                                                        <Label Text="{Binding StartsAt.LocalDateTime, StringFormat='{0:h:mm tt}'}"
+                                                               FontSize="10" FontAttributes="Bold"
+                                                               TextColor="{StaticResource Primary}"
+                                                               VerticalOptions="Center" />
+                                                    </HorizontalStackLayout>
+                                                </Border>
                                                 <Label Text="{Binding RoomName}" FontSize="11"
                                                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
-                                                       IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
+                                                       IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}"
+                                                       VerticalOptions="Center" />
                                                 <Label Text="{Binding DurationDisplay}" FontSize="11"
-                                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                                       VerticalOptions="Center" />
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
                                     </Grid>

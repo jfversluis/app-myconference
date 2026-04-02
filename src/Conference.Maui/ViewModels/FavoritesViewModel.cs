@@ -15,6 +15,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly IReminderService _reminderService;
     private readonly ILogger<FavoritesViewModel> _logger;
 
     [ObservableProperty]
@@ -29,10 +30,12 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
     public FavoritesViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
+        IReminderService reminderService,
         ILogger<FavoritesViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _reminderService = reminderService;
         _logger = logger;
         Title = "My Agenda";
 
@@ -68,6 +71,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
         if (allData == null) return;
 
         var favorites = await _favoritesService.GetFavoriteSessionIdsAsync();
+        var activeReminders = await _reminderService.GetActiveReminderIdsAsync(favorites);
         var favoriteSessions = allData.Sessions
             .Where(s => favorites.Contains(s.Id))
             .OrderBy(s => s.StartsAt)
@@ -89,7 +93,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
 
                 foreach (var session in slotGroup.OrderBy(s => allData.Rooms.FirstOrDefault(r => r.Id == s.RoomId)?.Name))
                 {
-                    slot.Add(CreateSessionItem(session, allData, favorites));
+                    slot.Add(CreateSessionItem(session, allData, activeReminders));
                 }
 
                 return slot;
@@ -100,7 +104,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
         HasFavorites = slots.Count > 0;
     }
 
-    private static SessionItem CreateSessionItem(SessionDetails session, AllDataResponse allData, IReadOnlySet<string> favorites)
+    private static SessionItem CreateSessionItem(SessionDetails session, AllDataResponse allData, IReadOnlySet<string> activeReminders)
     {
         var speakers = session.Speakers
             .Select(speakerId => allData.Speakers.FirstOrDefault(s => s.Id == speakerId))
@@ -118,7 +122,8 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
             RoomId = session.RoomId,
             RoomName = allData.Rooms.FirstOrDefault(r => r.Id == session.RoomId)?.Name,
             Speakers = speakers,
-            IsFavorite = true
+            IsFavorite = true,
+            HasReminder = activeReminders.Contains(session.Id)
         };
     }
 

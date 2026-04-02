@@ -120,6 +120,20 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
         return !await IsSessionOverriddenOffAsync(sessionId);
     }
 
+    public async Task<IReadOnlySet<string>> GetActiveReminderIdsAsync(IEnumerable<string> sessionIds)
+    {
+        if (!IsGlobalRemindersEnabled)
+            return new HashSet<string>();
+
+        var result = new HashSet<string>();
+        foreach (var id in sessionIds)
+        {
+            if (!await IsSessionOverriddenOffAsync(id))
+                result.Add(id);
+        }
+        return result;
+    }
+
     public async Task<bool> ToggleSessionReminderAsync(string sessionId, string title, string? roomName, DateTimeOffset startsAt)
     {
         var isCurrentlyOff = await IsSessionOverriddenOffAsync(sessionId);
