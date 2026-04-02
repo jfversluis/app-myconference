@@ -264,7 +264,7 @@
                                 <Image Grid.Column="0" HeightRequest="18" WidthRequest="18" VerticalOptions="Center"
                                        IsVisible="{Binding IsReminderActive, Converter={toolkit:InvertedBoolConverter}}"
                                        SemanticProperties.Description=""
-                                       mi:MauiIcon.Value="{mi:Fluent Icon=AlertOff24, IconColor={StaticResource Gray400}}" />
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=AlertOff24, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                                 <Label Grid.Column="1" VerticalOptions="Center"
                                        FontSize="13"
                                        Text="{Binding IsReminderActive, Converter={toolkit:BoolToObjectConverter TrueObject='Reminder set', FalseObject='Reminder off'}}"
@@ -276,7 +276,7 @@
                                 <Image Grid.Column="2" HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
                                        IsVisible="{Binding IsReminderActive, Converter={toolkit:InvertedBoolConverter}}"
                                        SemanticProperties.Description=""
-                                       mi:MauiIcon.Value="{mi:Fluent Icon=Dismiss20, IconColor={StaticResource Gray400}}" />
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=Dismiss20, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                             </Grid>
                         </Border>
 

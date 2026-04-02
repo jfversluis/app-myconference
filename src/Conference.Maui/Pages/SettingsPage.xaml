@@ -237,7 +237,7 @@
                         </VerticalStackLayout>
                         <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
                                SemanticProperties.Description=""
-                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={StaticResource Gray400}}" />
+                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                     </Grid>
                 </Border>
 
@@ -263,7 +263,7 @@
                         </VerticalStackLayout>
                         <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
                                SemanticProperties.Description=""
-                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={StaticResource Gray400}}" />
+                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                     </Grid>
                 </Border>
             </VerticalStackLayout>
@@ -328,7 +328,8 @@
                         Padding="0">
                     <VerticalStackLayout Spacing="0">
                         <!-- MAUI Community Toolkit -->
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14"
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14" MinimumHeightRequest="44"
+                              SemanticProperties.Description="MAUI Community Toolkit, UI Components"
                               SemanticProperties.Hint="Double tap to open in browser">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
@@ -339,12 +340,13 @@
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
-                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                         </Grid>
                         <BoxView HeightRequest="1" Margin="16,0" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
 
                         <!-- Syncfusion -->
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14"
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14" MinimumHeightRequest="44"
+                              SemanticProperties.Description="Syncfusion MAUI Toolkit, Tab View"
                               SemanticProperties.Hint="Double tap to open in browser">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
@@ -355,12 +357,13 @@
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
-                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                         </Grid>
                         <BoxView HeightRequest="1" Margin="16,0" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
 
                         <!-- Akavache -->
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14"
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14" MinimumHeightRequest="44"
+                              SemanticProperties.Description="Akavache, Offline Caching"
                               SemanticProperties.Hint="Double tap to open in browser">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
@@ -371,12 +374,13 @@
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
-                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                         </Grid>
                         <BoxView HeightRequest="1" Margin="16,0" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
 
                         <!-- Polly -->
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14"
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14" MinimumHeightRequest="44"
+                              SemanticProperties.Description="Polly, Resilient HTTP"
                               SemanticProperties.Hint="Double tap to open in browser">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
@@ -387,12 +391,13 @@
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
-                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                         </Grid>
                         <BoxView HeightRequest="1" Margin="16,0" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}" />
 
                         <!-- Sessionize -->
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14"
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Padding="16,14" MinimumHeightRequest="44"
+                              SemanticProperties.Description="Sessionize API Client, Conference Data"
                               SemanticProperties.Hint="Double tap to open in browser">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenLibraryCommand}"
@@ -403,7 +408,7 @@
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
-                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>

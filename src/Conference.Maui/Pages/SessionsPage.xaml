@@ -51,7 +51,7 @@
                        VerticalOptions="Center"
                        Margin="0,0,8,0"
                        SemanticProperties.Description=""
-                       mi:MauiIcon.Value="{mi:Fluent Icon=Search24, IconSize=18, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
+                       mi:MauiIcon.Value="{mi:Fluent Icon=Search24, IconSize=18, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                 <Entry Grid.Column="1"
                        x:Name="SessionSearchEntry"
                        Placeholder="Search sessions..."
@@ -275,7 +275,7 @@
                                      IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
                     <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
                            SemanticProperties.Description=""
-                           mi:MauiIcon.Value="{mi:Fluent Icon=CalendarLtr24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
+                           mi:MauiIcon.Value="{mi:Fluent Icon=CalendarLtr24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                     <Label Text="No sessions found"
                            FontSize="18"
                            FontAttributes="Bold"

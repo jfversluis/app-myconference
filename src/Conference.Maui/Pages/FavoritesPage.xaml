@@ -159,7 +159,7 @@
                              IsVisible="{Binding ShowEmptyState}">
             <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
                    SemanticProperties.Description=""
-                   mi:MauiIcon.Value="{mi:Fluent Icon=Star24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
+                   mi:MauiIcon.Value="{mi:Fluent Icon=Star24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
             <Label Text="No sessions in your agenda yet"
                    FontSize="18"
                    FontAttributes="Bold"

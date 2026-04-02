@@ -15,8 +15,8 @@ public class IndexToColorConverter : IValueConverter
                 return Application.Current?.Resources["Primary"] as Color ?? Colors.Blue;
 
             return Application.Current?.RequestedTheme == AppTheme.Dark
-                ? Application.Current?.Resources["Gray700"] as Color ?? Colors.DarkGray
-                : Application.Current?.Resources["Gray200"] as Color ?? Colors.LightGray;
+                ? Application.Current?.Resources["Gray800"] as Color ?? Colors.DarkGray
+                : Application.Current?.Resources["Gray100"] as Color ?? Colors.LightGray;
         }
         return Colors.LightGray;
     }

@@ -94,7 +94,7 @@
                         <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
                                IsVisible="{Binding IsPhysicalVenue}"
                                SemanticProperties.Description=""
-                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={StaticResource Gray400}}" />
+                               mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
                     </Grid>
                 </Border>
 
@@ -127,6 +127,7 @@
                                 FontAttributes="Bold"
                                 CornerRadius="8"
                                 Padding="12,6"
+                                HeightRequest="44"
                                 VerticalOptions="Center" />
                     </Grid>
                 </Border>

@@ -123,6 +123,7 @@
                                                 IsVisible="{Binding HasSpeaker1}">
                                             <Image Source="{Binding Speaker1.ProfilePictureUrl}"
                                                    Aspect="AspectFill"
+                                                   SemanticProperties.Description=""
                                                    HeightRequest="36" WidthRequest="36">
                                                 <Image.Clip>
                                                     <EllipseGeometry Center="18,18" RadiusX="18" RadiusY="18" />
@@ -138,6 +139,7 @@
                                                 IsVisible="{Binding HasSpeaker2}">
                                             <Image Source="{Binding Speaker2.ProfilePictureUrl}"
                                                    Aspect="AspectFill"
+                                                   SemanticProperties.Description=""
                                                    HeightRequest="36" WidthRequest="36">
                                                 <Image.Clip>
                                                     <EllipseGeometry Center="18,18" RadiusX="18" RadiusY="18" />
@@ -225,6 +227,7 @@
                                                TextColor="{StaticResource Primary}"
                                                VerticalOptions="Center" />
                                         <Image Grid.Column="1" WidthRequest="16" HeightRequest="16" VerticalOptions="Center"
+                                               SemanticProperties.Description=""
                                                mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconSize=16, IconColor={StaticResource Primary}}" />
                                     </Grid>
                                 </Border>
@@ -275,6 +278,7 @@
             <VerticalStackLayout Spacing="4" Padding="28,32">
                 <Image HeightRequest="40" WidthRequest="40"
                        HorizontalOptions="Center"
+                       SemanticProperties.Description=""
                        mi:MauiIcon.Value="{mi:Fluent Icon=CheckmarkCircle24, IconSize=40, IconColor={StaticResource Primary}}" />
                 <Label Text="Done" FontSize="24" FontAttributes="Bold"
                        HorizontalTextAlignment="Center"
