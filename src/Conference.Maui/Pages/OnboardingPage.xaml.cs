@@ -72,7 +72,8 @@ public partial class OnboardingPage : ContentPage
 
         for (int i = 0; i < Math.Min(speakers.Count, _speakerCircles.Length); i++)
         {
-            _speakerImages[i].Source = ImageSource.FromUri(new Uri(speakers[i].ProfilePictureUrl));
+            if (Uri.TryCreate(speakers[i].ProfilePictureUrl, UriKind.Absolute, out var uri))
+                _speakerImages[i].Source = ImageSource.FromUri(uri);
             _speakerCircles[i].Stroke = Color.FromArgb(speakers[i].CircleColor);
             _speakerCircles[i].BackgroundColor = Color.FromArgb(speakers[i].CircleColor);
             _speakerCircles[i].IsVisible = true;

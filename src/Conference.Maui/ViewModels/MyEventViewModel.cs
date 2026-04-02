@@ -513,7 +513,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
     public void Receive(FavoriteChangedMessage message)
     {
-        MainThread.BeginInvokeOnMainThread(async () =>
+        _ = MainThread.InvokeOnMainThreadAsync(async () =>
         {
             try
             {

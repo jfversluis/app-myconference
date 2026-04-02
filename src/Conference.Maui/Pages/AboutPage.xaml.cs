@@ -99,12 +99,19 @@ public partial class AboutPage : ContentPage
             };
 
             // Apply theme colors
-            border.SetAppThemeColor(Border.StrokeProperty,
-                (Color)Application.Current!.Resources["Gray200"],
-                (Color)Application.Current!.Resources["Gray600"]);
-            border.SetAppThemeColor(Border.BackgroundProperty,
-                Colors.White,
-                (Color)Application.Current!.Resources["Gray900"]);
+            var gray200 = Colors.LightGray;
+            var gray600 = Colors.Gray;
+            var gray900 = Color.FromArgb("#1A1A1A");
+
+            if (Application.Current?.Resources.TryGetValue("Gray200", out var g200) == true && g200 is Color c200)
+                gray200 = c200;
+            if (Application.Current?.Resources.TryGetValue("Gray600", out var g600) == true && g600 is Color c600)
+                gray600 = c600;
+            if (Application.Current?.Resources.TryGetValue("Gray900", out var g900) == true && g900 is Color c900)
+                gray900 = c900;
+
+            border.SetAppThemeColor(Border.StrokeProperty, gray200, gray600);
+            border.SetAppThemeColor(Border.BackgroundProperty, Colors.White, gray900);
 
             SemanticProperties.SetDescription(border, $"Sponsor: {sponsor.Name}");
 

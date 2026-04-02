@@ -388,7 +388,15 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
 
     private static int GetNotificationId(string sessionId)
     {
-        // Use stable hash for deterministic notification IDs
-        return sessionId.GetHashCode() & 0x7FFFFFFF; // Ensure positive
+        // Deterministic hash — string.GetHashCode() is randomized per-process in .NET
+        unchecked
+        {
+            int hash = (int)2166136261;
+            foreach (char c in sessionId)
+            {
+                hash = (hash ^ c) * 16777619;
+            }
+            return hash & 0x7FFFFFFF; // Ensure positive
+        }
     }
 }

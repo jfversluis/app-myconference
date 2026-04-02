@@ -78,7 +78,7 @@ public partial class SettingsViewModel : BaseViewModel
         else
         {
             _reminderService.IsGlobalRemindersEnabled = false;
-            _ = _reminderService.ReconcileRemindersAsync();
+            _ = SafeReconcileRemindersAsync();
             SemanticScreenReader.Announce("Reminders disabled");
         }
     }
@@ -91,7 +91,7 @@ public partial class SettingsViewModel : BaseViewModel
             if (enabled)
             {
                 _reminderService.IsGlobalRemindersEnabled = true;
-                _ = _reminderService.ReconcileRemindersAsync();
+                _ = SafeReconcileRemindersAsync();
                 SemanticScreenReader.Announce("Reminders enabled");
                 return;
             }
@@ -112,7 +112,7 @@ public partial class SettingsViewModel : BaseViewModel
             if (granted)
             {
                 _reminderService.IsGlobalRemindersEnabled = true;
-                _ = _reminderService.ReconcileRemindersAsync();
+                _ = SafeReconcileRemindersAsync();
                 SemanticScreenReader.Announce("Reminders enabled");
                 return;
             }
@@ -130,8 +130,9 @@ public partial class SettingsViewModel : BaseViewModel
             if (openSettings)
                 Microsoft.Maui.ApplicationModel.AppInfo.ShowSettingsUI();
         }
-        catch
+        catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"Notification permission error: {ex.Message}");
             _suppressPermissionCheck = true;
             RemindersEnabled = false;
             _suppressPermissionCheck = false;
@@ -144,7 +145,7 @@ public partial class SettingsViewModel : BaseViewModel
         {
             _reminderService.LeadTimeMinutes = LeadTimeOptions[value];
             if (_reminderService.IsGlobalRemindersEnabled)
-                _ = _reminderService.ReconcileRemindersAsync();
+                _ = SafeReconcileRemindersAsync();
         }
     }
 
@@ -230,5 +231,17 @@ public partial class SettingsViewModel : BaseViewModel
     {
         if (string.IsNullOrEmpty(url)) return;
         await Browser.OpenAsync(url, BrowserLaunchMode.SystemPreferred);
+    }
+
+    private async Task SafeReconcileRemindersAsync()
+    {
+        try
+        {
+            await _reminderService.ReconcileRemindersAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Reminder reconciliation failed: {ex.Message}");
+        }
     }
 }

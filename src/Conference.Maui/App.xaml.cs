@@ -61,7 +61,10 @@ public partial class App : Application
         if (!isOnboardingEnabled || OnboardingViewModel.IsOnboardingCompleted())
             return new Window(new AppShell());
 
-        var onboardingPage = sp!.GetRequiredService<OnboardingPage>();
+        var onboardingPage = sp?.GetService<OnboardingPage>();
+        if (onboardingPage is null)
+            return new Window(new AppShell());
+
         return new Window(onboardingPage);
     }
 
@@ -101,9 +104,22 @@ public partial class App : Application
     {
         if (Current?.Windows.FirstOrDefault() is Window window)
         {
-            window.Page = new AppShell();
-            await Task.Delay(300); // Let Shell initialize
-            await Shell.Current.GoToAsync(route);
+            var shell = new AppShell();
+            window.Page = shell;
+
+            try
+            {
+                // Wait for Shell to be fully ready (up to 3s) instead of a fixed delay
+                for (int i = 0; i < 30 && Shell.Current is null; i++)
+                    await Task.Delay(100);
+
+                if (Shell.Current is not null)
+                    await Shell.Current.GoToAsync(route);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Post-onboarding navigation error: {ex.Message}");
+            }
         }
     }
 }

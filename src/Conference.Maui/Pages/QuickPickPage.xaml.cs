@@ -17,15 +17,21 @@ public partial class QuickPickPage : ContentPage
 
         if (AccessibilityHelper.ShouldReduceMotion)
             SwipeCardView.AnimationLength = 0;
-
-        SwipeCardView.Swiped += OnSwiped;
-        SwipeCardView.Dragging += OnDragging;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        SwipeCardView.Swiped += OnSwiped;
+        SwipeCardView.Dragging += OnDragging;
         await _viewModel.LoadDeckAsync();
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        SwipeCardView.Swiped -= OnSwiped;
+        SwipeCardView.Dragging -= OnDragging;
     }
 
     private async void OnSwiped(object? sender, SwipedCardEventArgs e)

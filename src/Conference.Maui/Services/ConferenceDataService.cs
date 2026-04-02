@@ -80,13 +80,13 @@ public class ConferenceDataService : IConferenceDataService
                     try
                     {
                         // Quick HEAD check: has data changed on the server?
-                        if (!await HasDataChangedAsync(cancellationToken))
+                        if (!await HasDataChangedAsync(CancellationToken.None))
                         {
                             _logger.LogDebug("Data unchanged on server, skipping background refresh");
                             return;
                         }
 
-                        var freshData = await FetchFromApiAsync(cancellationToken);
+                        var freshData = await FetchFromApiAsync(CancellationToken.None);
                         if (freshData != null)
                         {
                             await _cache.InsertObject(

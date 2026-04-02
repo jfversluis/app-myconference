@@ -12,8 +12,6 @@ public partial class SessionsPage : ContentPage
     {
         InitializeComponent();
         BindingContext = _viewModel = viewModel;
-        
-        _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -54,10 +52,17 @@ public partial class SessionsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         
         if (_viewModel.Days.Count == 0)
         {
             await _viewModel.LoadDataCommand.ExecuteAsync(null);
         }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
     }
 }

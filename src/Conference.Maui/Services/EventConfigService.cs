@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using CommunityToolkit.Maui.Extensions;
 using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 
@@ -28,7 +29,6 @@ public sealed class EventConfigService : IEventConfigService
         {
             var path = Path.Combine(AppContext.BaseDirectory, "event_config.json");
 
-            // On iOS the file is in the app bundle; try direct path first, then the async API on a thread pool thread
             if (File.Exists(path))
             {
                 var json = File.ReadAllText(path);
@@ -38,15 +38,7 @@ public sealed class EventConfigService : IEventConfigService
             }
             else
             {
-                // Fallback: run async load on thread pool to avoid main-thread deadlock
-                var config = Task.Run(async () =>
-                {
-                    using var stream = await FileSystem.OpenAppPackageFileAsync("event_config.json");
-                    return await JsonSerializer.DeserializeAsync<EventConfig>(stream, s_jsonOptions);
-                }).GetAwaiter().GetResult();
-
-                if (config is not null)
-                    Config = config;
+                Debug.WriteLine("[EventConfigService] event_config.json not found at bundle path, using defaults");
             }
         }
         catch (Exception ex)
@@ -118,6 +110,37 @@ public sealed class EventConfigService : IEventConfigService
             };
             resources["HeroGradient"] = gradient;
         }
+
+        // Update AppThemeColor objects that captured old Color references at XAML parse time
+        UpdateAppThemeColor(resources, "ThemePrimary",
+            TryParseColor(branding.PrimaryColor),
+            branding.PrimaryColor is not null ? TryParseColor(branding.PrimaryColor)?.WithLuminosity(
+                Math.Min((TryParseColor(branding.PrimaryColor)?.GetLuminosity() ?? 0.5f) + 0.15f, 0.85f)) : null);
+    }
+
+    private static void UpdateAppThemeColor(ResourceDictionary resources, string key, Color? light, Color? dark)
+    {
+        // Search merged dictionaries for the AppThemeColor
+        if (TryFindResource(resources, key) is CommunityToolkit.Maui.AppThemeColor themeColor)
+        {
+            if (light is not null) themeColor.Light = light;
+            if (dark is not null) themeColor.Dark = dark;
+        }
+    }
+
+    private static object? TryFindResource(ResourceDictionary resources, string key)
+    {
+        if (resources.TryGetValue(key, out var value))
+            return value;
+
+        foreach (var merged in resources.MergedDictionaries)
+        {
+            var found = TryFindResource(merged, key);
+            if (found is not null)
+                return found;
+        }
+
+        return null;
     }
 
     private static void TrySetColor(ResourceDictionary resources, string key, string? hex)
