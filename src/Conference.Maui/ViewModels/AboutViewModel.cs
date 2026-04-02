@@ -3,6 +3,7 @@ using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Configuration;
+using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Conference.Maui.Pages;
 #if IOS
@@ -13,18 +14,20 @@ namespace Conference.Maui.ViewModels;
 
 public partial class AboutViewModel : BaseViewModel
 {
-    public string ConferenceName => AppConfig.ConferenceName;
-    public string EventDescription => AppConfig.EventDescription;
-    public string VenueName => AppConfig.VenueName;
-    public string VenueDetails => AppConfig.VenueDetails;
-    public bool IsPhysicalVenue => !AppConfig.IsOnlineEvent;
+    private readonly IEventConfigService _configService;
+
+    public string ConferenceName => _configService.Config.Event.Name;
+    public string EventDescription => _configService.Config.Event.Description;
+    public string VenueName => _configService.Config.Venue.Name;
+    public string VenueDetails => _configService.Config.Venue.Address;
+    public bool IsPhysicalVenue => !_configService.Config.Event.IsOnline;
 
     public string EventDateRange
     {
         get
         {
-            var start = AppConfig.EventStartDate;
-            var end = AppConfig.EventEndDate;
+            var start = _configService.Config.Event.StartDateTime;
+            var end = _configService.Config.Event.EndDateTime;
 
             if (start == end)
                 return start.ToString("D");
@@ -53,8 +56,9 @@ public partial class AboutViewModel : BaseViewModel
 
     public bool HasWifi => !string.IsNullOrEmpty(WifiNetworkName);
 
-    public AboutViewModel()
+    public AboutViewModel(IEventConfigService configService)
     {
+        _configService = configService;
         Title = "About";
     }
 
@@ -83,7 +87,7 @@ public partial class AboutViewModel : BaseViewModel
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync("event_config.json");
-            var config = await JsonSerializer.DeserializeAsync<EventConfig>(stream, new JsonSerializerOptions
+            var config = await JsonSerializer.DeserializeAsync<Conference.Maui.Configuration.EventConfig>(stream, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
@@ -178,22 +182,22 @@ public partial class AboutViewModel : BaseViewModel
     [RelayCommand]
     private async Task OpenConferenceWebsiteAsync()
     {
-        await Browser.OpenAsync(AppConfig.ConferenceWebsite, BrowserLaunchMode.SystemPreferred);
+        await Browser.OpenAsync(_configService.Config.Links.Website, BrowserLaunchMode.SystemPreferred);
     }
 
     [RelayCommand]
     private async Task OpenSessionizeAsync()
     {
-        await Browser.OpenAsync("https://sessionize.com", BrowserLaunchMode.SystemPreferred);
+        await Browser.OpenAsync(_configService.Config.Links.Sessionize, BrowserLaunchMode.SystemPreferred);
     }
 
     [RelayCommand]
     private async Task OpenSourceCodeAsync()
     {
-        await Browser.OpenAsync(AppConfig.GitHubRepo, BrowserLaunchMode.SystemPreferred);
+        await Browser.OpenAsync(_configService.Config.Links.GitHub, BrowserLaunchMode.SystemPreferred);
     }
 
-    public string AppVersion => $"v{AppInfo.VersionString} (build {AppInfo.BuildString})";
+    public string AppVersion => $"v{Microsoft.Maui.ApplicationModel.AppInfo.VersionString} (build {Microsoft.Maui.ApplicationModel.AppInfo.BuildString})";
 
     [RelayCommand]
     private async Task OpenSponsorWebsiteAsync(Sponsor? sponsor)

@@ -29,11 +29,16 @@ public partial class App : Application
     {
         var sp = IPlatformApplication.Current?.Services;
 
-        // Preload conference data and reconcile reminders in background
+        // Initialize event config and preload conference data in background
         _ = Task.Run(async () =>
         {
             try
             {
+                // Load event_config.json first — other services depend on it
+                var configService = sp?.GetService<IEventConfigService>();
+                if (configService != null)
+                    await configService.InitializeAsync();
+
                 var dataService = sp?.GetService<IConferenceDataService>();
                 if (dataService != null)
                     await dataService.GetAllDataAsync();

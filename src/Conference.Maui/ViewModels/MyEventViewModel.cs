@@ -19,6 +19,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     private readonly IReminderService _reminderService;
     private readonly ISessionItemMapper _mapper;
     private readonly ILogger<MyEventViewModel> _logger;
+    private readonly IEventConfigService _configService;
 
     private const int TimerIntervalSeconds = 30;
     private const int UpNextWindowMinutes = 60;
@@ -113,7 +114,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     [ObservableProperty]
     private string _eventDateDisplay = string.Empty;
 
-    public string EventHeaderTitle => $"Your {AppConfig.ConferenceName}";
+    public string EventHeaderTitle => $"Your {_configService.Config.Event.Name}";
 
     [ObservableProperty]
     private bool _hasLoadError;
@@ -156,12 +157,14 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         IFavoritesService favoritesService,
         IReminderService reminderService,
         ISessionItemMapper mapper,
+        IEventConfigService configService,
         ILogger<MyEventViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _reminderService = reminderService;
         _mapper = mapper;
+        _configService = configService;
         _logger = logger;
         Title = "My Event";
 
@@ -214,7 +217,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             try
             {
                 using var stream = await FileSystem.OpenAppPackageFileAsync("event_config.json");
-                var config = await JsonSerializer.DeserializeAsync<EventConfig>(stream, new JsonSerializerOptions
+                var config = await JsonSerializer.DeserializeAsync<Conference.Maui.Configuration.EventConfig>(stream, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });

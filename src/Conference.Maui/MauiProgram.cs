@@ -49,7 +49,10 @@ public static class MauiProgram
 #endif
         });
 
-        // Configure Sessionize API client
+        // Register config service (must be before Sessionize which depends on it)
+        builder.Services.AddSingleton<IEventConfigService, EventConfigService>();
+
+        // Configure Sessionize API client (defaults overridden at startup after config loads)
         builder.Services.Configure<SessionizeConfiguration>(options =>
         {
             options.BaseUrl = AppConfig.SessionizeBaseUrl;

@@ -1,4 +1,4 @@
-using Conference.Maui.Configuration;
+using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Conference.Maui.ViewModels;
 
@@ -7,11 +7,13 @@ namespace Conference.Maui.Pages;
 public partial class AboutPage : ContentPage
 {
     private readonly AboutViewModel _viewModel;
+    private readonly IEventConfigService _configService;
 
-    public AboutPage(AboutViewModel viewModel)
+    public AboutPage(AboutViewModel viewModel, IEventConfigService configService)
     {
         InitializeComponent();
         BindingContext = _viewModel = viewModel;
+        _configService = configService;
         SetupVenueTap();
     }
 
@@ -24,7 +26,7 @@ public partial class AboutPage : ContentPage
 
     private void SetupVenueTap()
     {
-        if (AppConfig.IsOnlineEvent) return;
+        if (_configService.Config.Event.IsOnline) return;
 
         var tapGesture = new TapGestureRecognizer();
         tapGesture.Tapped += OnVenueTapped;
@@ -35,17 +37,17 @@ public partial class AboutPage : ContentPage
     {
         try
         {
-            var location = new Location(55.6377, 12.5741); // Bella Center Copenhagen
+            var location = new Location(_configService.Config.Venue.Latitude, _configService.Config.Venue.Longitude);
             var options = new MapLaunchOptions
             {
-                Name = AppConfig.VenueName,
+                Name = _configService.Config.Venue.Name,
                 NavigationMode = NavigationMode.None
             };
             await Map.Default.OpenAsync(location, options);
         }
         catch
         {
-            var query = Uri.EscapeDataString(AppConfig.VenueDetails);
+            var query = Uri.EscapeDataString(_configService.Config.Venue.Address);
             await Browser.OpenAsync($"https://maps.apple.com/?q={query}", BrowserLaunchMode.SystemPreferred);
         }
     }

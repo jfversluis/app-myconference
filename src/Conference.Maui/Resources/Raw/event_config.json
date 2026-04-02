@@ -1,6 +1,43 @@
 {
+  "event": {
+    "name": "NDC Copenhagen 2026",
+    "description": "Four days of software development talks and workshops covering .NET, cloud, AI, architecture, security, and more. Join world-class speakers and the developer community in Copenhagen.",
+    "startDate": "2026-06-01",
+    "endDate": "2026-06-04",
+    "isOnline": false
+  },
+  "venue": {
+    "name": "Øksnehallen",
+    "address": "Halmtorvet 11, 1700 København V, Denmark",
+    "latitude": 55.6377,
+    "longitude": 12.5741
+  },
+  "api": {
+    "sessionizeEventId": "5g27052o",
+    "sessionizeBaseUrl": "https://sessionize.com/api/v2/",
+    "cacheExpirationHours": 24,
+    "maxRetryAttempts": 3,
+    "apiTimeoutSeconds": 30
+  },
+  "app": {
+    "displayName": "MyConference"
+  },
+  "links": {
+    "website": "https://ndccopenhagen.com",
+    "github": "https://github.com/jfversluis/app-myconference",
+    "sessionize": "https://sessionize.com"
+  },
   "wifi": {
     "networkName": "NDC-CPH-2026",
     "password": "ndccopenhagen"
+  },
+  "features": {
+    "enableQuickPick": true,
+    "enableOnboarding": true,
+    "enableReminders": true,
+    "enableWifi": true,
+    "enableSponsors": true,
+    "enableConflictResolver": true,
+    "enableHapticFeedback": true
   }
 }

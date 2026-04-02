@@ -14,10 +14,11 @@ public partial class SettingsViewModel : BaseViewModel
 {
     private readonly IConferenceDataService _dataService;
     private readonly IReminderService _reminderService;
+    private readonly IEventConfigService _configService;
     private bool _suppressPermissionCheck;
 
-    public string AppName => AppConfig.AppName;
-    public string AppVersion => $"Version {AppInfo.VersionString} (Build {AppInfo.BuildString})";
+    public string AppName => _configService.Config.App.DisplayName;
+    public string AppVersion => $"Version {Microsoft.Maui.ApplicationModel.AppInfo.VersionString} (Build {Microsoft.Maui.ApplicationModel.AppInfo.BuildString})";
     public string Framework => ".NET MAUI";
 
     [ObservableProperty]
@@ -34,11 +35,12 @@ public partial class SettingsViewModel : BaseViewModel
 
     public static int[] LeadTimeOptions => [5, 10, 15, 30];
 
-    public SettingsViewModel(IConferenceDataService dataService, IReminderService reminderService)
+    public SettingsViewModel(IConferenceDataService dataService, IReminderService reminderService, IEventConfigService configService)
     {
         Title = "Settings";
         _dataService = dataService;
         _reminderService = reminderService;
+        _configService = configService;
 
         _selectedThemeIndex = Application.Current?.UserAppTheme switch
         {
@@ -123,7 +125,7 @@ public partial class SettingsViewModel : BaseViewModel
                 "Open Settings", "Cancel");
 
             if (openSettings)
-                AppInfo.ShowSettingsUI();
+                Microsoft.Maui.ApplicationModel.AppInfo.ShowSettingsUI();
         }
         catch
         {
@@ -211,13 +213,13 @@ public partial class SettingsViewModel : BaseViewModel
     [RelayCommand]
     private async Task OpenGitHubAsync()
     {
-        await Browser.OpenAsync(AppConfig.GitHubRepo, BrowserLaunchMode.SystemPreferred);
+        await Browser.OpenAsync(_configService.Config.Links.GitHub, BrowserLaunchMode.SystemPreferred);
     }
 
     [RelayCommand]
     private async Task OpenSessionizeAsync()
     {
-        await Browser.OpenAsync("https://sessionize.com", BrowserLaunchMode.SystemPreferred);
+        await Browser.OpenAsync(_configService.Config.Links.Sessionize, BrowserLaunchMode.SystemPreferred);
     }
 
     [RelayCommand]

@@ -27,6 +27,7 @@ public partial class OnboardingViewModel : ObservableObject
     private readonly IFavoritesService _favoritesService;
     private readonly ISessionItemMapper _mapper;
     private readonly ILogger<OnboardingViewModel> _logger;
+    private readonly IEventConfigService _configService;
 
     private AllDataResponse? _allData;
     private Dictionary<int, string> _mainTagMap = [];
@@ -96,18 +97,20 @@ public partial class OnboardingViewModel : ObservableObject
     [ObservableProperty]
     private string _welcomeSubtitle = string.Empty;
 
-    public string WelcomeTitle => $"Welcome to {AppConfig.ConferenceName}!";
-    public string ConferenceName => AppConfig.ConferenceName;
+    public string WelcomeTitle => $"Welcome to {_configService.Config.Event.Name}!";
+    public string ConferenceName => _configService.Config.Event.Name;
 
     public OnboardingViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
         ISessionItemMapper mapper,
+        IEventConfigService configService,
         ILogger<OnboardingViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _mapper = mapper;
+        _configService = configService;
         _logger = logger;
     }
 
@@ -177,7 +180,7 @@ public partial class OnboardingViewModel : ObservableObject
     {
         var speakerCount = _allData?.Speakers.Count ?? 0;
         var sessionCount = _allData?.Sessions.Count(s => !s.IsServiceSession) ?? 0;
-        var days = (AppConfig.EventEndDate - AppConfig.EventStartDate).Days + 1;
+        var days = (_configService.Config.Event.EndDateTime - _configService.Config.Event.StartDateTime).Days + 1;
 
         WelcomeSubtitle = $"{speakerCount} speakers. {sessionCount} sessions. {days} days.\nLet's build your perfect schedule.";
     }

@@ -1,7 +1,6 @@
 using System.Reactive.Linq;
 using System.Text.Json;
 using Akavache;
-using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 using Microsoft.Extensions.Logging;
 using Polly;
@@ -17,6 +16,7 @@ public class ConferenceDataService : IConferenceDataService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IBlobCache _cache;
     private readonly ILogger<ConferenceDataService> _logger;
+    private readonly IEventConfigService _configService;
     private readonly AsyncRetryPolicy _retryPolicy;
 
     private const string AllDataCacheKey = "sessionize_all_data";
@@ -29,10 +29,12 @@ public class ConferenceDataService : IConferenceDataService
     public ConferenceDataService(
         ISessionizeApiClient sessionizeClient,
         IHttpClientFactory httpClientFactory,
+        IEventConfigService configService,
         ILogger<ConferenceDataService> logger)
     {
         _sessionizeClient = sessionizeClient;
-        _sessionizeClient.SessionizeApiId = AppConfig.SessionizeApiId;
+        _configService = configService;
+        _sessionizeClient.SessionizeApiId = _configService.Config.Api.SessionizeEventId;
         _httpClientFactory = httpClientFactory;
         _cache = BlobCache.LocalMachine;
         _logger = logger;
@@ -41,7 +43,7 @@ public class ConferenceDataService : IConferenceDataService
             .Handle<HttpRequestException>()
             .Or<TaskCanceledException>()
             .WaitAndRetryAsync(
-                AppConfig.MaxRetryAttempts,
+                _configService.Config.Api.MaxRetryAttempts,
                 retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                 (exception, timeSpan, retryCount, context) =>
                 {
@@ -90,7 +92,7 @@ public class ConferenceDataService : IConferenceDataService
                             await _cache.InsertObject(
                                 AllDataCacheKey,
                                 freshData,
-                                TimeSpan.FromHours(AppConfig.CacheExpirationHours));
+                                TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours));
                             _logger.LogInformation("Conference data refreshed in background");
                         }
                     }
@@ -112,7 +114,7 @@ public class ConferenceDataService : IConferenceDataService
                     await _cache.InsertObject(
                         AllDataCacheKey,
                         freshData,
-                        TimeSpan.FromHours(AppConfig.CacheExpirationHours));
+                        TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours));
 
                     _logger.LogInformation("Conference data fetched and cached");
                     return freshData;
@@ -137,7 +139,7 @@ public class ConferenceDataService : IConferenceDataService
         var data = await _retryPolicy.ExecuteAsync(async () =>
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
+            cts.CancelAfter(TimeSpan.FromSeconds(_configService.Config.Api.ApiTimeoutSeconds));
             return await _sessionizeClient.GetAllDataAsync(cancellationToken: cts.Token);
         });
 
@@ -150,7 +152,7 @@ public class ConferenceDataService : IConferenceDataService
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 cts.CancelAfter(TimeSpan.FromSeconds(5));
                 var request = new HttpRequestMessage(HttpMethod.Head,
-                    $"{AppConfig.SessionizeBaseUrl}{AppConfig.SessionizeApiId}/view/All");
+                    $"{_configService.Config.Api.SessionizeBaseUrl}{_configService.Config.Api.SessionizeEventId}/view/All");
                 var response = await client.SendAsync(request, cts.Token);
                 if (response.Content.Headers.LastModified.HasValue)
                 {
@@ -198,7 +200,7 @@ public class ConferenceDataService : IConferenceDataService
             var freshData = await _retryPolicy.ExecuteAsync(async () =>
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
+                cts.CancelAfter(TimeSpan.FromSeconds(_configService.Config.Api.ApiTimeoutSeconds));
                 return await _sessionizeClient.GetScheduleGridAsync(cancellationToken: cts.Token);
             });
 
@@ -207,7 +209,7 @@ public class ConferenceDataService : IConferenceDataService
                 await _cache.InsertObject(
                     ScheduleGridCacheKey,
                     freshData,
-                    TimeSpan.FromHours(AppConfig.CacheExpirationHours));
+                    TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours));
 
                 _logger.LogInformation("Schedule grid refreshed and cached");
             }
@@ -230,7 +232,7 @@ public class ConferenceDataService : IConferenceDataService
             var freshData = await _retryPolicy.ExecuteAsync(async () =>
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
+                cts.CancelAfter(TimeSpan.FromSeconds(_configService.Config.Api.ApiTimeoutSeconds));
                 return await _sessionizeClient.GetScheduleGridAsync(cancellationToken: cts.Token);
             });
 
@@ -239,7 +241,7 @@ public class ConferenceDataService : IConferenceDataService
                 await _cache.InsertObject(
                     ScheduleGridCacheKey,
                     freshData,
-                    TimeSpan.FromHours(AppConfig.CacheExpirationHours));
+                    TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours));
 
                 _logger.LogDebug("Schedule grid background refresh completed");
             }
@@ -271,7 +273,7 @@ public class ConferenceDataService : IConferenceDataService
             cts.CancelAfter(TimeSpan.FromSeconds(5));
 
             var request = new HttpRequestMessage(HttpMethod.Head,
-                $"{AppConfig.SessionizeBaseUrl}{AppConfig.SessionizeApiId}/view/All");
+                $"{_configService.Config.Api.SessionizeBaseUrl}{_configService.Config.Api.SessionizeEventId}/view/All");
             var response = await client.SendAsync(request, cts.Token);
 
             if (!response.Content.Headers.LastModified.HasValue)
@@ -396,9 +398,9 @@ public class ConferenceDataService : IConferenceDataService
     {
         var client = _httpClientFactory.CreateClient();
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
+        cts.CancelAfter(TimeSpan.FromSeconds(_configService.Config.Api.ApiTimeoutSeconds));
 
-        var url = $"{AppConfig.SessionizeBaseUrl}{AppConfig.SessionizeApiId}/view/All";
+        var url = $"{_configService.Config.Api.SessionizeBaseUrl}{_configService.Config.Api.SessionizeEventId}/view/All";
         var json = await client.GetStringAsync(url, cts.Token);
         using var doc = JsonDocument.Parse(json);
 
@@ -455,7 +457,7 @@ public class ConferenceDataService : IConferenceDataService
 
         if (tagMap.Count > 0)
         {
-            var expiry = TimeSpan.FromHours(AppConfig.CacheExpirationHours);
+            var expiry = TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours);
             await _cache.InsertObject(CategoryTagsCacheKey, tagMap, expiry);
             await _cache.InsertObject(TagSessionCountsCacheKey, tagCounts, expiry);
             await _cache.InsertObject(SessionTagMapCacheKey, sessionTagMap, expiry);
