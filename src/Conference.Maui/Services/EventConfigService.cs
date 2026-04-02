@@ -18,6 +18,43 @@ public sealed class EventConfigService : IEventConfigService
 
     public EventConfig Config { get; private set; } = new();
 
+    /// <summary>
+    /// Loads config synchronously — safe to call from CreateWindow on the main thread.
+    /// Uses synchronous file I/O to avoid deadlocking the iOS synchronization context.
+    /// </summary>
+    public void Initialize()
+    {
+        try
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, "event_config.json");
+
+            // On iOS the file is in the app bundle; try direct path first, then the async API on a thread pool thread
+            if (File.Exists(path))
+            {
+                var json = File.ReadAllText(path);
+                var config = JsonSerializer.Deserialize<EventConfig>(json, s_jsonOptions);
+                if (config is not null)
+                    Config = config;
+            }
+            else
+            {
+                // Fallback: run async load on thread pool to avoid main-thread deadlock
+                var config = Task.Run(async () =>
+                {
+                    using var stream = await FileSystem.OpenAppPackageFileAsync("event_config.json");
+                    return await JsonSerializer.DeserializeAsync<EventConfig>(stream, s_jsonOptions);
+                }).GetAwaiter().GetResult();
+
+                if (config is not null)
+                    Config = config;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[EventConfigService] Failed to load event_config.json: {ex.Message}");
+        }
+    }
+
     public async Task InitializeAsync()
     {
         try

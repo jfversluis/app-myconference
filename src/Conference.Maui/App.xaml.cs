@@ -33,7 +33,7 @@ public partial class App : Application
         var configService = sp?.GetService<IEventConfigService>();
         if (configService is Services.EventConfigService ecs)
         {
-            ecs.InitializeAsync().GetAwaiter().GetResult();
+            ecs.Initialize();
             ecs.ApplyBranding(Resources);
         }
 
