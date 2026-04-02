@@ -195,17 +195,73 @@
                                      Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}"
                                      IsVisible="{Binding Session, Converter={toolkit:IsNotNullConverter}}">
                     
-                    <!-- Favorite Button -->
-                    <Button Text="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='★  Added to My Agenda', FalseObject='☆  Add to My Agenda'}}"
-                            Command="{Binding ToggleFavoriteCommand}"
-                            BackgroundColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject=Transparent}}"
-                            TextColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject=White, FalseObject={StaticResource Primary}}}"
-                            BorderColor="{StaticResource Primary}"
-                            BorderWidth="2"
-                            CornerRadius="10"
-                            FontAttributes="Bold"
-                            FontSize="14"
-                            HeightRequest="44" />
+                    <!-- Favorite & Reminder Row -->
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="0" HeightRequest="44">
+                        <!-- Favorite Star Button (left) -->
+                        <Border Grid.Column="0"
+                                StrokeShape="RoundRectangle 10"
+                                Stroke="{StaticResource Primary}"
+                                StrokeThickness="2"
+                                BackgroundColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject=Transparent}}"
+                                Padding="14,0"
+                                VerticalOptions="Fill">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleFavoriteCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='★', FalseObject='☆'}}"
+                                   TextColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject=White, FalseObject={StaticResource Primary}}}"
+                                   FontSize="20"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" />
+                        </Border>
+
+                        <!-- Reminder Toggle (right, visible when favorited + reminders enabled) -->
+                        <Border Grid.Column="1"
+                                StrokeShape="RoundRectangle 10"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                StrokeThickness="1"
+                                Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                                Padding="12,0"
+                                Margin="8,0,0,0"
+                                VerticalOptions="Fill"
+                                IsVisible="{Binding ShowReminderToggle}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleReminderCommand}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                <Image Grid.Column="0" HeightRequest="18" WidthRequest="18" VerticalOptions="Center"
+                                       IsVisible="{Binding IsReminderActive}"
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=Alert24, IconColor={StaticResource Primary}}" />
+                                <Image Grid.Column="0" HeightRequest="18" WidthRequest="18" VerticalOptions="Center"
+                                       IsVisible="{Binding IsReminderActive, Converter={toolkit:InvertedBoolConverter}}"
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=AlertOff24, IconColor={StaticResource Gray400}}" />
+                                <Label Grid.Column="1" VerticalOptions="Center"
+                                       FontSize="13"
+                                       Text="{Binding IsReminderActive, Converter={toolkit:BoolToObjectConverter TrueObject='Reminder set', FalseObject='Reminder off'}}"
+                                       TextColor="{Binding IsReminderActive, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}}" />
+                                <Image Grid.Column="2" HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
+                                       IsVisible="{Binding IsReminderActive}"
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=Checkmark20, IconColor={StaticResource Primary}}" />
+                                <Image Grid.Column="2" HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
+                                       IsVisible="{Binding IsReminderActive, Converter={toolkit:InvertedBoolConverter}}"
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=Dismiss20, IconColor={StaticResource Gray400}}" />
+                            </Grid>
+                        </Border>
+
+                        <!-- "Add to My Agenda" full-width button when NOT favorited -->
+                        <Button Grid.Column="1"
+                                Text="Add to My Agenda"
+                                Command="{Binding ToggleFavoriteCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource Primary}"
+                                BorderColor="{StaticResource Primary}"
+                                BorderWidth="2"
+                                CornerRadius="10"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Margin="8,0,0,0"
+                                IsVisible="{Binding Session.IsFavorite, Converter={toolkit:InvertedBoolConverter}}" />
+                    </Grid>
 
                     <!-- Description Section -->
                     <VerticalStackLayout Spacing="6">

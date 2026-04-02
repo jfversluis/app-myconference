@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -8,6 +7,8 @@ using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 using Plugin.Maui.SwipeCardView.Core;
 using Sessionize.Api.Client.DataTransferObjects;
 using Sessionize.Api.Client.ValueObjects;
@@ -29,6 +30,8 @@ public partial class OnboardingViewModel : ObservableObject
 
     private AllDataResponse? _allData;
     private Dictionary<int, string> _mainTagMap = [];
+    private Dictionary<int, int> _tagSessionCounts = [];
+    private Dictionary<string, List<int>> _sessionTagMap = [];
     private readonly HashSet<string> _sessionFavoritedIds = [];
     private IReadOnlySet<string> _existingFavoriteIds = new HashSet<string>();
     private List<SessionItem> _filteredDeck = [];
@@ -131,15 +134,19 @@ public partial class OnboardingViewModel : ObservableObject
             HasLoadError = false;
             CurrentStep = 0;
 
-            // Fetch data, category tags, and favorites in parallel
+            // Fetch data, category tags, tag counts, session-tag map, and favorites in parallel
             var dataTask = _dataService.GetAllDataAsync();
             var tagsTask = _dataService.GetCategoryTagsAsync();
+            var countsTask = _dataService.GetTagSessionCountsAsync();
+            var mapTask = _dataService.GetSessionTagMapAsync();
             var favoritesTask = _favoritesService.GetFavoriteSessionIdsAsync();
 
-            await Task.WhenAll(dataTask, tagsTask, favoritesTask);
+            await Task.WhenAll(dataTask, tagsTask, countsTask, mapTask, favoritesTask);
 
             _allData = dataTask.Result;
             _mainTagMap = tagsTask.Result;
+            _tagSessionCounts = countsTask.Result;
+            _sessionTagMap = mapTask.Result;
 
             if (_allData == null)
             {
@@ -214,31 +221,16 @@ public partial class OnboardingViewModel : ObservableObject
     {
         if (_allData == null || _mainTagMap.Count == 0) return;
 
-        // Count sessions per main tag (non-service only)
-        var nonServiceSessions = _allData.Sessions.Where(s => !s.IsServiceSession).ToList();
-        var tagCounts = new Dictionary<int, int>();
-        foreach (var session in nonServiceSessions)
-        {
-            foreach (var catObj in session.CategoryItems)
-            {
-                if (catObj is not JsonElement je) continue;
-                var catId = je.GetInt32();
-                if (_mainTagMap.ContainsKey(catId))
-                {
-                    tagCounts[catId] = tagCounts.GetValueOrDefault(catId) + 1;
-                }
-            }
-        }
-
-        // Only show tags that have at least 2 sessions, sorted by popularity
+        // Use pre-computed tag session counts (cached as plain Dictionary<int,int>,
+        // avoiding Akavache/Newtonsoft serialization issues with CategoryItems)
         var tags = _mainTagMap
-            .Where(kv => tagCounts.GetValueOrDefault(kv.Key) >= 2)
-            .OrderByDescending(kv => tagCounts.GetValueOrDefault(kv.Key))
+            .Where(kv => _tagSessionCounts.GetValueOrDefault(kv.Key) >= 2)
+            .OrderByDescending(kv => _tagSessionCounts.GetValueOrDefault(kv.Key))
             .Select(kv => new InterestTag
             {
                 Id = kv.Key,
                 Name = kv.Value,
-                SessionCount = tagCounts.GetValueOrDefault(kv.Key)
+                SessionCount = _tagSessionCounts.GetValueOrDefault(kv.Key)
             })
             .ToList();
 
@@ -265,7 +257,17 @@ public partial class OnboardingViewModel : ObservableObject
         try
         {
             NotificationPermissionRequested = true;
-            var result = await LocalNotificationCenter.Current.RequestNotificationPermission();
+            var permission = new NotificationPermission
+            {
+                Apple = new AppleNotificationPermission
+                {
+                    NotificationAuthorization = AppleAuthorizationOptions.Alert
+                        | AppleAuthorizationOptions.Badge
+                        | AppleAuthorizationOptions.Sound
+                        | AppleAuthorizationOptions.TimeSensitive
+                }
+            };
+            var result = await LocalNotificationCenter.Current.RequestNotificationPermission(permission);
             NotificationsGranted = result;
             _logger.LogInformation("Notification permission result: {Granted}", result);
         }
@@ -479,15 +481,13 @@ public partial class OnboardingViewModel : ObservableObject
         };
     }
 
-    private static int GetMatchingTagCount(SessionDetails session, HashSet<int> tagIds)
+    private int GetMatchingTagCount(SessionDetails session, HashSet<int> tagIds)
     {
-        int count = 0;
-        foreach (var catObj in session.CategoryItems)
-        {
-            if (catObj is JsonElement je && tagIds.Contains(je.GetInt32()))
-                count++;
-        }
-        return count;
+        // Use pre-computed session→tag mapping (cached as plain types,
+        // avoiding Akavache/Newtonsoft serialization issues with CategoryItems)
+        if (_sessionTagMap.TryGetValue(session.Id, out var sessionTags))
+            return sessionTags.Count(t => tagIds.Contains(t));
+        return 0;
     }
 
     private void NotifyQuickPickChanged()

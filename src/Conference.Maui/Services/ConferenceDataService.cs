@@ -23,6 +23,8 @@ public class ConferenceDataService : IConferenceDataService
     private const string ScheduleGridCacheKey = "sessionize_schedule_grid";
     private const string LastModifiedCacheKey = "sessionize_last_modified";
     private const string CategoryTagsCacheKey = "sessionize_category_tags";
+    private const string TagSessionCountsCacheKey = "sessionize_tag_session_counts";
+    private const string SessionTagMapCacheKey = "sessionize_session_tag_map";
 
     public ConferenceDataService(
         ISessionizeApiClient sessionizeClient,
@@ -306,48 +308,159 @@ public class ConferenceDataService : IConferenceDataService
             }
             catch (KeyNotFoundException) { }
 
-            // Fetch from API — uses the same /view/All endpoint, parse categories from raw JSON
-            var client = _httpClientFactory.CreateClient();
-            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
+            // Fetch from API and compute both tags + counts
+            await FetchAndCacheTagDataAsync(cancellationToken);
 
-            var url = $"{AppConfig.SessionizeBaseUrl}{AppConfig.SessionizeApiId}/view/All";
-            var json = await client.GetStringAsync(url, cts.Token);
-            using var doc = JsonDocument.Parse(json);
-
-            var tagMap = new Dictionary<int, string>();
-            if (doc.RootElement.TryGetProperty("categories", out var categories))
+            try
             {
-                foreach (var cat in categories.EnumerateArray())
-                {
-                    var title = cat.GetProperty("title").GetString() ?? "";
-                    if (!title.Contains("tag", StringComparison.OrdinalIgnoreCase) ||
-                        title.Contains("other", StringComparison.OrdinalIgnoreCase))
-                        continue;
-
-                    foreach (var item in cat.GetProperty("items").EnumerateArray())
-                    {
-                        var id = item.GetProperty("id").GetInt32();
-                        var name = item.GetProperty("name").GetString() ?? "";
-                        tagMap[id] = name;
-                    }
-                    break; // Only the first "tag" category
-                }
+                var result = await _cache.GetObject<Dictionary<int, string>>(CategoryTagsCacheKey);
+                return result ?? [];
             }
-
-            if (tagMap.Count > 0)
+            catch (KeyNotFoundException)
             {
-                await _cache.InsertObject(CategoryTagsCacheKey, tagMap,
-                    TimeSpan.FromHours(AppConfig.CacheExpirationHours));
-                _logger.LogInformation("Cached {Count} category tags", tagMap.Count);
+                return [];
             }
-
-            return tagMap;
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Error fetching category tags");
             return [];
+        }
+    }
+
+    public async Task<Dictionary<int, int>> GetTagSessionCountsAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Try cache first
+            try
+            {
+                var cached = await _cache.GetObject<Dictionary<int, int>>(TagSessionCountsCacheKey);
+                if (cached is { Count: > 0 })
+                    return cached;
+            }
+            catch (KeyNotFoundException) { }
+
+            // Fetch from API
+            await FetchAndCacheTagDataAsync(cancellationToken);
+
+            try
+            {
+                var result = await _cache.GetObject<Dictionary<int, int>>(TagSessionCountsCacheKey);
+                return result ?? [];
+            }
+            catch (KeyNotFoundException)
+            {
+                return [];
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching tag session counts");
+            return [];
+        }
+    }
+
+    public async Task<Dictionary<string, List<int>>> GetSessionTagMapAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            try
+            {
+                var cached = await _cache.GetObject<Dictionary<string, List<int>>>(SessionTagMapCacheKey);
+                if (cached is { Count: > 0 })
+                    return cached;
+            }
+            catch (KeyNotFoundException) { }
+
+            await FetchAndCacheTagDataAsync(cancellationToken);
+
+            try
+            {
+                var result = await _cache.GetObject<Dictionary<string, List<int>>>(SessionTagMapCacheKey);
+                return result ?? [];
+            }
+            catch (KeyNotFoundException)
+            {
+                return [];
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching session tag map");
+            return [];
+        }
+    }
+
+    private async Task FetchAndCacheTagDataAsync(CancellationToken cancellationToken)
+    {
+        var client = _httpClientFactory.CreateClient();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(TimeSpan.FromSeconds(AppConfig.ApiTimeoutSeconds));
+
+        var url = $"{AppConfig.SessionizeBaseUrl}{AppConfig.SessionizeApiId}/view/All";
+        var json = await client.GetStringAsync(url, cts.Token);
+        using var doc = JsonDocument.Parse(json);
+
+        // Extract tag names from categories
+        var tagMap = new Dictionary<int, string>();
+        var tagIds = new HashSet<int>();
+        if (doc.RootElement.TryGetProperty("categories", out var categories))
+        {
+            foreach (var cat in categories.EnumerateArray())
+            {
+                var title = cat.GetProperty("title").GetString() ?? "";
+                if (!title.Contains("tag", StringComparison.OrdinalIgnoreCase) ||
+                    title.Contains("other", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                foreach (var item in cat.GetProperty("items").EnumerateArray())
+                {
+                    var id = item.GetProperty("id").GetInt32();
+                    var name = item.GetProperty("name").GetString() ?? "";
+                    tagMap[id] = name;
+                    tagIds.Add(id);
+                }
+                break;
+            }
+        }
+
+        // Count sessions per tag and build session→tag mapping from the sessions array
+        var tagCounts = new Dictionary<int, int>();
+        var sessionTagMap = new Dictionary<string, List<int>>();
+        if (doc.RootElement.TryGetProperty("sessions", out var sessions))
+        {
+            foreach (var session in sessions.EnumerateArray())
+            {
+                if (session.TryGetProperty("isServiceSession", out var isSvc) && isSvc.GetBoolean())
+                    continue;
+                if (!session.TryGetProperty("categoryItems", out var catItems))
+                    continue;
+
+                var sessionId = session.GetProperty("id").GetString() ?? "";
+                var sessionTags = new List<int>();
+                foreach (var catId in catItems.EnumerateArray())
+                {
+                    var id = catId.GetInt32();
+                    if (tagIds.Contains(id))
+                    {
+                        tagCounts[id] = tagCounts.GetValueOrDefault(id) + 1;
+                        sessionTags.Add(id);
+                    }
+                }
+                if (sessionTags.Count > 0)
+                    sessionTagMap[sessionId] = sessionTags;
+            }
+        }
+
+        if (tagMap.Count > 0)
+        {
+            var expiry = TimeSpan.FromHours(AppConfig.CacheExpirationHours);
+            await _cache.InsertObject(CategoryTagsCacheKey, tagMap, expiry);
+            await _cache.InsertObject(TagSessionCountsCacheKey, tagCounts, expiry);
+            await _cache.InsertObject(SessionTagMapCacheKey, sessionTagMap, expiry);
+            _logger.LogInformation("Cached {Tags} tags, {Counts} tag counts, {Map} session-tag mappings",
+                tagMap.Count, tagCounts.Count, sessionTagMap.Count);
         }
     }
 
@@ -359,6 +472,8 @@ public class ConferenceDataService : IConferenceDataService
             await _cache.InvalidateObject<List<ScheduleGridResponse>>(ScheduleGridCacheKey);
             await _cache.InvalidateObject<long>(LastModifiedCacheKey);
             await _cache.InvalidateObject<Dictionary<int, string>>(CategoryTagsCacheKey);
+            await _cache.InvalidateObject<Dictionary<int, int>>(TagSessionCountsCacheKey);
+            await _cache.InvalidateObject<Dictionary<string, List<int>>>(SessionTagMapCacheKey);
             _logger.LogInformation("Cache cleared");
         }
         catch (Exception ex)

@@ -16,6 +16,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly IReminderService _reminderService;
     private readonly ILogger<MyEventViewModel> _logger;
 
     private const int TimerIntervalSeconds = 30;
@@ -151,10 +152,12 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     public MyEventViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
+        IReminderService reminderService,
         ILogger<MyEventViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _reminderService = reminderService;
         _logger = logger;
         Title = "My Event";
 
@@ -378,6 +381,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             .ToList();
 
         var now = Now;
+        var isFavorite = _favoriteIds.Contains(session.Id);
         var item = new SessionItem
         {
             Id = session.Id,
@@ -388,7 +392,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             RoomId = session.RoomId,
             RoomName = GetRoomName(session.RoomId),
             Speakers = speakers,
-            IsFavorite = _favoriteIds.Contains(session.Id)
+            IsFavorite = isFavorite,
+            HasReminder = isFavorite && _reminderService.IsGlobalRemindersEnabled
         };
 
         return item;

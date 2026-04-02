@@ -15,6 +15,7 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly IReminderService _reminderService;
     private readonly ILogger<SessionDetailsViewModel> _logger;
 
     [ObservableProperty]
@@ -30,13 +31,21 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
     [ObservableProperty]
     private SessionItem? _session;
 
+    [ObservableProperty]
+    private bool _isReminderActive;
+
+    [ObservableProperty]
+    private bool _showReminderToggle;
+
     public SessionDetailsViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
+        IReminderService reminderService,
         ILogger<SessionDetailsViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _reminderService = reminderService;
         _logger = logger;
         Title = "Session";
 
@@ -84,6 +93,7 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
                 };
 
                 Title = Session.Title;
+                await UpdateReminderStateAsync();
             }
         }
         catch (Exception ex)
@@ -96,12 +106,49 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
         }
     }
 
+    private async Task UpdateReminderStateAsync()
+    {
+        if (Session == null) return;
+
+        try
+        {
+#if DEBUG
+            // In debug builds, treat all sessions as future so reminders UI is testable with past conference data
+            var isFuture = true;
+#else
+            var isFuture = Session.StartsAt > DateTimeOffset.Now;
+#endif
+            ShowReminderToggle = Session.IsFavorite && _reminderService.IsGlobalRemindersEnabled && isFuture;
+            IsReminderActive = ShowReminderToggle && await _reminderService.IsReminderActiveAsync(Session.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating reminder state");
+            ShowReminderToggle = false;
+        }
+    }
+
     [RelayCommand]
     private async Task ToggleFavoriteAsync()
     {
         if (Session == null) return;
 
         Session.IsFavorite = await _favoritesService.ToggleFavoriteAsync(Session.Id);
+        await UpdateReminderStateAsync();
+
+        if (HapticService.IsEnabled)
+        {
+            try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); } catch { }
+        }
+    }
+
+    [RelayCommand]
+    private async Task ToggleReminderAsync()
+    {
+        if (Session == null) return;
+
+        IsReminderActive = await _reminderService.ToggleSessionReminderAsync(
+            Session.Id, Session.Title, Session.RoomName, Session.StartsAt);
 
         if (HapticService.IsEnabled)
         {
@@ -131,6 +178,7 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
         if (Session != null && Session.Id == message.SessionId)
         {
             Session.IsFavorite = message.IsFavorite;
+            _ = UpdateReminderStateAsync();
         }
     }
 }

@@ -3,12 +3,17 @@ using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Services;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.Core.Models;
+using Plugin.LocalNotification.Core.Models.AppleOption;
 
 namespace Conference.Maui.ViewModels;
 
 public partial class SettingsViewModel : BaseViewModel
 {
     private readonly IConferenceDataService _dataService;
+    private readonly IReminderService _reminderService;
+    private bool _suppressPermissionCheck;
 
     public string AppName => AppConfig.AppName;
     public string AppVersion => $"Version {AppInfo.VersionString} (Build {AppInfo.BuildString})";
@@ -20,10 +25,19 @@ public partial class SettingsViewModel : BaseViewModel
     [ObservableProperty]
     private bool _hapticFeedbackEnabled;
 
-    public SettingsViewModel(IConferenceDataService dataService)
+    [ObservableProperty]
+    private bool _remindersEnabled;
+
+    [ObservableProperty]
+    private int _selectedLeadTimeIndex;
+
+    public static int[] LeadTimeOptions => [5, 10, 15, 30];
+
+    public SettingsViewModel(IConferenceDataService dataService, IReminderService reminderService)
     {
         Title = "Settings";
         _dataService = dataService;
+        _reminderService = reminderService;
 
         _selectedThemeIndex = Application.Current?.UserAppTheme switch
         {
@@ -33,11 +47,95 @@ public partial class SettingsViewModel : BaseViewModel
         };
 
         _hapticFeedbackEnabled = HapticService.IsEnabled;
+        _remindersEnabled = _reminderService.IsGlobalRemindersEnabled;
+
+        var currentLeadTime = _reminderService.LeadTimeMinutes;
+        _selectedLeadTimeIndex = Array.IndexOf(LeadTimeOptions, currentLeadTime);
+        if (_selectedLeadTimeIndex < 0) _selectedLeadTimeIndex = 2;
     }
 
     partial void OnHapticFeedbackEnabledChanged(bool value)
     {
         HapticService.IsEnabled = value;
+    }
+
+    partial void OnRemindersEnabledChanged(bool value)
+    {
+        if (_suppressPermissionCheck)
+            return;
+
+        if (value)
+        {
+            _ = EnsureNotificationPermissionAsync();
+        }
+        else
+        {
+            _reminderService.IsGlobalRemindersEnabled = false;
+            _ = _reminderService.ReconcileRemindersAsync();
+        }
+    }
+
+    private async Task EnsureNotificationPermissionAsync()
+    {
+        try
+        {
+            var enabled = await LocalNotificationCenter.Current.AreNotificationsEnabled();
+            if (enabled)
+            {
+                _reminderService.IsGlobalRemindersEnabled = true;
+                _ = _reminderService.ReconcileRemindersAsync();
+                return;
+            }
+
+            // Not enabled — try requesting permission (works if not yet determined)
+            var permission = new NotificationPermission
+            {
+                Apple = new AppleNotificationPermission
+                {
+                    NotificationAuthorization = AppleAuthorizationOptions.Alert
+                        | AppleAuthorizationOptions.Badge
+                        | AppleAuthorizationOptions.Sound
+                        | AppleAuthorizationOptions.TimeSensitive
+                }
+            };
+
+            var granted = await LocalNotificationCenter.Current.RequestNotificationPermission(permission);
+            if (granted)
+            {
+                _reminderService.IsGlobalRemindersEnabled = true;
+                _ = _reminderService.ReconcileRemindersAsync();
+                return;
+            }
+
+            // Permission denied — on iOS the system won't re-prompt, send to Settings
+            _suppressPermissionCheck = true;
+            RemindersEnabled = false;
+            _suppressPermissionCheck = false;
+
+            var openSettings = await Shell.Current.DisplayAlertAsync(
+                "Notifications Disabled",
+                "Session reminders require notification permission. Would you like to open Settings to enable them?",
+                "Open Settings", "Cancel");
+
+            if (openSettings)
+                AppInfo.ShowSettingsUI();
+        }
+        catch
+        {
+            _suppressPermissionCheck = true;
+            RemindersEnabled = false;
+            _suppressPermissionCheck = false;
+        }
+    }
+
+    partial void OnSelectedLeadTimeIndexChanged(int value)
+    {
+        if (value >= 0 && value < LeadTimeOptions.Length)
+        {
+            _reminderService.LeadTimeMinutes = LeadTimeOptions[value];
+            if (_reminderService.IsGlobalRemindersEnabled)
+                _ = _reminderService.ReconcileRemindersAsync();
+        }
     }
 
     partial void OnSelectedThemeIndexChanged(int value)
@@ -59,6 +157,13 @@ public partial class SettingsViewModel : BaseViewModel
     {
         if (int.TryParse(indexStr, out var index))
             SelectedThemeIndex = index;
+    }
+
+    [RelayCommand]
+    private void SetLeadTime(string? indexStr)
+    {
+        if (int.TryParse(indexStr, out var index))
+            SelectedLeadTimeIndex = index;
     }
 
     [RelayCommand]

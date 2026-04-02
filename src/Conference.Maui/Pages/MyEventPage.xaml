@@ -347,17 +347,19 @@
                                 <Image Source="wifi_regular.png" HeightRequest="14" WidthRequest="14"
                                        VerticalOptions="Center" />
                                 <Label FontSize="13"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1"
                                        TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="WiFi available: " />
+                                            <Span Text="WiFi: " />
                                             <Span Text="{Binding WifiNetworkName}" FontAttributes="Bold" />
-                                            <Span Text=" — check About for details" />
+                                            <Span Text=" — see About" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
                             </HorizontalStackLayout>
-                            <HorizontalStackLayout Spacing="8">
+                            <FlexLayout Wrap="Wrap" AlignItems="Center" JustifyContent="Start">
                                 <Button Text="Quick Pick"
                                         Command="{Binding NavigateToQuickPickCommand}"
                                         BackgroundColor="{StaticResource Primary}"
@@ -366,6 +368,7 @@
                                         CornerRadius="8"
                                         HorizontalOptions="Start"
                                         Padding="20,10"
+                                        Margin="0,0,8,0"
                                         mi:MauiIcon.Value="{mi:Fluent Icon=Flash28, IconColor=White}" />
                                 <Button Text="Browse Sessions"
                                         Command="{Binding NavigateToSessionsCommand}"
@@ -375,7 +378,7 @@
                                         CornerRadius="8"
                                         HorizontalOptions="Start"
                                         Padding="20,10" />
-                            </HorizontalStackLayout>
+                            </FlexLayout>
                         </VerticalStackLayout>
                     </Border>
 
@@ -416,8 +419,14 @@
                                         </Grid>
                                         <!-- Session info -->
                                         <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Start">
-                                            <Label Text="{Binding Title}" FontSize="14" FontAttributes="Bold"
-                                                   LineBreakMode="TailTruncation" MaxLines="2" />
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                                                <Label Text="{Binding Title}" FontSize="14" FontAttributes="Bold"
+                                                       LineBreakMode="TailTruncation" MaxLines="2" />
+                                                <Image Grid.Column="1" HeightRequest="14" WidthRequest="14"
+                                                       VerticalOptions="Start" Margin="0,3,0,0"
+                                                       IsVisible="{Binding HasReminder}"
+                                                       mi:MauiIcon.Value="{mi:Fluent Icon=Alert16, IconColor={StaticResource Primary}}" />
+                                            </Grid>
                                             <HorizontalStackLayout Spacing="8">
                                                 <Label Text="{Binding RoomName}" FontSize="11"
                                                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"

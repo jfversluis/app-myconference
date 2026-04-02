@@ -17,6 +17,76 @@
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="16,20">
 
+            <!-- Notifications Section -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="NOTIFICATIONS"
+                       FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       CharacterSpacing="0.5" />
+
+                <!-- Session Reminders Toggle -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeThickness="1"
+                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="16">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Alert24, IconColor={StaticResource Primary}}" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Session Reminders" FontSize="15" FontAttributes="Bold" />
+                            <Label Text="Get notified before favorited sessions start" FontSize="12"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="2" IsToggled="{Binding RemindersEnabled}" VerticalOptions="Center"
+                                OnColor="{StaticResource Primary}" />
+                    </Grid>
+                </Border>
+
+                <!-- Lead Time Picker -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                        StrokeThickness="1"
+                        Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Padding="16"
+                        IsVisible="{Binding RemindersEnabled}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               mi:MauiIcon.Value="{mi:Fluent Icon=Timer24, IconColor={StaticResource Primary}}" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                            <Label Text="Remind Me Before" FontSize="15" FontAttributes="Bold" />
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                                <Button Grid.Column="0" Text="5 min"
+                                        FontSize="12" CornerRadius="10" HeightRequest="40"
+                                        BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=0}"
+                                        TextColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=0}"
+                                        Command="{Binding SetLeadTimeCommand}"
+                                        CommandParameter="0" />
+                                <Button Grid.Column="1" Text="10 min"
+                                        FontSize="12" CornerRadius="10" HeightRequest="40"
+                                        BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=1}"
+                                        TextColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=1}"
+                                        Command="{Binding SetLeadTimeCommand}"
+                                        CommandParameter="1" />
+                                <Button Grid.Column="2" Text="15 min"
+                                        FontSize="12" CornerRadius="10" HeightRequest="40"
+                                        BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=2}"
+                                        TextColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=2}"
+                                        Command="{Binding SetLeadTimeCommand}"
+                                        CommandParameter="2" />
+                                <Button Grid.Column="3" Text="30 min"
+                                        FontSize="12" CornerRadius="10" HeightRequest="40"
+                                        BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=3}"
+                                        TextColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=3}"
+                                        Command="{Binding SetLeadTimeCommand}"
+                                        CommandParameter="3" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+
             <!-- Preferences Section -->
             <VerticalStackLayout Spacing="8">
                 <Label Text="PREFERENCES"

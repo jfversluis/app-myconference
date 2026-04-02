@@ -30,6 +30,18 @@ public interface IConferenceDataService
     Task<Dictionary<int, string>> GetCategoryTagsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Gets session counts per category tag. Computed from the raw API response and cached separately
+    /// to avoid Akavache serialization issues with CategoryItems (JsonElement vs Newtonsoft round-trip).
+    /// </summary>
+    Task<Dictionary<int, int>> GetTagSessionCountsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets the mapping of session ID → list of tag IDs. Cached separately to avoid
+    /// Akavache serialization issues with CategoryItems after cache round-trip.
+    /// </summary>
+    Task<Dictionary<string, List<int>>> GetSessionTagMapAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Clears all cached data.
     /// </summary>
     Task ClearCacheAsync();

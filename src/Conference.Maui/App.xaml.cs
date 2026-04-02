@@ -1,6 +1,8 @@
 ﻿using Conference.Maui.Interfaces;
 using Conference.Maui.Pages;
 using Conference.Maui.ViewModels;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.EventArgs;
 
 namespace Conference.Maui;
 
@@ -17,13 +19,16 @@ public partial class App : Application
             2 => AppTheme.Dark,
             _ => AppTheme.Unspecified
         };
+
+        // Handle notification taps → deep-link to session detail
+        LocalNotificationCenter.Current.NotificationActionTapped += OnNotificationTapped;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
         var sp = IPlatformApplication.Current?.Services;
 
-        // Preload conference data in background so it's ready when pages appear
+        // Preload conference data and reconcile reminders in background
         _ = Task.Run(async () =>
         {
             try
@@ -31,6 +36,10 @@ public partial class App : Application
                 var dataService = sp?.GetService<IConferenceDataService>();
                 if (dataService != null)
                     await dataService.GetAllDataAsync();
+
+                var reminderService = sp?.GetService<IReminderService>();
+                if (reminderService != null)
+                    await reminderService.ReconcileRemindersAsync();
             }
             catch { /* Non-critical preload */ }
         });
@@ -40,6 +49,23 @@ public partial class App : Application
 
         var onboardingPage = sp!.GetRequiredService<OnboardingPage>();
         return new Window(onboardingPage);
+    }
+
+    private static async void OnNotificationTapped(NotificationActionEventArgs e)
+    {
+        var sessionId = e.Request?.ReturningData;
+        if (string.IsNullOrEmpty(sessionId))
+            return;
+
+        // Navigate to session detail — route & param must match Shell registration and QueryProperty
+        try
+        {
+            if (Shell.Current != null)
+            {
+                await Shell.Current.GoToAsync($"{nameof(Pages.SessionDetailsPage)}?SessionId={sessionId}");
+            }
+        }
+        catch { /* Best-effort navigation */ }
     }
 
     /// <summary>

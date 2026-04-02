@@ -52,6 +52,9 @@ public partial class SessionItem : ObservableObject
     [ObservableProperty]
     private bool _isFavorite;
 
+    [ObservableProperty]
+    private bool _hasReminder;
+
     public string TimeDisplay => $"{StartsAt.LocalDateTime:h:mm tt} - {EndsAt.LocalDateTime:h:mm tt}";
     public string DurationDisplay => $"{(EndsAt - StartsAt).TotalMinutes:0} min";
     public bool HasMultipleSpeakers => Speakers.Count > 1;
