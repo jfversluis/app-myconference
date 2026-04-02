@@ -73,7 +73,9 @@
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                        Padding="16">
+                        Padding="16"
+                        SemanticProperties.Description="{Binding VenueName, StringFormat='Venue: {0}'}"
+                        SemanticProperties.Hint="Double tap to view on map">
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
                                SemanticProperties.Description=""

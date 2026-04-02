@@ -63,29 +63,37 @@
                             <Label Text="Remind Me Before" FontSize="15" FontAttributes="Bold" />
                             <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
                                 <Button Grid.Column="0" Text="5 min"
-                                        FontSize="12" CornerRadius="10" HeightRequest="40"
+                                        FontSize="12" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=0}"
                                         TextColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=0}"
                                         Command="{Binding SetLeadTimeCommand}"
-                                        CommandParameter="0" />
+                                        CommandParameter="0"
+                                        SemanticProperties.Description="5 minutes before"
+                                        SemanticProperties.Hint="Double tap to set reminder lead time" />
                                 <Button Grid.Column="1" Text="10 min"
-                                        FontSize="12" CornerRadius="10" HeightRequest="40"
+                                        FontSize="12" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=1}"
                                         TextColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=1}"
                                         Command="{Binding SetLeadTimeCommand}"
-                                        CommandParameter="1" />
+                                        CommandParameter="1"
+                                        SemanticProperties.Description="10 minutes before"
+                                        SemanticProperties.Hint="Double tap to set reminder lead time" />
                                 <Button Grid.Column="2" Text="15 min"
-                                        FontSize="12" CornerRadius="10" HeightRequest="40"
+                                        FontSize="12" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=2}"
                                         TextColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=2}"
                                         Command="{Binding SetLeadTimeCommand}"
-                                        CommandParameter="2" />
+                                        CommandParameter="2"
+                                        SemanticProperties.Description="15 minutes before"
+                                        SemanticProperties.Hint="Double tap to set reminder lead time" />
                                 <Button Grid.Column="3" Text="30 min"
-                                        FontSize="12" CornerRadius="10" HeightRequest="40"
+                                        FontSize="12" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=3}"
                                         TextColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=3}"
                                         Command="{Binding SetLeadTimeCommand}"
-                                        CommandParameter="3" />
+                                        CommandParameter="3"
+                                        SemanticProperties.Description="30 minutes before"
+                                        SemanticProperties.Hint="Double tap to set reminder lead time" />
                             </Grid>
                         </VerticalStackLayout>
                     </Grid>
@@ -119,19 +127,25 @@
                                         BackgroundColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=0}"
                                         TextColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=0}"
                                         Command="{Binding SetThemeCommand}"
-                                        CommandParameter="0" />
+                                        CommandParameter="0"
+                                        SemanticProperties.Description="System theme"
+                                        SemanticProperties.Hint="Double tap to use system appearance" />
                                 <Button Grid.Column="1" Text="Light"
                                         FontSize="13" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=1}"
                                         TextColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=1}"
                                         Command="{Binding SetThemeCommand}"
-                                        CommandParameter="1" />
+                                        CommandParameter="1"
+                                        SemanticProperties.Description="Light theme"
+                                        SemanticProperties.Hint="Double tap to use light appearance" />
                                 <Button Grid.Column="2" Text="Dark"
                                         FontSize="13" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=2}"
                                         TextColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToTextColorConverter}, ConverterParameter=2}"
                                         Command="{Binding SetThemeCommand}"
-                                        CommandParameter="2" />
+                                        CommandParameter="2"
+                                        SemanticProperties.Description="Dark theme"
+                                        SemanticProperties.Hint="Double tap to use dark appearance" />
                             </Grid>
                         </VerticalStackLayout>
                     </Grid>

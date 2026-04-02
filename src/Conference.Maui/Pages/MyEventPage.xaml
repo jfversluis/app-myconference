@@ -105,7 +105,9 @@
                                             StrokeThickness="1.5"
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                             Padding="16"
-                                            WidthRequest="260">
+                                            WidthRequest="260"
+                                            SemanticProperties.Description="{Binding AccessibleDescription}"
+                                            SemanticProperties.Hint="Double tap for session details">
                                         <VerticalStackLayout Spacing="6" VerticalOptions="Start">
                                             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
                                                 <Label Grid.Column="0"
@@ -246,7 +248,9 @@
                                             StrokeThickness="1"
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                             Padding="16"
-                                            WidthRequest="260">
+                                            WidthRequest="260"
+                                            SemanticProperties.Description="{Binding AccessibleDescription}"
+                                            SemanticProperties.Hint="Double tap for session details">
                                         <VerticalStackLayout Spacing="6" VerticalOptions="Start">
                                             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
                                                 <Label Grid.Column="0"

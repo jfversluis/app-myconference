@@ -367,15 +367,18 @@
                                     StrokeThickness="1.5"
                                     Padding="16,12"
                                     MinimumHeightRequest="44"
+                                    SemanticProperties.Description="{Binding Name, StringFormat='{0}'}"
                                     SemanticProperties.Hint="Double tap to toggle selection"
                                     BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
                                 <Border.Triggers>
                                     <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
                                         <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
                                         <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        <Setter Property="SemanticProperties.Description" Value="{Binding Name, StringFormat='{0}, selected'}" />
                                     </DataTrigger>
                                     <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="False">
                                         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+                                        <Setter Property="SemanticProperties.Description" Value="{Binding Name, StringFormat='{0}, not selected'}" />
                                     </DataTrigger>
                                 </Border.Triggers>
                                 <Border.GestureRecognizers>
@@ -451,7 +454,8 @@
                 <ProgressBar Grid.Row="1"
                              Progress="{Binding QuickPickProgress}"
                              ProgressColor="{StaticResource Primary}"
-                             HeightRequest="3" />
+                             HeightRequest="3"
+                             SemanticProperties.Description="{Binding QuickPickProgress, StringFormat='Quick Pick progress: {0:P0} complete'}" />
             </Grid>
 
             <Grid Grid.Row="1" Padding="16,0">
@@ -474,7 +478,8 @@
                                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                                         StrokeThickness="0.5"
                                         BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                        Padding="0" Margin="8">
+                                        Padding="0" Margin="8"
+                                        SemanticProperties.Description="{Binding AccessibleDescription}">
                                     <Border.Shadow>
                                         <Shadow Brush="{AppThemeBinding Light=#20000000, Dark=#40000000}"
                                                 Offset="0,8" Radius="24" Opacity="0.7" />

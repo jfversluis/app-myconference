@@ -88,7 +88,7 @@
     <!-- Gray Scale (Updated for modern look) -->
     <Color x:Key="Gray50">#F9FAFB</Color>
     <Color x:Key="Gray100">#F3F4F6</Color>
-    <Color x:Key="Gray200">#E5E7EB</Color>
+    <Color x:Key="Gray200">#8E95A2</Color>
     <Color x:Key="Gray300">#8B919E</Color>
     <Color x:Key="Gray400">#9CA3AF</Color>
     <Color x:Key="Gray500">#6B7280</Color>

@@ -38,7 +38,8 @@
                          x:Name="ProgressIndicator"
                          Progress="{Binding Progress}"
                          ProgressColor="{StaticResource Primary}"
-                         HeightRequest="3" />
+                         HeightRequest="3"
+                         SemanticProperties.Description="{Binding Progress, StringFormat='Quick Pick progress: {0:P0} complete'}" />
         </Grid>
 
         <!-- Conflict note — calm, integrated -->
@@ -102,7 +103,8 @@
                                 StrokeThickness="0.5"
                                 Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                 Padding="0"
-                                Margin="8">
+                                Margin="8"
+                                SemanticProperties.Description="{Binding AccessibleDescription}">
                             <Border.Shadow>
                                 <Shadow Brush="{AppThemeBinding Light=#18000000, Dark=#30000000}"
                                         Offset="0,8" Radius="24" Opacity="0.7" />
@@ -359,7 +361,8 @@
                     BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                     HeightRequest="56" WidthRequest="56"
                     HorizontalOptions="Center"
-                    SemanticProperties.Description="Skip this session">
+                    SemanticProperties.Description="Skip this session"
+                    SemanticProperties.Hint="Double tap to skip and see next session">
                 <Border.Shadow>
                     <Shadow Brush="#10000000" Offset="0,2" Radius="8" Opacity="0.5" />
                 </Border.Shadow>
@@ -403,7 +406,8 @@
                     BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                     HeightRequest="56" WidthRequest="56"
                     HorizontalOptions="Center"
-                    SemanticProperties.Description="Add this session to favorites">
+                    SemanticProperties.Description="Add this session to favorites"
+                    SemanticProperties.Hint="Double tap to add to favorites and see next session">
                 <Border.Shadow>
                     <Shadow Brush="#10512BD4" Offset="0,2" Radius="8" Opacity="0.5" />
                 </Border.Shadow>
