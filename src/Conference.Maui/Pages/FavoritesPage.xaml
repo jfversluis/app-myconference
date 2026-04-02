@@ -31,12 +31,16 @@
                         <Label Text="{Binding TimeDisplay}"
                                FontSize="13"
                                FontAttributes="Bold"
+                               SemanticProperties.HeadingLevel="Level2"
                                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
-                        <HorizontalStackLayout Grid.Column="1" Spacing="4" IsVisible="{Binding HasConflict}" VerticalOptions="Center">
+                        <HorizontalStackLayout Grid.Column="1" Spacing="4" IsVisible="{Binding HasConflict}" VerticalOptions="Center"
+                                                   SemanticProperties.Description="Resolve schedule conflicts"
+                                                   SemanticProperties.Hint="Double tap to resolve">
                             <HorizontalStackLayout.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnConflictBadgeTapped" />
                             </HorizontalStackLayout.GestureRecognizers>
                             <Image HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
+                                   SemanticProperties.Description=""
                                    mi:MauiIcon.Value="{mi:Fluent Icon=Warning24, IconColor={StaticResource ConflictOrange}}" />
                             <Label Text="{Binding ConflictText}"
                                    FontSize="12"
@@ -48,7 +52,9 @@
             </CollectionView.GroupHeaderTemplate>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:SessionItem">
-                    <Grid Padding="16,4" BackgroundColor="Transparent">
+                    <Grid Padding="16,4" BackgroundColor="Transparent"
+                          SemanticProperties.Description="{Binding AccessibleDescription}"
+                          SemanticProperties.Hint="Double tap for session details">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup Name="CommonStates">
                                 <VisualState Name="Normal">
@@ -87,6 +93,7 @@
                                             <HorizontalStackLayout Spacing="3">
                                                 <Image HeightRequest="11" WidthRequest="11"
                                                        VerticalOptions="Center"
+                                                       SemanticProperties.Description=""
                                                        mi:MauiIcon.Value="{mi:Fluent Icon=Alert16, IconColor={StaticResource Primary}}" />
                                                 <Label Text="{Binding StartsAt.LocalDateTime, StringFormat='{0:h:mm tt}'}"
                                                        FontSize="10" FontAttributes="Bold"
@@ -95,7 +102,8 @@
                                             </HorizontalStackLayout>
                                         </Border>
                                         <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
-                                            <Image Source="location_regular.png" HeightRequest="16" WidthRequest="16" VerticalOptions="Center">
+                                            <Image Source="location_regular.png" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
+                                                   SemanticProperties.Description="">
                                                 <Image.Behaviors>
                                                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                                 </Image.Behaviors>
@@ -104,7 +112,8 @@
                                                    TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                         </HorizontalStackLayout>
                                         <HorizontalStackLayout Spacing="4">
-                                            <Image Source="clock_regular.png" HeightRequest="16" WidthRequest="16" VerticalOptions="Center">
+                                            <Image Source="clock_regular.png" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
+                                                   SemanticProperties.Description="">
                                                 <Image.Behaviors>
                                                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                                 </Image.Behaviors>
@@ -119,13 +128,15 @@
                                                 StrokeThickness="2" Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                                 Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                                                 IsVisible="{Binding HasSpeaker1}">
-                                            <Image Source="{Binding Speaker1.ProfilePictureUrl}" Aspect="AspectFill" />
+                                            <Image Source="{Binding Speaker1.ProfilePictureUrl}" Aspect="AspectFill"
+                                                   SemanticProperties.Description="" />
                                         </Border>
                                         <Border StrokeShape="RoundRectangle 14" HeightRequest="28" WidthRequest="28"
                                                 StrokeThickness="2" Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                                 Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                                                 Margin="-10,0,0,0" IsVisible="{Binding HasSpeaker2}">
-                                            <Image Source="{Binding Speaker2.ProfilePictureUrl}" Aspect="AspectFill" />
+                                            <Image Source="{Binding Speaker2.ProfilePictureUrl}" Aspect="AspectFill"
+                                                   SemanticProperties.Description="" />
                                         </Border>
                                     </HorizontalStackLayout>
                                 </Grid>
@@ -146,6 +157,7 @@
                              Spacing="12"
                              IsVisible="{Binding ShowEmptyState}">
             <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
+                   SemanticProperties.Description=""
                    mi:MauiIcon.Value="{mi:Fluent Icon=Star24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
             <Label Text="No sessions in your agenda yet"
                    FontSize="18"

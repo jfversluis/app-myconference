@@ -49,6 +49,7 @@
                        HeightRequest="18" WidthRequest="18"
                        VerticalOptions="Center"
                        Margin="0,0,8,0"
+                       SemanticProperties.Description=""
                        mi:MauiIcon.Value="{mi:Fluent Icon=Search24, IconSize=18, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
                 <Entry Grid.Column="1"
                        x:Name="SessionSearchEntry"
@@ -110,6 +111,7 @@
                             <Label Text="{Binding TimeDisplay}"
                                    FontSize="13"
                                    FontAttributes="Bold"
+                                   SemanticProperties.HeadingLevel="Level2"
                                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                         </Grid>
                     </DataTemplate>
@@ -119,7 +121,9 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:SessionItem">
-                        <Grid Padding="12,4" BackgroundColor="Transparent">
+                        <Grid Padding="12,4" BackgroundColor="Transparent"
+                              SemanticProperties.Description="{Binding AccessibleDescription}"
+                              SemanticProperties.Hint="Double tap for session details">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup Name="CommonStates">
                                     <VisualState Name="Normal">
@@ -154,7 +158,8 @@
                                             <Image Source="location_regular.png" 
                                                    HeightRequest="16" 
                                                    WidthRequest="16"
-                                                   VerticalOptions="Center">
+                                                   VerticalOptions="Center"
+                                                   SemanticProperties.Description="">
                                                 <Image.Behaviors>
                                                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                                 </Image.Behaviors>
@@ -168,7 +173,8 @@
                                             <Image Source="clock_regular.png" 
                                                    HeightRequest="16" 
                                                    WidthRequest="16"
-                                                   VerticalOptions="Center">
+                                                   VerticalOptions="Center"
+                                                   SemanticProperties.Description="">
                                                 <Image.Behaviors>
                                                     <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                                 </Image.Behaviors>
@@ -193,6 +199,7 @@
                                                 Background="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
                                                 IsVisible="{Binding HasSpeaker1}">
                                             <Image Source="{Binding Speaker1.ProfilePictureUrl}"
+                                                   SemanticProperties.Description=""
                                                    Aspect="AspectFill" />
                                         </Border>
                                         <!-- Speaker 2 -->
@@ -205,6 +212,7 @@
                                                 Margin="-10,0,0,0"
                                                 IsVisible="{Binding HasSpeaker2}">
                                             <Image Source="{Binding Speaker2.ProfilePictureUrl}"
+                                                   SemanticProperties.Description=""
                                                    Aspect="AspectFill" />
                                         </Border>
                                         <!-- Speaker 3 -->
@@ -217,6 +225,7 @@
                                                 Margin="-10,0,0,0"
                                                 IsVisible="{Binding HasSpeaker3}">
                                             <Image Source="{Binding Speaker3.ProfilePictureUrl}"
+                                                   SemanticProperties.Description=""
                                                    Aspect="AspectFill" />
                                         </Border>
                                         <!-- Speaker 4 -->
@@ -229,6 +238,7 @@
                                                 Margin="-10,0,0,0"
                                                 IsVisible="{Binding HasSpeaker4}">
                                             <Image Source="{Binding Speaker4.ProfilePictureUrl}"
+                                                   SemanticProperties.Description=""
                                                    Aspect="AspectFill" />
                                         </Border>
                                         <!-- More speakers indicator -->

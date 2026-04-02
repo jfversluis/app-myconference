@@ -26,6 +26,7 @@
                        HeightRequest="18" WidthRequest="18"
                        VerticalOptions="Center"
                        Margin="0,0,8,0"
+                       SemanticProperties.Description=""
                        mi:MauiIcon.Value="{mi:Fluent Icon=Search24, IconSize=18, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
                 <Entry Grid.Column="1"
                        x:Name="SpeakerSearchEntry"
@@ -86,7 +87,9 @@
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:SpeakerItem">
-                    <Grid HeightRequest="170" Margin="4,0">
+                    <Grid HeightRequest="170" Margin="4,0"
+                          SemanticProperties.Description="{Binding AccessibleDescription}"
+                          SemanticProperties.Hint="Double tap for speaker details">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup Name="CommonStates">
                                 <VisualState Name="Normal">
@@ -125,7 +128,8 @@
                                         <Image Source="{Binding ProfilePictureUrl}"
                                                Aspect="AspectFill"
                                                HeightRequest="64"
-                                               WidthRequest="64">
+                                               WidthRequest="64"
+                                               SemanticProperties.Description="">
                                             <Image.Clip>
                                                 <EllipseGeometry Center="32,32" RadiusX="32" RadiusY="32" />
                                             </Image.Clip>
@@ -163,6 +167,7 @@
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32" Spacing="12"
                                      IsVisible="{Binding ShowEmptyState}">
                     <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
+                           SemanticProperties.Description=""
                            mi:MauiIcon.Value="{mi:Fluent Icon=People24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
                     <Label Text="No speakers found"
                            FontSize="18"

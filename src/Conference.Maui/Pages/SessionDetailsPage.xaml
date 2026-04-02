@@ -51,7 +51,8 @@
                            FontAttributes="Bold"
                            TextColor="White"
                            LineBreakMode="WordWrap"
-                           Margin="0,0,0,10" />
+                           Margin="0,0,0,10"
+                           SemanticProperties.HeadingLevel="Level1" />
 
                     <!-- Row 1: Meta info with icons -->
                     <HorizontalStackLayout Grid.Row="1" Spacing="16" Margin="0,0,0,10">
@@ -60,7 +61,8 @@
                             <Image Source="calendar_regular.png" 
                                    HeightRequest="14" 
                                    WidthRequest="14"
-                                   VerticalOptions="Center">
+                                   VerticalOptions="Center"
+                                   SemanticProperties.Description="">
                                 <Image.Behaviors>
                                     <toolkit:IconTintColorBehavior TintColor="White" />
                                 </Image.Behaviors>
@@ -77,7 +79,8 @@
                             <Image Source="clock_regular.png" 
                                    HeightRequest="14" 
                                    WidthRequest="14"
-                                   VerticalOptions="Center">
+                                   VerticalOptions="Center"
+                                   SemanticProperties.Description="">
                                 <Image.Behaviors>
                                     <toolkit:IconTintColorBehavior TintColor="White" />
                                 </Image.Behaviors>
@@ -107,7 +110,8 @@
                             <Image Source="location_regular.png" 
                                    HeightRequest="14" 
                                    WidthRequest="14"
-                                   VerticalOptions="Center">
+                                   VerticalOptions="Center"
+                                   SemanticProperties.Description="">
                                 <Image.Behaviors>
                                     <toolkit:IconTintColorBehavior TintColor="White" />
                                 </Image.Behaviors>
@@ -132,7 +136,8 @@
                                     Background="{StaticResource Primary}"
                                     IsVisible="{Binding Session.HasSpeaker1}">
                                 <Image Source="{Binding Session.Speaker1.ProfilePictureUrl}"
-                                       Aspect="AspectFill" />
+                                       Aspect="AspectFill"
+                                       SemanticProperties.Description="" />
                             </Border>
                             <!-- Speaker 2 -->
                             <Border StrokeShape="RoundRectangle 16"
@@ -144,7 +149,8 @@
                                     Margin="-12,0,0,0"
                                     IsVisible="{Binding Session.HasSpeaker2}">
                                 <Image Source="{Binding Session.Speaker2.ProfilePictureUrl}"
-                                       Aspect="AspectFill" />
+                                       Aspect="AspectFill"
+                                       SemanticProperties.Description="" />
                             </Border>
                             <!-- Speaker 3 -->
                             <Border StrokeShape="RoundRectangle 16"
@@ -156,7 +162,8 @@
                                     Margin="-12,0,0,0"
                                     IsVisible="{Binding Session.HasSpeaker3}">
                                 <Image Source="{Binding Session.Speaker3.ProfilePictureUrl}"
-                                       Aspect="AspectFill" />
+                                       Aspect="AspectFill"
+                                       SemanticProperties.Description="" />
                             </Border>
                             <!-- Speaker 4 -->
                             <Border StrokeShape="RoundRectangle 16"
@@ -168,7 +175,8 @@
                                     Margin="-12,0,0,0"
                                     IsVisible="{Binding Session.HasSpeaker4}">
                                 <Image Source="{Binding Session.Speaker4.ProfilePictureUrl}"
-                                       Aspect="AspectFill" />
+                                       Aspect="AspectFill"
+                                       SemanticProperties.Description="" />
                             </Border>
                             <!-- More speakers indicator -->
                             <Border StrokeShape="RoundRectangle 16"
@@ -204,7 +212,9 @@
                                 StrokeThickness="2"
                                 BackgroundColor="{Binding Session.IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject=Transparent}}"
                                 Padding="14,0"
-                                VerticalOptions="Fill">
+                                VerticalOptions="Fill"
+                                SemanticProperties.Description="Toggle favorite"
+                                SemanticProperties.Hint="Double tap to add or remove from favorites">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ToggleFavoriteCommand}" />
                             </Border.GestureRecognizers>
@@ -224,16 +234,20 @@
                                 Padding="12,0"
                                 Margin="8,0,0,0"
                                 VerticalOptions="Fill"
-                                IsVisible="{Binding ShowReminderToggle}">
+                                IsVisible="{Binding ShowReminderToggle}"
+                                SemanticProperties.Description="Toggle reminder"
+                                SemanticProperties.Hint="Double tap to enable or disable reminder">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ToggleReminderCommand}" />
                             </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                 <Image Grid.Column="0" HeightRequest="18" WidthRequest="18" VerticalOptions="Center"
                                        IsVisible="{Binding IsReminderActive}"
+                                       SemanticProperties.Description=""
                                        mi:MauiIcon.Value="{mi:Fluent Icon=Alert24, IconColor={StaticResource Primary}}" />
                                 <Image Grid.Column="0" HeightRequest="18" WidthRequest="18" VerticalOptions="Center"
                                        IsVisible="{Binding IsReminderActive, Converter={toolkit:InvertedBoolConverter}}"
+                                       SemanticProperties.Description=""
                                        mi:MauiIcon.Value="{mi:Fluent Icon=AlertOff24, IconColor={StaticResource Gray400}}" />
                                 <Label Grid.Column="1" VerticalOptions="Center"
                                        FontSize="13"
@@ -241,9 +255,11 @@
                                        TextColor="{Binding IsReminderActive, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource Primary}, FalseObject={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}}" />
                                 <Image Grid.Column="2" HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
                                        IsVisible="{Binding IsReminderActive}"
+                                       SemanticProperties.Description=""
                                        mi:MauiIcon.Value="{mi:Fluent Icon=Checkmark20, IconColor={StaticResource Primary}}" />
                                 <Image Grid.Column="2" HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
                                        IsVisible="{Binding IsReminderActive, Converter={toolkit:InvertedBoolConverter}}"
+                                       SemanticProperties.Description=""
                                        mi:MauiIcon.Value="{mi:Fluent Icon=Dismiss20, IconColor={StaticResource Gray400}}" />
                             </Grid>
                         </Border>
@@ -269,7 +285,8 @@
                                FontSize="11"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                               CharacterSpacing="0.5" />
+                               CharacterSpacing="0.5"
+                               SemanticProperties.HeadingLevel="Level2" />
                         <Label Text="{Binding Session.Description}"
                                FontSize="15"
                                LineHeight="1.5"
@@ -283,7 +300,8 @@
                                FontSize="11"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                               CharacterSpacing="0.5" />
+                               CharacterSpacing="0.5"
+                               SemanticProperties.HeadingLevel="Level2" />
 
                         <VerticalStackLayout BindableLayout.ItemsSource="{Binding Session.Speakers}"
                                              Spacing="8">
@@ -293,7 +311,8 @@
                                             Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 12"
-                                            Padding="16">
+                                            Padding="16"
+                                            SemanticProperties.Hint="Double tap for speaker details">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnSpeakerTapped" />
                                         </Border.GestureRecognizers>
@@ -317,7 +336,8 @@
                                                     <Image Source="{Binding ProfilePictureUrl}"
                                                            Aspect="AspectFill"
                                                            HeightRequest="48"
-                                                           WidthRequest="48">
+                                                           WidthRequest="48"
+                                                           SemanticProperties.Description="">
                                                         <Image.Clip>
                                                             <EllipseGeometry Center="24,24" RadiusX="24" RadiusY="24" />
                                                         </Image.Clip>
@@ -342,6 +362,7 @@
 
                                             <!-- Chevron -->
                                             <Image Grid.Column="2" WidthRequest="16" HeightRequest="16" VerticalOptions="Center"
+                                                   SemanticProperties.Description=""
                                                    mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconSize=16, IconColor={AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}}" />
                                         </Grid>
                                     </Border>

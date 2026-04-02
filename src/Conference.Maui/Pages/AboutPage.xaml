@@ -58,7 +58,8 @@
                            FontSize="11"
                            FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                           CharacterSpacing="0.5" />
+                           CharacterSpacing="0.5"
+                           SemanticProperties.HeadingLevel="Level2" />
                     <Label Text="{Binding EventDescription}"
                            FontSize="15"
                            LineHeight="1.5"
@@ -75,6 +76,7 @@
                         Padding="16">
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
+                               SemanticProperties.Description=""
                                mi:MauiIcon.Value="{mi:Fluent Icon=Location24, IconColor={StaticResource Primary}}" />
                         <VerticalStackLayout Grid.Column="1" Spacing="4">
                             <Label Text="{Binding VenueName}"
@@ -88,6 +90,7 @@
                         </VerticalStackLayout>
                         <Image Grid.Column="2" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"
                                IsVisible="{Binding IsPhysicalVenue}"
+                               SemanticProperties.Description=""
                                mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconColor={StaticResource Gray400}}" />
                     </Grid>
                 </Border>
@@ -102,7 +105,8 @@
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <Image Grid.Column="0" Source="wifi_regular.png"
                                HeightRequest="24" WidthRequest="24"
-                               VerticalOptions="Center" />
+                               VerticalOptions="Center"
+                               SemanticProperties.Description="" />
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                             <Label Text="{Binding WifiNetworkName}"
                                    FontSize="15"
@@ -130,7 +134,8 @@
                            FontSize="11"
                            FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                           CharacterSpacing="0.5" />
+                           CharacterSpacing="0.5"
+                           SemanticProperties.HeadingLevel="Level2" />
                     <Label Text="Thank you to our amazing sponsors who make this event possible!"
                            FontSize="13"
                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />

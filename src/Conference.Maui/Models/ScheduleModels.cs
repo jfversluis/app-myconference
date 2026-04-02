@@ -59,6 +59,26 @@ public partial class SessionItem : ObservableObject
     public string DurationDisplay => $"{(EndsAt - StartsAt).TotalMinutes:0} min";
     public bool HasMultipleSpeakers => Speakers.Count > 1;
     public string SpeakerNames => string.Join(", ", Speakers.Select(s => s.FullName));
+
+    /// <summary>Screen reader description for this session card.</summary>
+    public string AccessibleDescription
+    {
+        get
+        {
+            var parts = new List<string> { Title };
+            if (Speakers.Count > 0)
+                parts.Add($"by {SpeakerNames}");
+            parts.Add(StartsAt.LocalDateTime.ToString("dddd h:mm tt"));
+            if (!string.IsNullOrEmpty(RoomName))
+                parts.Add(RoomName);
+            parts.Add(DurationDisplay);
+            if (IsFavorite)
+                parts.Add("favorited");
+            if (HasReminder)
+                parts.Add("reminder set");
+            return string.Join(", ", parts);
+        }
+    }
     
     // Avatar display properties - show up to 4 speakers, then "+N"
     public SpeakerItem? Speaker1 => Speakers.Count > 0 ? Speakers[0] : null;
@@ -90,6 +110,11 @@ public class SpeakerItem
     public List<int> SessionIds { get; set; } = [];
 
     public string Initials => $"{(FirstName?.Length > 0 ? FirstName[0] : ' ')}{(LastName?.Length > 0 ? LastName[0] : ' ')}".Trim().ToUpperInvariant();
+
+    /// <summary>Screen reader description for this speaker card.</summary>
+    public string AccessibleDescription => string.IsNullOrEmpty(TagLine)
+        ? FullName
+        : $"{FullName}, {TagLine}";
 
     public string BioPreview => string.IsNullOrEmpty(Bio) 
         ? string.Empty 

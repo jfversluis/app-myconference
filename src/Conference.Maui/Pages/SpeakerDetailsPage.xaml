@@ -58,7 +58,8 @@
                             <Image Source="{Binding Speaker.ProfilePictureUrl}"
                                    Aspect="AspectFill"
                                    HeightRequest="96"
-                                   WidthRequest="96">
+                                   WidthRequest="96"
+                                   SemanticProperties.Description="{Binding Speaker.FullName, StringFormat='Photo of {0}'}">
                                 <Image.Clip>
                                     <EllipseGeometry Center="48,48" RadiusX="48" RadiusY="48" />
                                 </Image.Clip>
@@ -71,7 +72,8 @@
                            FontSize="22"
                            FontAttributes="Bold"
                            TextColor="White"
-                           HorizontalTextAlignment="Center" />
+                           HorizontalTextAlignment="Center"
+                           SemanticProperties.HeadingLevel="Level1" />
 
                     <!-- Tagline -->
                     <Label Text="{Binding Speaker.TagLine}"
@@ -94,7 +96,8 @@
                                FontSize="11"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                               CharacterSpacing="0.5" />
+                               CharacterSpacing="0.5"
+                               SemanticProperties.HeadingLevel="Level2" />
                         <Label Text="{Binding Speaker.Bio}"
                                FontSize="15"
                                LineHeight="1.5"
@@ -108,7 +111,8 @@
                                FontSize="11"
                                FontAttributes="Bold"
                                TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
-                               CharacterSpacing="0.5" />
+                               CharacterSpacing="0.5"
+                               SemanticProperties.HeadingLevel="Level2" />
 
                         <VerticalStackLayout BindableLayout.ItemsSource="{Binding Sessions}"
                                              Spacing="8">
@@ -118,7 +122,8 @@
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 12"
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                                            Padding="16">
+                                            Padding="16"
+                                            SemanticProperties.Hint="Double tap for session details">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnSessionTapped" />
                                         </Border.GestureRecognizers>
@@ -131,7 +136,8 @@
                                                    MaxLines="2" />
                                             <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="16" Margin="0,6,0,0">
                                                 <HorizontalStackLayout Spacing="4" IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
-                                                    <Image Source="location_regular.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center">
+                                                    <Image Source="location_regular.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
+                                                           SemanticProperties.Description="">
                                                         <Image.Behaviors>
                                                             <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                                         </Image.Behaviors>
@@ -140,7 +146,8 @@
                                                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" VerticalOptions="Center" />
                                                 </HorizontalStackLayout>
                                                 <HorizontalStackLayout Spacing="4">
-                                                    <Image Source="clock_regular.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center">
+                                                    <Image Source="clock_regular.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
+                                                           SemanticProperties.Description="">
                                                         <Image.Behaviors>
                                                             <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                                         </Image.Behaviors>
@@ -150,6 +157,7 @@
                                                 </HorizontalStackLayout>
                                             </HorizontalStackLayout>
                                             <Image Grid.Row="1" Grid.Column="1" WidthRequest="16" HeightRequest="16" VerticalOptions="Center"
+                                                   SemanticProperties.Description=""
                                                    mi:MauiIcon.Value="{mi:Fluent Icon=ChevronRight20, IconSize=16, IconColor={AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}}" />
                                         </Grid>
                                     </Border>
