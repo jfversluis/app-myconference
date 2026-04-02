@@ -26,6 +26,7 @@ public partial class OnboardingViewModel : ObservableObject
 
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly ISessionItemMapper _mapper;
     private readonly ILogger<OnboardingViewModel> _logger;
 
     private AllDataResponse? _allData;
@@ -102,10 +103,12 @@ public partial class OnboardingViewModel : ObservableObject
     public OnboardingViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
+        ISessionItemMapper mapper,
         ILogger<OnboardingViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _mapper = mapper;
         _logger = logger;
     }
 
@@ -155,6 +158,7 @@ public partial class OnboardingViewModel : ObservableObject
             }
 
             _existingFavoriteIds = favoritesTask.Result;
+            _mapper.Initialize(_allData);
             UpdateWelcomeSubtitle();
             BuildFeaturedSpeakers();
             BuildInterestTags();
@@ -348,7 +352,7 @@ public partial class OnboardingViewModel : ObservableObject
                     .ToList();
             }
 
-            _filteredDeck = filtered.Select(CreateSessionItem).ToList();
+            _filteredDeck = filtered.Select(s => _mapper.MapSession(s)).ToList();
             QuickPickTotal = _filteredDeck.Count;
             Cards = new ObservableCollection<SessionItem>(_filteredDeck);
 
@@ -456,28 +460,6 @@ public partial class OnboardingViewModel : ObservableObject
             1 => $"⚠️ Conflicts with \"{conflicting[0].Title}\"",
             > 1 => $"⚠️ {conflicting.Count} sessions in this time slot",
             _ => string.Empty
-        };
-    }
-
-    private SessionItem CreateSessionItem(SessionDetails session)
-    {
-        var speakers = session.Speakers
-            .Select(sid => _allData?.Speakers.FirstOrDefault(s => s.Id == sid))
-            .Where(s => s != null)
-            .Select(s => SpeakerItem.FromSpeakerDetails(s!))
-            .ToList();
-
-        return new SessionItem
-        {
-            Id = session.Id,
-            Title = session.Title,
-            Description = session.Description,
-            StartsAt = session.StartsAt,
-            EndsAt = session.EndsAt,
-            RoomId = session.RoomId,
-            RoomName = _allData?.Rooms.FirstOrDefault(r => r.Id == session.RoomId)?.Name,
-            Speakers = speakers,
-            IsFavorite = false
         };
     }
 

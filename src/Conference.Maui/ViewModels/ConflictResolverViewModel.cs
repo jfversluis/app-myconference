@@ -16,6 +16,7 @@ public partial class ConflictResolverViewModel : ObservableObject
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly ISessionItemMapper _mapper;
     private readonly ILogger<ConflictResolverViewModel> _logger;
     private AllDataResponse? _allData;
 
@@ -46,10 +47,12 @@ public partial class ConflictResolverViewModel : ObservableObject
     public ConflictResolverViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
+        ISessionItemMapper mapper,
         ILogger<ConflictResolverViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _mapper = mapper;
         _logger = logger;
     }
 
@@ -66,12 +69,14 @@ public partial class ConflictResolverViewModel : ObservableObject
             _allData = await _dataService.GetAllDataAsync();
             if (_allData == null) return;
 
+            _mapper.Initialize(_allData);
+
             var favoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
 
             var favSessions = _allData.Sessions
                 .Where(s => favoriteIds.Contains(s.Id))
                 .OrderBy(s => s.StartsAt)
-                .Select(CreateSessionItem)
+                .Select(s => _mapper.MapSession(s))
                 .ToList();
 
             foreach (var s in favSessions)
@@ -150,28 +155,6 @@ public partial class ConflictResolverViewModel : ObservableObject
             HasLoaded = true;
             OnPropertyChanged(nameof(AllResolved));
         }
-    }
-
-    private SessionItem CreateSessionItem(SessionDetails session)
-    {
-        var speakers = session.Speakers
-            .Select(sid => _allData?.Speakers.FirstOrDefault(s => s.Id == sid))
-            .Where(s => s != null)
-            .Select(s => SpeakerItem.FromSpeakerDetails(s!))
-            .ToList();
-
-        return new SessionItem
-        {
-            Id = session.Id,
-            Title = session.Title,
-            Description = session.Description,
-            StartsAt = session.StartsAt,
-            EndsAt = session.EndsAt,
-            RoomId = session.RoomId,
-            RoomName = _allData?.Rooms.FirstOrDefault(r => r.Id == session.RoomId)?.Name,
-            Speakers = speakers,
-            IsFavorite = false
-        };
     }
 
     [RelayCommand]

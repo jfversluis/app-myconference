@@ -16,6 +16,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly IReminderService _reminderService;
+    private readonly ISessionItemMapper _mapper;
     private readonly ILogger<FavoritesViewModel> _logger;
 
     [ObservableProperty]
@@ -31,11 +32,13 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
         IReminderService reminderService,
+        ISessionItemMapper mapper,
         ILogger<FavoritesViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _reminderService = reminderService;
+        _mapper = mapper;
         _logger = logger;
         Title = "My Agenda";
 
@@ -70,6 +73,8 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
         var allData = await _dataService.GetAllDataAsync();
         if (allData == null) return;
 
+        _mapper.Initialize(allData);
+
         var favorites = await _favoritesService.GetFavoriteSessionIdsAsync();
         var activeReminders = await _reminderService.GetActiveReminderIdsAsync(favorites);
         var favoriteSessions = allData.Sessions
@@ -93,7 +98,8 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
 
                 foreach (var session in slotGroup.OrderBy(s => allData.Rooms.FirstOrDefault(r => r.Id == s.RoomId)?.Name))
                 {
-                    slot.Add(CreateSessionItem(session, allData, activeReminders));
+                    var item = _mapper.MapSession(session, favoriteIds: favorites, reminderIds: activeReminders);
+                    slot.Add(item);
                 }
 
                 return slot;
@@ -102,29 +108,6 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
 
         FavoriteSlots = new ObservableCollection<TimeSlotGroup>(slots);
         HasFavorites = slots.Count > 0;
-    }
-
-    private static SessionItem CreateSessionItem(SessionDetails session, AllDataResponse allData, IReadOnlySet<string> activeReminders)
-    {
-        var speakers = session.Speakers
-            .Select(speakerId => allData.Speakers.FirstOrDefault(s => s.Id == speakerId))
-            .Where(s => s != null)
-            .Select(s => SpeakerItem.FromSpeakerDetails(s!))
-            .ToList();
-
-        return new SessionItem
-        {
-            Id = session.Id,
-            Title = session.Title,
-            Description = session.Description,
-            StartsAt = session.StartsAt,
-            EndsAt = session.EndsAt,
-            RoomId = session.RoomId,
-            RoomName = allData.Rooms.FirstOrDefault(r => r.Id == session.RoomId)?.Name,
-            Speakers = speakers,
-            IsFavorite = true,
-            HasReminder = activeReminders.Contains(session.Id)
-        };
     }
 
     [RelayCommand]

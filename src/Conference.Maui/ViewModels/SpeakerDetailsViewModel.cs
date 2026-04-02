@@ -17,6 +17,7 @@ public partial class SpeakerDetailsViewModel : BaseViewModel, IRecipient<Favorit
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly ISessionItemMapper _mapper;
     private readonly ILogger<SpeakerDetailsViewModel> _logger;
 
     [ObservableProperty]
@@ -38,10 +39,12 @@ public partial class SpeakerDetailsViewModel : BaseViewModel, IRecipient<Favorit
     public SpeakerDetailsViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
+        ISessionItemMapper mapper,
         ILogger<SpeakerDetailsViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _mapper = mapper;
         _logger = logger;
         Title = "Speaker";
 
@@ -68,6 +71,7 @@ public partial class SpeakerDetailsViewModel : BaseViewModel, IRecipient<Favorit
 
             if (speakerData != null)
             {
+                _mapper.Initialize(allData!);
                 Speaker = SpeakerItem.FromSpeakerDetails(speakerData);
                 Title = Speaker.FullName;
 
@@ -75,7 +79,7 @@ public partial class SpeakerDetailsViewModel : BaseViewModel, IRecipient<Favorit
                 var speakerSessions = allData!.Sessions
                     .Where(s => s.Speakers.Contains(speakerData.Id))
                     .OrderBy(s => s.StartsAt)
-                    .Select(s => CreateSessionItem(s, allData, favorites))
+                    .Select(s => _mapper.MapSession(s, favoriteIds: favorites))
                     .ToList();
 
                 Sessions = new ObservableCollection<SessionItem>(speakerSessions);
@@ -89,28 +93,6 @@ public partial class SpeakerDetailsViewModel : BaseViewModel, IRecipient<Favorit
         {
             IsBusy = false;
         }
-    }
-
-    private static SessionItem CreateSessionItem(SessionDetails session, AllDataResponse allData, IReadOnlySet<string> favorites)
-    {
-        var speakers = session.Speakers
-            .Select(speakerId => allData.Speakers.FirstOrDefault(s => s.Id == speakerId))
-            .Where(s => s != null)
-            .Select(s => SpeakerItem.FromSpeakerDetails(s!))
-            .ToList();
-
-        return new SessionItem
-        {
-            Id = session.Id,
-            Title = session.Title,
-            Description = session.Description,
-            StartsAt = session.StartsAt,
-            EndsAt = session.EndsAt,
-            RoomId = session.RoomId,
-            RoomName = allData.Rooms.FirstOrDefault(r => r.Id == session.RoomId)?.Name,
-            Speakers = speakers,
-            IsFavorite = favorites.Contains(session.Id)
-        };
     }
 
     [RelayCommand]

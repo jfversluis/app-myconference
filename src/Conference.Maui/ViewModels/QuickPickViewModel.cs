@@ -20,6 +20,7 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
 
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly ISessionItemMapper _mapper;
     private readonly ILogger<QuickPickViewModel> _logger;
 
     private AllDataResponse? _allData;
@@ -92,10 +93,12 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
     public QuickPickViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
+        ISessionItemMapper mapper,
         ILogger<QuickPickViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _mapper = mapper;
         _logger = logger;
 
         WeakReferenceMessenger.Default.Register<FavoriteChangedMessage>(this);
@@ -125,6 +128,8 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
                 return;
             }
 
+            _mapper.Initialize(_allData);
+
             _favoriteIds = await _favoritesService.GetFavoriteSessionIdsAsync();
             _swipeState = await LoadSwipeStateAsync();
 
@@ -141,7 +146,7 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
                 .ThenBy(s => s.Title)
                 .ToList();
 
-            _fullDeck = sessions.Select(CreateSessionItem).ToList();
+            _fullDeck = sessions.Select(s => _mapper.MapSession(s)).ToList();
 
             // Track totals including already-processed items
             var allNonService = _allData.Sessions.Count(s => !s.IsServiceSession);
@@ -453,33 +458,6 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
         {
             card.IsFavorite = message.IsFavorite;
         }
-    }
-
-    private SessionItem CreateSessionItem(SessionDetails session)
-    {
-        var speakers = session.Speakers
-            .Select(sid => _allData?.Speakers.FirstOrDefault(s => s.Id == sid))
-            .Where(s => s != null)
-            .Select(s => SpeakerItem.FromSpeakerDetails(s!))
-            .ToList();
-
-        return new SessionItem
-        {
-            Id = session.Id,
-            Title = session.Title,
-            Description = session.Description,
-            StartsAt = session.StartsAt,
-            EndsAt = session.EndsAt,
-            RoomId = session.RoomId,
-            RoomName = GetRoomName(session.RoomId),
-            Speakers = speakers,
-            IsFavorite = false
-        };
-    }
-
-    private string? GetRoomName(int roomId)
-    {
-        return _allData?.Rooms.FirstOrDefault(r => r.Id == roomId)?.Name;
     }
 
     private void NotifyProgressChanged()

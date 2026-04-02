@@ -17,6 +17,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly IReminderService _reminderService;
+    private readonly ISessionItemMapper _mapper;
     private readonly ILogger<MyEventViewModel> _logger;
 
     private const int TimerIntervalSeconds = 30;
@@ -154,11 +155,13 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
         IReminderService reminderService,
+        ISessionItemMapper mapper,
         ILogger<MyEventViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _reminderService = reminderService;
+        _mapper = mapper;
         _logger = logger;
         Title = "My Event";
 
@@ -185,6 +188,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
             if (_allData != null)
             {
+                _mapper.Initialize(_allData);
                 var sessions = _allData.Sessions.Where(s => !s.IsServiceSession).ToList();
                 TotalSessions = sessions.Count;
                 TotalSpeakers = _allData.Speakers.Count;
@@ -291,7 +295,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             .Where(s => !s.IsServiceSession && s.StartsAt <= now && s.EndsAt > now)
             .OrderByDescending(s => _favoriteIds.Contains(s.Id))
             .ThenBy(s => s.EndsAt)
-            .Select(s => CreateSessionItem(s))
+            .Select(s => _mapper.MapSession(s, _favoriteIds, _activeReminderIds))
             .ToList();
 
         NowSessions = new ObservableCollection<SessionItem>(liveSessions);
@@ -328,8 +332,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             // Show all sessions in the slot, favorites first
             var nextItems = allNextSessions
                 .OrderByDescending(s => _favoriteIds.Contains(s.Id))
-                .ThenBy(s => GetRoomName(s.RoomId))
-                .Select(s => CreateSessionItem(s))
+                .ThenBy(s => _mapper.GetRoomName(s.RoomId))
+                .Select(s => _mapper.MapSession(s, _favoriteIds, _activeReminderIds))
                 .ToList();
 
             UpNextSessions = new ObservableCollection<SessionItem>(nextItems);
@@ -360,7 +364,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
                 && _favoriteIds.Contains(s.Id)
                 && new DateOnly(s.StartsAt.Year, s.StartsAt.Month, s.StartsAt.Day) == today)
             .OrderBy(s => s.StartsAt)
-            .Select(s => CreateSessionItem(s))
+            .Select(s => _mapper.MapSession(s, _favoriteIds, _activeReminderIds))
             .ToList();
 
         TodayAgenda = new ObservableCollection<SessionItem>(todayFavorites);
@@ -374,38 +378,6 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         OnPropertyChanged(nameof(ShowSeeAllUpNext));
 
         UpdateEmptyStateText();
-    }
-
-    private SessionItem CreateSessionItem(Sessionize.Api.Client.ValueObjects.SessionDetails session)
-    {
-        var speakers = session.Speakers
-            .Select(sid => _allData?.Speakers.FirstOrDefault(s => s.Id == sid))
-            .Where(s => s != null)
-            .Select(s => SpeakerItem.FromSpeakerDetails(s!))
-            .ToList();
-
-        var now = Now;
-        var isFavorite = _favoriteIds.Contains(session.Id);
-        var item = new SessionItem
-        {
-            Id = session.Id,
-            Title = session.Title,
-            Description = session.Description,
-            StartsAt = session.StartsAt,
-            EndsAt = session.EndsAt,
-            RoomId = session.RoomId,
-            RoomName = GetRoomName(session.RoomId),
-            Speakers = speakers,
-            IsFavorite = isFavorite,
-            HasReminder = isFavorite && _activeReminderIds.Contains(session.Id)
-        };
-
-        return item;
-    }
-
-    private string? GetRoomName(int roomId)
-    {
-        return _allData?.Rooms.FirstOrDefault(r => r.Id == roomId)?.Name;
     }
 
     [RelayCommand]
@@ -457,6 +429,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
             if (_allData != null)
             {
+                _mapper.Initialize(_allData);
                 var sessions = _allData.Sessions.Where(s => !s.IsServiceSession).ToList();
                 TotalSessions = sessions.Count;
                 TotalSpeakers = _allData.Speakers.Count;
