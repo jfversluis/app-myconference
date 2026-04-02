@@ -1,25 +1,14 @@
+using Conference.Maui.Configuration;
+using Conference.Maui.Interfaces;
+
 namespace Conference.Maui.Services;
-
-public interface IHapticService
-{
-    void Perform(HapticIntensity intensity = HapticIntensity.Medium);
-}
-
-public enum HapticIntensity
-{
-    Light,
-    Medium,
-    Heavy
-}
 
 public class HapticService : IHapticService
 {
-    private const string PrefKey = "haptic_feedback_enabled";
-
     public static bool IsEnabled
     {
-        get => Preferences.Get(PrefKey, true);
-        set => Preferences.Set(PrefKey, value);
+        get => Preferences.Get(PreferenceKeys.HapticFeedbackEnabled, true);
+        set => Preferences.Set(PreferenceKeys.HapticFeedbackEnabled, value);
     }
 
     public void Perform(HapticIntensity intensity = HapticIntensity.Medium)
@@ -36,9 +25,9 @@ public class HapticService : IHapticService
             };
             HapticFeedback.Default.Perform(type);
         }
-        catch
+        catch (Exception ex)
         {
-            // Haptics not available on this device/platform
+            System.Diagnostics.Debug.WriteLine($"Haptics not available: {ex.Message}");
         }
     }
 }

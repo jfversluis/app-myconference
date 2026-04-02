@@ -1,4 +1,5 @@
-﻿using Conference.Maui.Interfaces;
+﻿using Conference.Maui.Configuration;
+using Conference.Maui.Interfaces;
 using Conference.Maui.Pages;
 using Conference.Maui.ViewModels;
 using Plugin.LocalNotification;
@@ -12,7 +13,7 @@ public partial class App : Application
     {
         InitializeComponent();
 
-        var savedTheme = Preferences.Get("app_theme", 0);
+        var savedTheme = Preferences.Get(PreferenceKeys.AppTheme, 0);
         UserAppTheme = savedTheme switch
         {
             1 => AppTheme.Light,
@@ -41,7 +42,10 @@ public partial class App : Application
                 if (reminderService != null)
                     await reminderService.ReconcileRemindersAsync();
             }
-            catch { /* Non-critical preload */ }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Non-critical preload error: {ex.Message}");
+            }
         });
 
         if (OnboardingViewModel.IsOnboardingCompleted())
@@ -65,7 +69,10 @@ public partial class App : Application
                 await Shell.Current.GoToAsync($"{nameof(Pages.SessionDetailsPage)}?SessionId={sessionId}");
             }
         }
-        catch { /* Best-effort navigation */ }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Best-effort navigation error: {ex.Message}");
+        }
     }
 
     /// <summary>

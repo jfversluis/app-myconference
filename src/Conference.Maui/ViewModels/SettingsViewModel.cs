@@ -154,7 +154,7 @@ public partial class SettingsViewModel : BaseViewModel
             _ => AppTheme.Unspecified
         };
 
-        Preferences.Set("app_theme", value);
+        Preferences.Set(PreferenceKeys.AppTheme, value);
     }
 
     [RelayCommand]

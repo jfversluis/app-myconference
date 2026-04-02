@@ -141,7 +141,14 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
 
         if (HapticService.IsEnabled)
         {
-            try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); } catch { }
+            try
+            {
+                HapticFeedback.Default.Perform(HapticFeedbackType.Click);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Haptics not available: {ex.Message}");
+            }
         }
     }
 
@@ -157,7 +164,14 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
 
         if (HapticService.IsEnabled)
         {
-            try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); } catch { }
+            try
+            {
+                HapticFeedback.Default.Perform(HapticFeedbackType.Click);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Haptics not available: {ex.Message}");
+            }
         }
     }
 

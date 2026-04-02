@@ -224,7 +224,10 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
                     HasWifi = true;
                 }
             }
-            catch { /* WiFi config is optional */ }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"WiFi config is optional: {ex.Message}");
+            }
         }
         catch (Exception ex)
         {

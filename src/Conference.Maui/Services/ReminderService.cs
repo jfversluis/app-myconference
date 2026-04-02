@@ -1,6 +1,7 @@
 using System.Reactive.Linq;
 using Akavache;
 using CommunityToolkit.Mvvm.Messaging;
+using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Microsoft.Extensions.Logging;
@@ -21,8 +22,6 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
     private Dictionary<string, bool>? _overrides;
 
     private const string OverridesCacheKey = "session_reminder_overrides";
-    private const string RemindersEnabledKey = "reminders_enabled";
-    private const string LeadTimeKey = "reminder_lead_time_minutes";
     private const int DefaultLeadTimeMinutes = 15;
 
     public ReminderService(
@@ -40,14 +39,14 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
 
     public bool IsGlobalRemindersEnabled
     {
-        get => Preferences.Get(RemindersEnabledKey, true);
-        set => Preferences.Set(RemindersEnabledKey, value);
+        get => Preferences.Get(PreferenceKeys.RemindersEnabled, true);
+        set => Preferences.Set(PreferenceKeys.RemindersEnabled, value);
     }
 
     public int LeadTimeMinutes
     {
-        get => Preferences.Get(LeadTimeKey, DefaultLeadTimeMinutes);
-        set => Preferences.Set(LeadTimeKey, value);
+        get => Preferences.Get(PreferenceKeys.ReminderLeadTimeMinutes, DefaultLeadTimeMinutes);
+        set => Preferences.Set(PreferenceKeys.ReminderLeadTimeMinutes, value);
     }
 
     public async Task ScheduleReminderAsync(string sessionId, string title, string? roomName, DateTimeOffset startsAt)

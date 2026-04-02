@@ -4,6 +4,7 @@ using Akavache;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Microsoft.Extensions.Logging;
@@ -14,10 +15,8 @@ using Sessionize.Api.Client.ValueObjects;
 
 namespace Conference.Maui.ViewModels;
 
-public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteChangedMessage>
+public partial class QuickPickViewModel : BaseViewModel, IRecipient<FavoriteChangedMessage>
 {
-    private const string SwipeStateCacheKey = "quick_pick_swipe_state";
-
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly ISessionItemMapper _mapper;
@@ -56,9 +55,6 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
 
     [ObservableProperty]
     private int _skippedCount;
-
-    [ObservableProperty]
-    private bool _isBusy;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasCards))]
@@ -473,7 +469,7 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
     {
         try
         {
-            var state = await BlobCache.UserAccount.GetObject<SwipeState>(SwipeStateCacheKey);
+            var state = await BlobCache.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
             _logger.LogDebug("Loaded swipe state: {SkipCount} skipped, last updated {Updated}",
                 state.SkippedSessionIds.Count, state.LastUpdated);
             return state;
@@ -488,6 +484,6 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
     private async Task SaveSwipeStateAsync()
     {
         _swipeState.LastUpdated = DateTime.UtcNow;
-        await BlobCache.UserAccount.InsertObject(SwipeStateCacheKey, _swipeState);
+        await BlobCache.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, _swipeState);
     }
 }

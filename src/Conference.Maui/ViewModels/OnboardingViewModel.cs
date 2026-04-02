@@ -17,7 +17,6 @@ namespace Conference.Maui.ViewModels;
 
 public partial class OnboardingViewModel : ObservableObject
 {
-    private const string OnboardingCompletedKey = "onboarding_completed_v1";
     private const int QuickPickCardLimit = 10;
 
     // Vibrant colors for speaker photo circles on the welcome screen
@@ -114,17 +113,17 @@ public partial class OnboardingViewModel : ObservableObject
 
     public static bool IsOnboardingCompleted()
     {
-        return Preferences.Get(OnboardingCompletedKey, false);
+        return Preferences.Get(PreferenceKeys.OnboardingCompleted, false);
     }
 
     public static void MarkOnboardingCompleted()
     {
-        Preferences.Set(OnboardingCompletedKey, true);
+        Preferences.Set(PreferenceKeys.OnboardingCompleted, true);
     }
 
     public static void ResetOnboarding()
     {
-        Preferences.Remove(OnboardingCompletedKey);
+        Preferences.Remove(PreferenceKeys.OnboardingCompleted);
     }
 
     public async Task InitializeAsync()
@@ -479,20 +478,4 @@ public partial class OnboardingViewModel : ObservableObject
         OnPropertyChanged(nameof(RemainingText));
         OnPropertyChanged(nameof(HasCards));
     }
-}
-
-public partial class InterestTag : ObservableObject
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public int SessionCount { get; set; }
-
-    [ObservableProperty]
-    private bool _isSelected;
-}
-
-public class FeaturedSpeaker
-{
-    public string ProfilePictureUrl { get; set; } = string.Empty;
-    public string CircleColor { get; set; } = "#4ECDC4";
 }

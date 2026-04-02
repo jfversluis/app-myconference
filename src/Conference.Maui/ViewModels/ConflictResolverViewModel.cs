@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using Akavache;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Microsoft.Extensions.Logging;
@@ -12,16 +13,13 @@ using Sessionize.Api.Client.ValueObjects;
 
 namespace Conference.Maui.ViewModels;
 
-public partial class ConflictResolverViewModel : ObservableObject
+public partial class ConflictResolverViewModel : BaseViewModel
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly ISessionItemMapper _mapper;
     private readonly ILogger<ConflictResolverViewModel> _logger;
     private AllDataResponse? _allData;
-
-    [ObservableProperty]
-    private bool _isBusy;
 
     [ObservableProperty]
     private bool _hasLoaded;
@@ -247,8 +245,6 @@ public partial class ConflictResolverViewModel : ObservableObject
         }
     }
 
-    private const string SwipeStateCacheKey = "quick_pick_swipe_state";
-
     private async Task MarkSessionsAsSkippedAsync(List<string> sessionIds)
     {
         try
@@ -256,7 +252,7 @@ public partial class ConflictResolverViewModel : ObservableObject
             SwipeState state;
             try
             {
-                state = await BlobCache.UserAccount.GetObject<SwipeState>(SwipeStateCacheKey);
+                state = await BlobCache.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
             }
             catch
             {
@@ -270,7 +266,7 @@ public partial class ConflictResolverViewModel : ObservableObject
             }
 
             state.LastUpdated = DateTime.UtcNow;
-            await BlobCache.UserAccount.InsertObject(SwipeStateCacheKey, state);
+            await BlobCache.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, state);
         }
         catch (Exception ex)
         {
@@ -282,11 +278,11 @@ public partial class ConflictResolverViewModel : ObservableObject
     {
         try
         {
-            var state = await BlobCache.UserAccount.GetObject<SwipeState>(SwipeStateCacheKey);
+            var state = await BlobCache.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
             foreach (var id in sessionIds)
                 state.SkippedSessionIds.Remove(id);
             state.LastUpdated = DateTime.UtcNow;
-            await BlobCache.UserAccount.InsertObject(SwipeStateCacheKey, state);
+            await BlobCache.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, state);
         }
         catch (Exception ex)
         {
@@ -304,18 +300,5 @@ public partial class ConflictResolverViewModel : ObservableObject
     private async Task ViewAgendaAsync()
     {
         await Shell.Current.GoToAsync("//Favorites");
-    }
-}
-
-public class ConflictGroup
-{
-    public string TimeSlotLabel { get; }
-    public List<SessionItem> Sessions { get; }
-    public int SessionCount => Sessions.Count;
-
-    public ConflictGroup(string timeSlotLabel, List<SessionItem> sessions)
-    {
-        TimeSlotLabel = timeSlotLabel;
-        Sessions = sessions;
     }
 }
