@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Conference.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+             x:Class="Conference.Maui.Controls.SessionCarouselCardView"
+             x:DataType="models:SessionItem"
+             x:Name="ThisCard">
+
+    <Border StrokeShape="RoundRectangle 12"
+            Stroke="{Binding BorderStroke, Source={x:Reference ThisCard}}"
+            StrokeThickness="{Binding BorderThickness, Source={x:Reference ThisCard}}"
+            Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+            Padding="16"
+            WidthRequest="260"
+            SemanticProperties.Description="{Binding AccessibleDescription}"
+            SemanticProperties.Hint="Double tap for session details">
+        <VerticalStackLayout Spacing="6" VerticalOptions="Start">
+            <!-- Title + Favorite Star -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                <Label Grid.Column="0"
+                       Text="{Binding Title}"
+                       FontSize="14" FontAttributes="Bold"
+                       LineBreakMode="TailTruncation" MaxLines="2" />
+                <Image Grid.Column="1"
+                       VerticalOptions="Start"
+                       Margin="0,3,0,0"
+                       HeightRequest="12" WidthRequest="12"
+                       IsVisible="{Binding IsFavorite}"
+                       SemanticProperties.Description=""
+                       mi:MauiIcon.Value="{mi:Fluent Icon=Star12, IconColor={StaticResource Primary}}" />
+            </Grid>
+
+            <!-- Room + Time -->
+            <HorizontalStackLayout Spacing="12">
+                <HorizontalStackLayout Spacing="4"
+                                       IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
+                    <Image HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                           SemanticProperties.Description=""
+                           mi:MauiIcon.Value="{mi:Fluent Icon=Location24, IconSize=12, IconColor={StaticResource Primary}}" />
+                    <Label Text="{Binding RoomName}" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="4">
+                    <Image HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
+                           SemanticProperties.Description=""
+                           mi:MauiIcon.Value="{mi:Fluent Icon=Clock24, IconSize=12, IconColor={AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}}" />
+                    <Label Text="{Binding TimeDisplay}" FontSize="11"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </HorizontalStackLayout>
+
+            <!-- Speaker avatars + names -->
+            <HorizontalStackLayout Spacing="6">
+                <HorizontalStackLayout Spacing="0">
+                    <Border StrokeShape="RoundRectangle 10"
+                            Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                            StrokeThickness="1.5"
+                            HeightRequest="20" WidthRequest="20"
+                            Background="{StaticResource Primary}"
+                            IsVisible="{Binding HasSpeaker1}">
+                        <Image Source="{Binding Speaker1.ProfilePictureUrl}"
+                               Aspect="AspectFill"
+                               HeightRequest="20" WidthRequest="20"
+                               SemanticProperties.Description="">
+                            <Image.Clip>
+                                <EllipseGeometry Center="10,10" RadiusX="10" RadiusY="10" />
+                            </Image.Clip>
+                        </Image>
+                    </Border>
+                    <Border StrokeShape="RoundRectangle 10"
+                            Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                            StrokeThickness="1.5"
+                            HeightRequest="20" WidthRequest="20"
+                            Background="{StaticResource PrimaryDark}"
+                            Margin="-6,0,0,0"
+                            IsVisible="{Binding HasSpeaker2}">
+                        <Image Source="{Binding Speaker2.ProfilePictureUrl}"
+                               Aspect="AspectFill"
+                               HeightRequest="20" WidthRequest="20"
+                               SemanticProperties.Description="">
+                            <Image.Clip>
+                                <EllipseGeometry Center="10,10" RadiusX="10" RadiusY="10" />
+                            </Image.Clip>
+                        </Image>
+                    </Border>
+                </HorizontalStackLayout>
+                <Border StrokeShape="RoundRectangle 10"
+                        StrokeThickness="0"
+                        HeightRequest="20" WidthRequest="20"
+                        Background="{StaticResource Primary}"
+                        Margin="-6,0,0,0"
+                        IsVisible="{Binding HasExtraSpeakers}">
+                    <Label Text="{Binding ExtraSpeakersText}"
+                           FontSize="11" FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center" />
+                </Border>
+                <Label Text="{Binding SpeakerNames}" FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                       LineBreakMode="TailTruncation" MaxLines="1"
+                       MaximumWidthRequest="150"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </Border>
+</ContentView>
