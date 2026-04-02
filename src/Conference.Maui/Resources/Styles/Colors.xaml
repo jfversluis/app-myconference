@@ -67,7 +67,7 @@
     <Color x:Key="WarningText">#BF360C</Color>
     <Color x:Key="WarningTextDark">#FFB74D</Color>
     <Color x:Key="ErrorRed">#D32F2F</Color>
-    <Color x:Key="ConflictOrange">#C56200</Color>
+    <Color x:Key="ConflictOrange">#B05200</Color>
     <Color x:Key="OnboardingBgLight">#F3E5F5</Color>
     <Color x:Key="OnboardingBgDark">#2D1B33</Color>
 
@@ -91,7 +91,7 @@
     <Color x:Key="Gray200">#8E95A2</Color>
     <Color x:Key="Gray300">#8B919E</Color>
     <Color x:Key="Gray400">#9CA3AF</Color>
-    <Color x:Key="Gray500">#6B7280</Color>
+    <Color x:Key="Gray500">#656C7A</Color>
     <Color x:Key="Gray600">#5C6778</Color>
     <Color x:Key="Gray700">#374151</Color>
     <Color x:Key="Gray800">#1F2937</Color>

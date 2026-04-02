@@ -614,7 +614,8 @@
                         SemanticProperties.Hint="Double tap to undo"
                         HorizontalOptions="Center" VerticalOptions="Center"
                         Opacity="{Binding ShowUndo, Converter={toolkit:BoolToObjectConverter TrueObject=1, FalseObject=0.3}}"
-                        InputTransparent="{Binding ShowUndo, Converter={toolkit:InvertedBoolConverter}}">
+                        InputTransparent="{Binding ShowUndo, Converter={toolkit:InvertedBoolConverter}}"
+                        IsVisible="{Binding ShowUndo}">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnQuickPickUndoTapped" />
                     </Border.GestureRecognizers>

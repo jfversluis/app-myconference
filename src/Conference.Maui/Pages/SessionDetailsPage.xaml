@@ -215,6 +215,14 @@
                                 VerticalOptions="Fill"
                                 SemanticProperties.Description="Toggle favorite"
                                 SemanticProperties.Hint="Double tap to add or remove from favorites">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Session.IsFavorite}" Value="True">
+                                    <Setter Property="SemanticProperties.Description" Value="Favorited" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Border" Binding="{Binding Session.IsFavorite}" Value="False">
+                                    <Setter Property="SemanticProperties.Description" Value="Not favorited" />
+                                </DataTrigger>
+                            </Border.Triggers>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ToggleFavoriteCommand}" />
                             </Border.GestureRecognizers>
@@ -237,6 +245,14 @@
                                 IsVisible="{Binding ShowReminderToggle}"
                                 SemanticProperties.Description="Toggle reminder"
                                 SemanticProperties.Hint="Double tap to enable or disable reminder">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsReminderActive}" Value="True">
+                                    <Setter Property="SemanticProperties.Description" Value="Reminder set" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsReminderActive}" Value="False">
+                                    <Setter Property="SemanticProperties.Description" Value="No reminder" />
+                                </DataTrigger>
+                            </Border.Triggers>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ToggleReminderCommand}" />
                             </Border.GestureRecognizers>
@@ -312,6 +328,7 @@
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 12"
                                             Padding="16"
+                                            SemanticProperties.Description="{Binding AccessibleDescription}"
                                             SemanticProperties.Hint="Double tap for speaker details">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnSpeakerTapped" />

@@ -278,7 +278,8 @@
                        mi:MauiIcon.Value="{mi:Fluent Icon=CheckmarkCircle24, IconSize=40, IconColor={StaticResource Primary}}" />
                 <Label Text="Done" FontSize="24" FontAttributes="Bold"
                        HorizontalTextAlignment="Center"
-                       Margin="0,2,0,0" />
+                       Margin="0,2,0,0"
+                       SemanticProperties.HeadingLevel="Level1" />
                 <Label HorizontalTextAlignment="Center" FontSize="14"
                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        LineBreakMode="WordWrap" Margin="0,2,0,16">
@@ -389,6 +390,7 @@
                     Margin="20,0"
                     Opacity="{Binding ShowUndo, Converter={toolkit:BoolToObjectConverter TrueObject=1, FalseObject=0}}"
                     InputTransparent="{Binding ShowUndo, Converter={toolkit:InvertedBoolConverter}}"
+                    IsVisible="{Binding ShowUndo}"
                     SemanticProperties.Description="Undo last swipe">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnUndoTapped" />

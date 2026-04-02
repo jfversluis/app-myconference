@@ -61,7 +61,7 @@
                        VerticalOptions="Center"
                        BackgroundColor="Transparent"
                        SemanticProperties.Description="Search sessions"
-                       PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}">
+                       PlaceholderColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}">
                     <Entry.Behaviors>
                         <toolkit:UserStoppedTypingBehavior
                             BindingContext="{Binding Path=BindingContext, Source={x:Reference SessionSearchEntry}, x:DataType=Entry}"
@@ -111,7 +111,7 @@
                         <Grid Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
                               Padding="12,8">
                             <Label Text="{Binding TimeDisplay}"
-                                   FontSize="13"
+                                   FontSize="14"
                                    FontAttributes="Bold"
                                    SemanticProperties.HeadingLevel="Level2"
                                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource DarkPrimary}}" />

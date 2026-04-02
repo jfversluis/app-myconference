@@ -37,7 +37,7 @@
                        VerticalOptions="Center"
                        BackgroundColor="Transparent"
                        SemanticProperties.Description="Search speakers"
-                       PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}">
+                       PlaceholderColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}">
                     <Entry.Behaviors>
                         <toolkit:UserStoppedTypingBehavior
                             BindingContext="{Binding Path=BindingContext, Source={x:Reference SpeakerSearchEntry}, x:DataType=Entry}"

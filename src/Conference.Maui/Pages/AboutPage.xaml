@@ -28,7 +28,8 @@
                        FontSize="26"
                        FontAttributes="Bold"
                        TextColor="White"
-                       HorizontalTextAlignment="Center" />
+                       HorizontalTextAlignment="Center"
+                       SemanticProperties.HeadingLevel="Level1" />
                 <Label Grid.Row="1"
                        Text="{Binding EventDateRange}"
                        FontSize="15"

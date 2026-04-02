@@ -180,6 +180,7 @@
                 <Button Grid.Column="1"
                         Clicked="OnUndoClicked"
                         SemanticProperties.Description="Undo"
+                        SemanticProperties.Hint="Double tap to undo last action"
                         mi:MauiIcon.Value="{mi:Fluent Icon=ArrowUndo24, IconColor={StaticResource Primary}}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
                         CornerRadius="20"
