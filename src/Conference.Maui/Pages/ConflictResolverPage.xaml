@@ -35,7 +35,9 @@
                     FontSize="20"
                     Padding="8,4"
                     MinimumWidthRequest="48" MinimumHeightRequest="48"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center"
+                    SemanticProperties.Description="Close"
+                    SemanticProperties.Hint="Double tap to close conflict resolver" />
         </Grid>
 
         <!-- Loading indicator -->

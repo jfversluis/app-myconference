@@ -64,10 +64,10 @@
     <Color x:Key="WarningLight">#FFF3E0</Color>
     <Color x:Key="WarningLightSubtle">#FFF8E1</Color>
     <Color x:Key="WarningDark">#3E2723</Color>
-    <Color x:Key="WarningText">#E65100</Color>
+    <Color x:Key="WarningText">#BF360C</Color>
     <Color x:Key="WarningTextDark">#FFB74D</Color>
     <Color x:Key="ErrorRed">#E53935</Color>
-    <Color x:Key="ConflictOrange">#F57C00</Color>
+    <Color x:Key="ConflictOrange">#C56200</Color>
     <Color x:Key="OnboardingBgLight">#F3E5F5</Color>
     <Color x:Key="OnboardingBgDark">#2D1B33</Color>
 
@@ -89,10 +89,10 @@
     <Color x:Key="Gray50">#F9FAFB</Color>
     <Color x:Key="Gray100">#F3F4F6</Color>
     <Color x:Key="Gray200">#E5E7EB</Color>
-    <Color x:Key="Gray300">#D1D5DB</Color>
+    <Color x:Key="Gray300">#8B919E</Color>
     <Color x:Key="Gray400">#9CA3AF</Color>
     <Color x:Key="Gray500">#6B7280</Color>
-    <Color x:Key="Gray600">#4B5563</Color>
+    <Color x:Key="Gray600">#5C6778</Color>
     <Color x:Key="Gray700">#374151</Color>
     <Color x:Key="Gray800">#1F2937</Color>
     <Color x:Key="Gray900">#111827</Color>

@@ -36,6 +36,7 @@
                        FontSize="16"
                        VerticalOptions="Center"
                        BackgroundColor="Transparent"
+                       SemanticProperties.Description="Search speakers"
                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}">
                     <Entry.Behaviors>
                         <toolkit:UserStoppedTypingBehavior

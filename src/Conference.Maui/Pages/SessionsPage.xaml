@@ -17,6 +17,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding NavigateToQuickPickCommand}" Order="Primary"
+                     Text="Quick Pick"
                      mi:MauiIcon.Value="{mi:Fluent Icon=Flash28}" />
     </ContentPage.ToolbarItems>
 
@@ -59,6 +60,7 @@
                        FontSize="16"
                        VerticalOptions="Center"
                        BackgroundColor="Transparent"
+                       SemanticProperties.Description="Search sessions"
                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}">
                     <Entry.Behaviors>
                         <toolkit:UserStoppedTypingBehavior

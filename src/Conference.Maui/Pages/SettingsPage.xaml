@@ -42,7 +42,9 @@
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                         </VerticalStackLayout>
                         <Switch Grid.Column="2" IsToggled="{Binding RemindersEnabled}" VerticalOptions="Center"
-                                OnColor="{StaticResource Primary}" />
+                                OnColor="{StaticResource Primary}"
+                                SemanticProperties.Description="Session Reminders"
+                                SemanticProperties.Hint="Double tap to toggle session reminder notifications" />
                     </Grid>
                 </Border>
 
@@ -151,7 +153,9 @@
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                         </VerticalStackLayout>
                         <Switch Grid.Column="2" IsToggled="{Binding HapticFeedbackEnabled}" VerticalOptions="Center"
-                                OnColor="{StaticResource Primary}" />
+                                OnColor="{StaticResource Primary}"
+                                SemanticProperties.Description="Haptic Feedback"
+                                SemanticProperties.Hint="Double tap to toggle vibration on swipes and actions" />
                     </Grid>
                 </Border>
 

@@ -365,7 +365,8 @@
                             <Border Margin="0,0,8,10"
                                     StrokeShape="RoundRectangle 20"
                                     StrokeThickness="1.5"
-                                    Padding="16,10"
+                                    Padding="16,12"
+                                    MinimumHeightRequest="44"
                                     SemanticProperties.Hint="Double tap to toggle selection"
                                     BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
                                 <Border.Triggers>

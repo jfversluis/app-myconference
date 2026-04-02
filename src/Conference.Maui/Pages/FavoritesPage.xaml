@@ -34,6 +34,7 @@
                                SemanticProperties.HeadingLevel="Level2"
                                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                         <HorizontalStackLayout Grid.Column="1" Spacing="4" IsVisible="{Binding HasConflict}" VerticalOptions="Center"
+                                                   MinimumHeightRequest="44"
                                                    SemanticProperties.Description="Resolve schedule conflicts"
                                                    SemanticProperties.Hint="Double tap to resolve">
                             <HorizontalStackLayout.GestureRecognizers>
