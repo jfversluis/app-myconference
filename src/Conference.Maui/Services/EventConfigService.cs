@@ -21,24 +21,34 @@ public sealed class EventConfigService : IEventConfigService
 
     /// <summary>
     /// Loads config synchronously — safe to call from CreateWindow on the main thread.
-    /// Uses synchronous file I/O to avoid deadlocking the iOS synchronization context.
+    /// On iOS/Mac Catalyst, reads directly from the bundle directory.
+    /// On Android, MauiAsset files live inside the APK and must be read via Assets.Open().
     /// </summary>
     public void Initialize()
     {
         try
         {
-            var path = Path.Combine(AppContext.BaseDirectory, "event_config.json");
+            string? json = null;
 
+#if ANDROID
+            using var stream = Android.App.Application.Context.Assets!.Open("event_config.json");
+            using var reader = new StreamReader(stream);
+            json = reader.ReadToEnd();
+#else
+            var path = Path.Combine(AppContext.BaseDirectory, "event_config.json");
             if (File.Exists(path))
+                json = File.ReadAllText(path);
+#endif
+
+            if (json is not null)
             {
-                var json = File.ReadAllText(path);
                 var config = JsonSerializer.Deserialize<EventConfig>(json, s_jsonOptions);
                 if (config is not null)
                     Config = config;
             }
             else
             {
-                Debug.WriteLine("[EventConfigService] event_config.json not found at bundle path, using defaults");
+                Debug.WriteLine("[EventConfigService] event_config.json not found, using defaults");
             }
         }
         catch (Exception ex)

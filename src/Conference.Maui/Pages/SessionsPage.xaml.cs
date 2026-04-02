@@ -53,10 +53,15 @@ public partial class SessionsPage : ContentPage
     {
         base.OnAppearing();
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
-        
+
         if (_viewModel.Days.Count == 0)
         {
             await _viewModel.LoadDataCommand.ExecuteAsync(null);
+        }
+        else if (DaySwitcher.Items.Count == 0)
+        {
+            // Data loaded while we were off-screen — heal the missed PropertyChanged
+            PopulateDayTabs();
         }
     }
 
