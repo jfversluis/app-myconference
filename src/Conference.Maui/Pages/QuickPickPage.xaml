@@ -99,7 +99,7 @@
                     <Grid>
                         <!-- Main Card -->
                         <Border StrokeShape="RoundRectangle 16"
-                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray800}}"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                                 StrokeThickness="0.5"
                                 Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                 Padding="0"
@@ -213,7 +213,9 @@
                                         StrokeShape="RoundRectangle 0,0,16,16"
                                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray800}}"
                                         Padding="24,16,24,16"
-                                        Margin="0,14,0,0">
+                                        Margin="0,14,0,0"
+                                        SemanticProperties.Description="Session Details"
+                                        SemanticProperties.Hint="Double tap for full session details">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Tapped="OnDetailsTapped" />
                                     </Border.GestureRecognizers>

@@ -17,7 +17,8 @@
         <!-- Header -->
         <Grid Grid.Row="0" Padding="20,12,20,12" ColumnDefinitions="*,Auto">
             <VerticalStackLayout Spacing="2">
-                <Label Text="Resolve Conflicts" FontSize="22" FontAttributes="Bold" />
+                <Label Text="Resolve Conflicts" FontSize="22" FontAttributes="Bold"
+                       SemanticProperties.HeadingLevel="Level1" />
                 <Label FontSize="13"
                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}">
                     <Label.FormattedText>
@@ -115,6 +116,8 @@
                                         <Border StrokeThickness="0"
                                                 BackgroundColor="Transparent"
                                                 Padding="16,14"
+                                                MinimumHeightRequest="44"
+                                                SemanticProperties.Description="{Binding AccessibleDescription}"
                                                 SemanticProperties.Hint="Double tap to keep this session">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer Tapped="OnKeepSessionTapped"
@@ -150,7 +153,8 @@
                                                         Padding="14,8"
                                                         VerticalOptions="Center"
                                                         Clicked="OnKeepButtonClicked"
-                                                        CommandParameter="{Binding}" />
+                                                        CommandParameter="{Binding}"
+                                                        SemanticProperties.Hint="Double tap to keep this session and remove others" />
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

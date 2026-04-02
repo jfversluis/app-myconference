@@ -210,6 +210,9 @@ public partial class ConflictResolverViewModel : ObservableObject
                 session.Title, group.Sessions.Count - 1);
 
             SemanticScreenReader.Announce($"Kept {session.Title}");
+
+            if (AllResolved)
+                SemanticScreenReader.Announce("All conflicts resolved. Your agenda is now conflict-free.");
         }
         catch (Exception ex)
         {

@@ -114,7 +114,7 @@
                                    FontSize="13"
                                    FontAttributes="Bold"
                                    SemanticProperties.HeadingLevel="Level2"
-                                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource DarkPrimary}}" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.GroupHeaderTemplate>
@@ -274,6 +274,7 @@
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="32" Spacing="12"
                                      IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
                     <Image HeightRequest="48" WidthRequest="48" HorizontalOptions="Center"
+                           SemanticProperties.Description=""
                            mi:MauiIcon.Value="{mi:Fluent Icon=CalendarLtr24, IconSize=48, IconColor={AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}}" />
                     <Label Text="No sessions found"
                            FontSize="18"

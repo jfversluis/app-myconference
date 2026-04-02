@@ -123,6 +123,7 @@
                                             StrokeShape="RoundRectangle 12"
                                             Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                                             Padding="16"
+                                            SemanticProperties.Description="{Binding AccessibleDescription}"
                                             SemanticProperties.Hint="Double tap for session details">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnSessionTapped" />

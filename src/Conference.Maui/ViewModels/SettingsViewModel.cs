@@ -160,14 +160,22 @@ public partial class SettingsViewModel : BaseViewModel
     private void SetTheme(string? indexStr)
     {
         if (int.TryParse(indexStr, out var index))
+        {
             SelectedThemeIndex = index;
+            var names = new[] { "System", "Light", "Dark" };
+            SemanticScreenReader.Announce($"Theme set to {names[index]}");
+        }
     }
 
     [RelayCommand]
     private void SetLeadTime(string? indexStr)
     {
         if (int.TryParse(indexStr, out var index))
+        {
             SelectedLeadTimeIndex = index;
+            var times = new[] { "5 minutes", "10 minutes", "15 minutes", "30 minutes" };
+            SemanticScreenReader.Announce($"Reminder lead time set to {times[index]}");
+        }
     }
 
     [RelayCommand]

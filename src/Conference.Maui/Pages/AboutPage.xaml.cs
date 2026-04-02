@@ -64,6 +64,7 @@ public partial class AboutPage : ContentPage
                 WidthRequest = 110,
                 HorizontalOptions = LayoutOptions.Center
             };
+            SemanticProperties.SetDescription(image, "");
 
             var nameLabel = new Label
             {
@@ -103,8 +104,11 @@ public partial class AboutPage : ContentPage
                 Colors.White,
                 (Color)Application.Current!.Resources["Gray900"]);
 
+            SemanticProperties.SetDescription(border, $"Sponsor: {sponsor.Name}");
+
             if (!string.IsNullOrEmpty(sponsor.Website))
             {
+                SemanticProperties.SetHint(border, "Double tap to visit sponsor website");
                 var tapGesture = new TapGestureRecognizer();
                 tapGesture.Tapped += async (s, e) =>
                 {

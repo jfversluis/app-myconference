@@ -38,7 +38,8 @@
                            Text="{Binding EventHeaderTitle}"
                            FontSize="22"
                            FontAttributes="Bold"
-                           TextColor="White" />
+                           TextColor="White"
+                           SemanticProperties.HeadingLevel="Level1" />
                     <!-- Stats Row -->
                     <HorizontalStackLayout Grid.Row="2" Spacing="16" Margin="0,4,0,0">
                         <HorizontalStackLayout Spacing="4">

@@ -69,7 +69,13 @@
                                         Command="{Binding SetLeadTimeCommand}"
                                         CommandParameter="0"
                                         SemanticProperties.Description="5 minutes before"
-                                        SemanticProperties.Hint="Double tap to set reminder lead time" />
+                                        SemanticProperties.Hint="Double tap to set reminder lead time">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding SelectedLeadTimeIndex}" Value="0">
+                                            <Setter Property="SemanticProperties.Description" Value="5 minutes before, currently selected" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
                                 <Button Grid.Column="1" Text="10 min"
                                         FontSize="12" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=1}"
@@ -77,7 +83,13 @@
                                         Command="{Binding SetLeadTimeCommand}"
                                         CommandParameter="1"
                                         SemanticProperties.Description="10 minutes before"
-                                        SemanticProperties.Hint="Double tap to set reminder lead time" />
+                                        SemanticProperties.Hint="Double tap to set reminder lead time">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding SelectedLeadTimeIndex}" Value="1">
+                                            <Setter Property="SemanticProperties.Description" Value="10 minutes before, currently selected" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
                                 <Button Grid.Column="2" Text="15 min"
                                         FontSize="12" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=2}"
@@ -85,7 +97,13 @@
                                         Command="{Binding SetLeadTimeCommand}"
                                         CommandParameter="2"
                                         SemanticProperties.Description="15 minutes before"
-                                        SemanticProperties.Hint="Double tap to set reminder lead time" />
+                                        SemanticProperties.Hint="Double tap to set reminder lead time">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding SelectedLeadTimeIndex}" Value="2">
+                                            <Setter Property="SemanticProperties.Description" Value="15 minutes before, currently selected" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
                                 <Button Grid.Column="3" Text="30 min"
                                         FontSize="12" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedLeadTimeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=3}"
@@ -93,7 +111,13 @@
                                         Command="{Binding SetLeadTimeCommand}"
                                         CommandParameter="3"
                                         SemanticProperties.Description="30 minutes before"
-                                        SemanticProperties.Hint="Double tap to set reminder lead time" />
+                                        SemanticProperties.Hint="Double tap to set reminder lead time">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding SelectedLeadTimeIndex}" Value="3">
+                                            <Setter Property="SemanticProperties.Description" Value="30 minutes before, currently selected" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
                             </Grid>
                         </VerticalStackLayout>
                     </Grid>
@@ -129,7 +153,13 @@
                                         Command="{Binding SetThemeCommand}"
                                         CommandParameter="0"
                                         SemanticProperties.Description="System theme"
-                                        SemanticProperties.Hint="Double tap to use system appearance" />
+                                        SemanticProperties.Hint="Double tap to use system appearance">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding SelectedThemeIndex}" Value="0">
+                                            <Setter Property="SemanticProperties.Description" Value="System theme, currently selected" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
                                 <Button Grid.Column="1" Text="Light"
                                         FontSize="13" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=1}"
@@ -137,7 +167,13 @@
                                         Command="{Binding SetThemeCommand}"
                                         CommandParameter="1"
                                         SemanticProperties.Description="Light theme"
-                                        SemanticProperties.Hint="Double tap to use light appearance" />
+                                        SemanticProperties.Hint="Double tap to use light appearance">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding SelectedThemeIndex}" Value="1">
+                                            <Setter Property="SemanticProperties.Description" Value="Light theme, currently selected" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
                                 <Button Grid.Column="2" Text="Dark"
                                         FontSize="13" CornerRadius="10" HeightRequest="44"
                                         BackgroundColor="{Binding SelectedThemeIndex, Converter={StaticResource IndexToColorConverter}, ConverterParameter=2}"
@@ -145,7 +181,13 @@
                                         Command="{Binding SetThemeCommand}"
                                         CommandParameter="2"
                                         SemanticProperties.Description="Dark theme"
-                                        SemanticProperties.Hint="Double tap to use dark appearance" />
+                                        SemanticProperties.Hint="Double tap to use dark appearance">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding SelectedThemeIndex}" Value="2">
+                                            <Setter Property="SemanticProperties.Description" Value="Dark theme, currently selected" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
                             </Grid>
                         </VerticalStackLayout>
                     </Grid>

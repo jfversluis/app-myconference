@@ -32,7 +32,7 @@
                                FontSize="13"
                                FontAttributes="Bold"
                                SemanticProperties.HeadingLevel="Level2"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource DarkPrimary}}" />
                         <HorizontalStackLayout Grid.Column="1" Spacing="4" IsVisible="{Binding HasConflict}" VerticalOptions="Center"
                                                    MinimumHeightRequest="44"
                                                    SemanticProperties.Description="Resolve schedule conflicts"
