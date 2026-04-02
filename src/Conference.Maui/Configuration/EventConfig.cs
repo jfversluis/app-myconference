@@ -26,6 +26,9 @@ public sealed class EventConfig
     [JsonPropertyName("wifi")]
     public WifiConfig Wifi { get; set; } = new();
 
+    [JsonPropertyName("branding")]
+    public BrandingConfig Branding { get; set; } = new();
+
     [JsonPropertyName("features")]
     public FeatureFlags Features { get; set; } = new();
 }
@@ -133,4 +136,34 @@ public sealed class FeatureFlags
 
     [JsonPropertyName("enableHapticFeedback")]
     public bool EnableHapticFeedback { get; set; } = true;
+}
+
+public sealed class BrandingConfig
+{
+    [JsonPropertyName("primaryColor")]
+    public string? PrimaryColor { get; set; }
+
+    [JsonPropertyName("primaryDark")]
+    public string? PrimaryDark { get; set; }
+
+    [JsonPropertyName("primaryLight")]
+    public string? PrimaryLight { get; set; }
+
+    [JsonPropertyName("primaryDeep")]
+    public string? PrimaryDeep { get; set; }
+
+    [JsonPropertyName("secondaryColor")]
+    public string? SecondaryColor { get; set; }
+
+    [JsonPropertyName("accentColor")]
+    public string? AccentColor { get; set; }
+
+    [JsonPropertyName("heroGradientStart")]
+    public string? HeroGradientStart { get; set; }
+
+    [JsonPropertyName("heroGradientMiddle")]
+    public string? HeroGradientMiddle { get; set; }
+
+    [JsonPropertyName("heroGradientEnd")]
+    public string? HeroGradientEnd { get; set; }
 }

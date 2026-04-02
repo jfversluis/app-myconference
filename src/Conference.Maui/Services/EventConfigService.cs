@@ -32,4 +32,74 @@ public sealed class EventConfigService : IEventConfigService
             Debug.WriteLine($"[EventConfigService] Failed to load event_config.json: {ex.Message}");
         }
     }
+
+    /// <summary>
+    /// Applies branding colors from config to the app's resource dictionary.
+    /// Must be called after InitializeAsync and before any pages are created.
+    /// </summary>
+    public void ApplyBranding(ResourceDictionary resources)
+    {
+        var branding = Config.Branding;
+        if (branding is null) return;
+
+        TrySetColor(resources, "Primary", branding.PrimaryColor);
+        TrySetColor(resources, "PrimaryDark", branding.PrimaryDark);
+        TrySetColor(resources, "PrimaryLight", branding.PrimaryLight);
+        TrySetColor(resources, "PrimaryDeep", branding.PrimaryDeep);
+        TrySetColor(resources, "LightPrimary", branding.PrimaryColor);
+        TrySetColor(resources, "Secondary", branding.SecondaryColor);
+        TrySetColor(resources, "SecondaryDark", branding.SecondaryColor);
+        TrySetColor(resources, "Accent", branding.AccentColor);
+
+        // Auto-generate a lighter dark-mode primary from the brand color
+        if (branding.PrimaryColor is not null)
+        {
+            var primaryColor = TryParseColor(branding.PrimaryColor);
+            if (primaryColor is not null)
+            {
+                var darkPrimary = primaryColor.WithLuminosity(
+                    Math.Min(primaryColor.GetLuminosity() + 0.15f, 0.85f));
+                resources["DarkPrimary"] = darkPrimary;
+            }
+        }
+
+        // Update hero gradient if custom colors specified
+        if (branding.HeroGradientStart is not null ||
+            branding.HeroGradientMiddle is not null ||
+            branding.HeroGradientEnd is not null)
+        {
+            var gradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(1, 1),
+                GradientStops =
+                {
+                    new GradientStop(TryParseColor(branding.HeroGradientStart) ?? Color.FromArgb("#005A9E"), 0.0f),
+                    new GradientStop(TryParseColor(branding.HeroGradientMiddle) ?? Color.FromArgb("#0078D4"), 0.5f),
+                    new GradientStop(TryParseColor(branding.HeroGradientEnd) ?? Color.FromArgb("#1E70C0"), 1.0f)
+                }
+            };
+            resources["HeroGradient"] = gradient;
+        }
+    }
+
+    private static void TrySetColor(ResourceDictionary resources, string key, string? hex)
+    {
+        if (string.IsNullOrEmpty(hex)) return;
+        try
+        {
+            resources[key] = Color.FromArgb(hex);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[EventConfigService] Invalid color '{hex}' for {key}: {ex.Message}");
+        }
+    }
+
+    private static Color? TryParseColor(string? hex)
+    {
+        if (string.IsNullOrEmpty(hex)) return null;
+        try { return Color.FromArgb(hex); }
+        catch { return null; }
+    }
 }

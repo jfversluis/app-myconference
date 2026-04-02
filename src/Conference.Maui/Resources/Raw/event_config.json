@@ -31,6 +31,17 @@
     "networkName": "NDC-CPH-2026",
     "password": "ndccopenhagen"
   },
+  "branding": {
+    "primaryColor": "#0078D4",
+    "primaryDark": "#106EBE",
+    "primaryLight": "#40E0FF",
+    "primaryDeep": "#005A9E",
+    "secondaryColor": "#00BCF2",
+    "accentColor": "#FF6900",
+    "heroGradientStart": "#005A9E",
+    "heroGradientMiddle": "#0078D4",
+    "heroGradientEnd": "#1E70C0"
+  },
   "features": {
     "enableQuickPick": true,
     "enableOnboarding": true,

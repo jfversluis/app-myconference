@@ -29,16 +29,19 @@ public partial class App : Application
     {
         var sp = IPlatformApplication.Current?.Services;
 
-        // Initialize event config and preload conference data in background
+        // Load event config synchronously — branding must be applied before pages render
+        var configService = sp?.GetService<IEventConfigService>();
+        if (configService is Services.EventConfigService ecs)
+        {
+            ecs.InitializeAsync().GetAwaiter().GetResult();
+            ecs.ApplyBranding(Resources);
+        }
+
+        // Preload conference data in background (non-blocking)
         _ = Task.Run(async () =>
         {
             try
             {
-                // Load event_config.json first — other services depend on it
-                var configService = sp?.GetService<IEventConfigService>();
-                if (configService != null)
-                    await configService.InitializeAsync();
-
                 var dataService = sp?.GetService<IConferenceDataService>();
                 if (dataService != null)
                     await dataService.GetAllDataAsync();
