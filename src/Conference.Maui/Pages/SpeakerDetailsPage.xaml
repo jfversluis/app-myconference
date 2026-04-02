@@ -95,7 +95,7 @@
                         <Label Text="ABOUT"
                                FontSize="11"
                                FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                CharacterSpacing="0.5"
                                SemanticProperties.HeadingLevel="Level2" />
                         <Label Text="{Binding Speaker.Bio}"
@@ -110,7 +110,7 @@
                         <Label Text="SESSIONS"
                                FontSize="11"
                                FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                CharacterSpacing="0.5"
                                SemanticProperties.HeadingLevel="Level2" />
 

@@ -72,14 +72,14 @@
                                     Background="{StaticResource ErrorRed}"
                                     Padding="8,3"
                                     VerticalOptions="Center">
-                                <Label Text="LIVE" FontSize="10" FontAttributes="Bold"
+                                <Label Text="LIVE" FontSize="11" FontAttributes="Bold"
                                        TextColor="White" CharacterSpacing="0.5" />
                             </Border>
                             <Label Grid.Column="1"
                                    Text="HAPPENING NOW"
                                    FontSize="11"
                                    FontAttributes="Bold"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                    CharacterSpacing="0.5"
                                    VerticalOptions="Center"
                                    SemanticProperties.HeadingLevel="Level2" />
@@ -181,7 +181,7 @@
                                                         Margin="-6,0,0,0"
                                                         IsVisible="{Binding HasExtraSpeakers}">
                                                     <Label Text="{Binding ExtraSpeakersText}"
-                                                           FontSize="9" FontAttributes="Bold"
+                                                           FontSize="11" FontAttributes="Bold"
                                                            TextColor="White"
                                                            HorizontalTextAlignment="Center"
                                                            VerticalTextAlignment="Center" />
@@ -205,7 +205,7 @@
                                    Text="UP NEXT"
                                    FontSize="11"
                                    FontAttributes="Bold"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                    CharacterSpacing="0.5"
                                    VerticalOptions="Center"
                                    SemanticProperties.HeadingLevel="Level2" />
@@ -221,7 +221,7 @@
                                     Padding="8,3"
                                     VerticalOptions="Center"
                                     IsVisible="{Binding HasCountdown}">
-                                <Label Text="{Binding CountdownText}" FontSize="10" FontAttributes="Bold"
+                                <Label Text="{Binding CountdownText}" FontSize="11" FontAttributes="Bold"
                                        TextColor="White" />
                             </Border>
                         </Grid>
@@ -322,7 +322,7 @@
                                                             Margin="-6,0,0,0"
                                                             IsVisible="{Binding HasExtraSpeakers}">
                                                         <Label Text="{Binding ExtraSpeakersText}"
-                                                               FontSize="9" FontAttributes="Bold"
+                                                               FontSize="11" FontAttributes="Bold"
                                                                TextColor="White"
                                                                HorizontalTextAlignment="Center"
                                                                VerticalTextAlignment="Center" />
@@ -400,7 +400,7 @@
                         <Label Text="YOUR AGENDA TODAY"
                                FontSize="11"
                                FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                CharacterSpacing="0.5"
                                SemanticProperties.HeadingLevel="Level2" />
 
@@ -453,7 +453,7 @@
                                                                SemanticProperties.Description=""
                                                                mi:MauiIcon.Value="{mi:Fluent Icon=Alert16, IconColor={StaticResource Primary}}" />
                                                         <Label Text="{Binding StartsAt.LocalDateTime, StringFormat='{0:h:mm tt}'}"
-                                                               FontSize="10" FontAttributes="Bold"
+                                                               FontSize="11" FontAttributes="Bold"
                                                                TextColor="{StaticResource Primary}"
                                                                VerticalOptions="Center" />
                                                     </HorizontalStackLayout>
@@ -491,7 +491,7 @@
                                FontSize="14"
                                HorizontalTextAlignment="Center"
                                LineBreakMode="WordWrap"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                         <Button Text="Browse Sessions"
                                 Command="{Binding NavigateToSessionsCommand}"
                                 BackgroundColor="{StaticResource Primary}"
@@ -520,7 +520,7 @@
                         <Label Text="Check your internet connection and try again."
                                FontSize="14"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                         <Button Text="Retry"
                                 Command="{Binding RetryLoadCommand}"
                                 BackgroundColor="{StaticResource Primary}"

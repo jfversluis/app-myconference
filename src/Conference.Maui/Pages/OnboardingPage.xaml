@@ -400,7 +400,7 @@
                                                 <Setter Property="TextColor" Value="#CCFFFFFF" />
                                             </DataTrigger>
                                             <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="False">
-                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                                             </DataTrigger>
                                         </Label.Triggers>
                                     </Label>
@@ -493,7 +493,7 @@
                                                        TextColor="{AppThemeBinding Light={StaticResource Gray700}, Dark={StaticResource Gray300}}"
                                                        LineBreakMode="TailTruncation" MaxLines="1" />
                                                 <Label Text="{Binding Speaker1.TagLine}" FontSize="11"
-                                                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                        LineBreakMode="TailTruncation" MaxLines="1"
                                                        IsVisible="{Binding Speaker1.TagLine, Converter={toolkit:IsNotNullConverter}}" />
                                             </VerticalStackLayout>
@@ -508,7 +508,7 @@
                                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                    VerticalOptions="Center" />
                                             <Label Text="·" FontSize="13"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                    IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                             <Image Source="location_regular.png" HeightRequest="14" WidthRequest="14"
                                                    SemanticProperties.Description=""

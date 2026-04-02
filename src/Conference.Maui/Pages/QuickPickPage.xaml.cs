@@ -1,3 +1,4 @@
+using Conference.Maui.Helpers;
 using Conference.Maui.Models;
 using Conference.Maui.ViewModels;
 using Plugin.Maui.SwipeCardView.Core;
@@ -13,6 +14,9 @@ public partial class QuickPickPage : ContentPage
     {
         InitializeComponent();
         BindingContext = _viewModel = viewModel;
+
+        if (AccessibilityHelper.ShouldReduceMotion)
+            SwipeCardView.AnimationLength = 0;
 
         SwipeCardView.Swiped += OnSwiped;
         SwipeCardView.Dragging += OnDragging;

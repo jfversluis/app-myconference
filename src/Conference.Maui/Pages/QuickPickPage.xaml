@@ -61,7 +61,7 @@
                                HeightRequest="36" WidthRequest="36" />
             <Label Text="Loading sessions…"
                    FontSize="14"
-                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                    HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
 
@@ -169,13 +169,13 @@
                                            TextColor="{StaticResource Primary}"
                                            VerticalOptions="Center" />
                                     <Label Text="·" FontSize="12"
-                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                            VerticalOptions="Center" />
                                     <Label Text="{Binding TimeDisplay}" FontSize="12"
                                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                            VerticalOptions="Center" />
                                     <Label Text="·" FontSize="12"
-                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                            VerticalOptions="Center"
                                            IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                     <Label Text="{Binding RoomName}" FontSize="12"
@@ -183,10 +183,10 @@
                                            VerticalOptions="Center" LineBreakMode="TailTruncation"
                                            IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                     <Label Text="·" FontSize="12"
-                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                            VerticalOptions="Center" />
                                     <Label Text="{Binding DurationDisplay}" FontSize="12"
-                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                            VerticalOptions="Center" />
                                 </HorizontalStackLayout>
 
@@ -329,13 +329,13 @@
                     <Button Text="Start Over"
                             Command="{Binding StartOverCommand}"
                             BackgroundColor="Transparent"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                             FontSize="13"
                             Padding="12,8" />
                     <Button Text="Close"
                             Command="{Binding CloseCommand}"
                             BackgroundColor="Transparent"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                             FontSize="13"
                             Padding="12,8" />
                 </HorizontalStackLayout>
@@ -389,7 +389,7 @@
                     <TapGestureRecognizer Tapped="OnUndoTapped" />
                 </Border.GestureRecognizers>
                 <Label mi:MauiIcon.Value="{mi:Fluent Icon=ArrowUndo24}" FontSize="16"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
             </Border>
 

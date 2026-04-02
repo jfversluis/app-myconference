@@ -6,6 +6,7 @@ using Conference.Maui.Models;
 using Conference.Maui.Pages;
 using Conference.Maui.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Accessibility;
 
 namespace Conference.Maui.ViewModels;
 
@@ -136,6 +137,8 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
         Session.IsFavorite = await _favoritesService.ToggleFavoriteAsync(Session.Id);
         await UpdateReminderStateAsync();
 
+        SemanticScreenReader.Announce(Session.IsFavorite ? "Added to favorites" : "Removed from favorites");
+
         if (HapticService.IsEnabled)
         {
             try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); } catch { }
@@ -149,6 +152,8 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
 
         IsReminderActive = await _reminderService.ToggleSessionReminderAsync(
             Session.Id, Session.Title, Session.RoomName, Session.StartsAt);
+
+        SemanticScreenReader.Announce(IsReminderActive ? "Reminder enabled" : "Reminder disabled");
 
         if (HapticService.IsEnabled)
         {

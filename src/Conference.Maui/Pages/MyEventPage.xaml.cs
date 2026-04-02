@@ -1,3 +1,4 @@
+using Conference.Maui.Helpers;
 using Conference.Maui.Models;
 using Conference.Maui.ViewModels;
 
@@ -93,7 +94,11 @@ public partial class MyEventPage : ContentPage
     private void StartLiveBadgePulse()
     {
         LiveBadge.CancelAnimations();
-        // Gentle back-and-forth pulse: 1.0 → 0.6 → 1.0
+        if (AccessibilityHelper.ShouldReduceMotion)
+        {
+            LiveBadge.Opacity = 1;
+            return;
+        }
         var fadeOut = new Animation(v => LiveBadge.Opacity = v, 1.0, 0.6, Easing.SinInOut);
         var fadeIn = new Animation(v => LiveBadge.Opacity = v, 0.6, 1.0, Easing.SinInOut);
         var pulse = new Animation();

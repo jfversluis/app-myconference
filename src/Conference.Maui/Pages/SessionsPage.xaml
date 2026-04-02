@@ -251,7 +251,7 @@
                                                 Margin="-10,0,0,0"
                                                 IsVisible="{Binding HasMoreSpeakers}">
                                             <Label Text="{Binding MoreSpeakersText}"
-                                                   FontSize="10"
+                                                   FontSize="11"
                                                    FontAttributes="Bold"
                                                    HorizontalOptions="Center"
                                                    VerticalOptions="Center"

@@ -129,12 +129,12 @@
                                                        Margin="0,2,0,0" />
                                                 <HorizontalStackLayout Grid.Row="2" Spacing="6" Margin="0,4,0,0">
                                                     <Label Text="{Binding TimeDisplay}" FontSize="12"
-                                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                                                     <Label Text="·" FontSize="12"
-                                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                            IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                                     <Label Text="{Binding RoomName}" FontSize="12"
-                                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                            IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
                                                 </HorizontalStackLayout>
 
@@ -168,7 +168,7 @@
             <Grid ColumnDefinitions="*,Auto">
                 <Label Text="Tap 'Keep' on the session you want. The others will be removed from your agenda."
                        FontSize="13"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        LineBreakMode="WordWrap"
                        VerticalOptions="Center" />
                 <Button Grid.Column="1"

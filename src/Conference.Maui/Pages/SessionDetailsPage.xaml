@@ -188,7 +188,7 @@
                                     Margin="-12,0,0,0"
                                     IsVisible="{Binding Session.HasMoreSpeakers}">
                                 <Label Text="{Binding Session.MoreSpeakersText}"
-                                       FontSize="10"
+                                       FontSize="11"
                                        FontAttributes="Bold"
                                        TextColor="White"
                                        HorizontalOptions="Center"
@@ -284,7 +284,7 @@
                         <Label Text="ABOUT THIS SESSION"
                                FontSize="11"
                                FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                CharacterSpacing="0.5"
                                SemanticProperties.HeadingLevel="Level2" />
                         <Label Text="{Binding Session.Description}"
@@ -299,7 +299,7 @@
                         <Label Text="SPEAKERS"
                                FontSize="11"
                                FontAttributes="Bold"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                CharacterSpacing="0.5"
                                SemanticProperties.HeadingLevel="Level2" />
 

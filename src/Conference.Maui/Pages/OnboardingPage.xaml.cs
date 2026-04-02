@@ -1,4 +1,6 @@
+using Conference.Maui.Helpers;
 using Conference.Maui.ViewModels;
+using Microsoft.Maui.Accessibility;
 using Plugin.Maui.SwipeCardView.Core;
 
 namespace Conference.Maui.Pages;
@@ -23,6 +25,9 @@ public partial class OnboardingPage : ContentPage
         _speakerImages = [SpeakerImg1, SpeakerImg2, SpeakerImg3, SpeakerImg4, SpeakerImg5,
                           SpeakerImg6, SpeakerImg7, SpeakerImg8, SpeakerImg9, SpeakerImg10,
                           SpeakerImg11, SpeakerImg12, SpeakerImg13, SpeakerImg14, SpeakerImg15, SpeakerImg16];
+
+        if (AccessibilityHelper.ShouldReduceMotion)
+            OnboardingSwipeCards.AnimationLength = 0;
     }
 
     protected override async void OnAppearing()
@@ -85,6 +90,18 @@ public partial class OnboardingPage : ContentPage
 
     private async void AnimateSpeakerPhotos()
     {
+        if (AccessibilityHelper.ShouldReduceMotion)
+        {
+            // Skip entrance animation, just show photos
+            foreach (var circle in _speakerCircles)
+            {
+                if (!circle.IsVisible) continue;
+                circle.Opacity = 1;
+                circle.Scale = 1;
+            }
+            return;
+        }
+
         foreach (var circle in _speakerCircles)
         {
             if (!circle.IsVisible) continue;
@@ -145,6 +162,17 @@ public partial class OnboardingPage : ContentPage
             {
                 UpdateStepVisibility();
                 AnimateStepTransition();
+
+                var stepName = _viewModel.CurrentStep switch
+                {
+                    0 => "Welcome",
+                    1 => "Notifications",
+                    2 => "Interests",
+                    3 => "Quick Pick",
+                    4 => "Done",
+                    _ => "Welcome"
+                };
+                SemanticScreenReader.Announce($"Step {_viewModel.CurrentStep + 1}: {stepName}");
             });
         }
     }
@@ -176,6 +204,13 @@ public partial class OnboardingPage : ContentPage
             4 => DoneStep,
             _ => WelcomeStep
         };
+
+        if (AccessibilityHelper.ShouldReduceMotion)
+        {
+            currentView.Opacity = 1;
+            currentView.TranslationX = 0;
+            return;
+        }
 
         currentView.Opacity = 0;
         currentView.TranslationX = 30;
@@ -255,18 +290,23 @@ public partial class OnboardingPage : ContentPage
     private void OnQuickPickSkipTapped(object? sender, TappedEventArgs e)
     {
         OnboardingSwipeCards.InvokeSwipe(SwipeCardDirection.Left);
+        SemanticScreenReader.Announce("Skipped");
     }
 
     private void OnQuickPickAddTapped(object? sender, TappedEventArgs e)
     {
         OnboardingSwipeCards.InvokeSwipe(SwipeCardDirection.Right);
+        SemanticScreenReader.Announce("Added to favorites");
     }
 
     private async void OnQuickPickUndoTapped(object? sender, TappedEventArgs e)
     {
         var success = OnboardingSwipeCards.GoBack(animated: true);
         if (success)
+        {
             await _viewModel.UndoLastSwipeCommand.ExecuteAsync(null);
+            SemanticScreenReader.Announce("Undo complete");
+        }
     }
 
     private void OnViewAgendaClicked(object? sender, EventArgs e)

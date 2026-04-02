@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Services;
+using Microsoft.Maui.Accessibility;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.Core.Models;
 using Plugin.LocalNotification.Core.Models.AppleOption;
@@ -72,6 +73,7 @@ public partial class SettingsViewModel : BaseViewModel
         {
             _reminderService.IsGlobalRemindersEnabled = false;
             _ = _reminderService.ReconcileRemindersAsync();
+            SemanticScreenReader.Announce("Reminders disabled");
         }
     }
 
@@ -84,6 +86,7 @@ public partial class SettingsViewModel : BaseViewModel
             {
                 _reminderService.IsGlobalRemindersEnabled = true;
                 _ = _reminderService.ReconcileRemindersAsync();
+                SemanticScreenReader.Announce("Reminders enabled");
                 return;
             }
 
@@ -104,6 +107,7 @@ public partial class SettingsViewModel : BaseViewModel
             {
                 _reminderService.IsGlobalRemindersEnabled = true;
                 _ = _reminderService.ReconcileRemindersAsync();
+                SemanticScreenReader.Announce("Reminders enabled");
                 return;
             }
 
@@ -177,6 +181,7 @@ public partial class SettingsViewModel : BaseViewModel
         if (!confirm) return;
 
         await _dataService.ClearCacheAsync();
+        SemanticScreenReader.Announce("Cache cleared successfully");
         await Shell.Current.DisplayAlertAsync("Done", "Cache cleared successfully.", "OK");
     }
 

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Accessibility;
 using Plugin.Maui.SwipeCardView.Core;
 using Sessionize.Api.Client.DataTransferObjects;
 using Sessionize.Api.Client.ValueObjects;
@@ -200,12 +201,14 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
                     _sessionFavoritedIds.Add(session.Id);
                     AddedCount++;
                     _logger.LogDebug("Added session to favorites: {Title}", session.Title);
+                    SemanticScreenReader.Announce($"Added {session.Title} to favorites");
                     break;
 
                 case SwipeCardDirection.Left:
                     _swipeState.SkippedSessionIds.Add(session.Id);
                     SkippedCount++;
                     _logger.LogDebug("Skipped session: {Title}", session.Title);
+                    SemanticScreenReader.Announce($"Skipped {session.Title}");
                     break;
             }
 
@@ -224,6 +227,7 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
                 OnPropertyChanged(nameof(HasCards));
                 _logger.LogInformation("Quick Pick complete: {Added} added, {Skipped} skipped, {Conflicts} conflicts",
                     AddedCount, SkippedCount, TotalConflictCount);
+                SemanticScreenReader.Announce("All sessions reviewed");
             }
             else
             {
@@ -376,6 +380,8 @@ public partial class QuickPickViewModel : ObservableObject, IRecipient<FavoriteC
             await SaveSwipeStateAsync();
             NotifyProgressChanged();
             UpdateConflictForCurrentCard();
+
+            SemanticScreenReader.Announce("Undo complete");
         }
         catch (Exception ex)
         {

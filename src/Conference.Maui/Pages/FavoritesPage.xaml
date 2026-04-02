@@ -96,7 +96,7 @@
                                                        SemanticProperties.Description=""
                                                        mi:MauiIcon.Value="{mi:Fluent Icon=Alert16, IconColor={StaticResource Primary}}" />
                                                 <Label Text="{Binding StartsAt.LocalDateTime, StringFormat='{0:h:mm tt}'}"
-                                                       FontSize="10" FontAttributes="Bold"
+                                                       FontSize="11" FontAttributes="Bold"
                                                        TextColor="{StaticResource Primary}"
                                                        VerticalOptions="Center" />
                                             </HorizontalStackLayout>

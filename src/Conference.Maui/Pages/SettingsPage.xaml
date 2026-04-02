@@ -22,7 +22,7 @@
                 <Label Text="NOTIFICATIONS"
                        FontSize="11"
                        FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        CharacterSpacing="0.5"
                        SemanticProperties.HeadingLevel="Level2" />
 
@@ -95,7 +95,7 @@
                 <Label Text="PREFERENCES"
                        FontSize="11"
                        FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        CharacterSpacing="0.5"
                        SemanticProperties.HeadingLevel="Level2" />
 
@@ -213,7 +213,7 @@
                 <Label Text="APP INFO"
                        FontSize="11"
                        FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        CharacterSpacing="0.5"
                        SemanticProperties.HeadingLevel="Level2" />
 
@@ -257,7 +257,7 @@
                 <Label Text="LIBRARIES"
                        FontSize="11"
                        FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        CharacterSpacing="0.5"
                        SemanticProperties.HeadingLevel="Level2" />
 
@@ -276,7 +276,7 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="MAUI Community Toolkit" FontSize="14" VerticalOptions="Center" />
                             <Label Grid.Column="1" Text="UI Components" FontSize="12" VerticalOptions="Center"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
                                    mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
@@ -292,7 +292,7 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="Syncfusion MAUI Toolkit" FontSize="14" VerticalOptions="Center" />
                             <Label Grid.Column="1" Text="Tab View" FontSize="12" VerticalOptions="Center"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
                                    mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
@@ -308,7 +308,7 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="Akavache" FontSize="14" VerticalOptions="Center" />
                             <Label Grid.Column="1" Text="Offline Caching" FontSize="12" VerticalOptions="Center"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
                                    mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
@@ -324,7 +324,7 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="Polly" FontSize="14" VerticalOptions="Center" />
                             <Label Grid.Column="1" Text="Resilient HTTP" FontSize="12" VerticalOptions="Center"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
                                    mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
@@ -340,7 +340,7 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="Sessionize API Client" FontSize="14" VerticalOptions="Center" />
                             <Label Grid.Column="1" Text="Conference Data" FontSize="12" VerticalOptions="Center"
-                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
                             <Image Grid.Column="2" HeightRequest="12" WidthRequest="12" VerticalOptions="Center"
                                    SemanticProperties.Description=""
                                    mi:MauiIcon.Value="{mi:Fluent Icon=Open16, IconColor={StaticResource Gray400}}" />
@@ -354,7 +354,7 @@
                 <Label Text="LINKS"
                        FontSize="11"
                        FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        CharacterSpacing="0.5"
                        SemanticProperties.HeadingLevel="Level2" />
 

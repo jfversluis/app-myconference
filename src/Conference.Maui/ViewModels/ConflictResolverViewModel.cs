@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Conference.Maui.Interfaces;
 using Conference.Maui.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Accessibility;
 using Sessionize.Api.Client.DataTransferObjects;
 using Sessionize.Api.Client.ValueObjects;
 
@@ -207,6 +208,8 @@ public partial class ConflictResolverViewModel : ObservableObject
 
             _logger.LogInformation("Kept \"{Title}\", removed {Count} conflicts",
                 session.Title, group.Sessions.Count - 1);
+
+            SemanticScreenReader.Announce($"Kept {session.Title}");
         }
         catch (Exception ex)
         {
