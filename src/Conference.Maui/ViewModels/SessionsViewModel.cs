@@ -15,10 +15,13 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
 {
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
+    private readonly IEventConfigService _configService;
     private readonly ILogger<SessionsViewModel> _logger;
 
     private AllDataResponse? _allData;
     private List<ScheduleDay> _allDays = [];
+
+    public bool IsQuickPickEnabled => _configService.Config.Features.EnableQuickPick;
 
     [ObservableProperty]
     private ObservableCollection<ScheduleDay> _days = [];
@@ -47,10 +50,12 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
     public SessionsViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
+        IEventConfigService configService,
         ILogger<SessionsViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
+        _configService = configService;
         _logger = logger;
         Title = "Sessions";
 

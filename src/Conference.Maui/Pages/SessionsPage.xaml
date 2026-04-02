@@ -18,6 +18,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding NavigateToQuickPickCommand}" Order="Primary"
                      Text="Quick Pick"
+                     IsEnabled="{Binding IsQuickPickEnabled}"
                      mi:MauiIcon.Value="{mi:Fluent Icon=Flash28}" />
     </ContentPage.ToolbarItems>
 

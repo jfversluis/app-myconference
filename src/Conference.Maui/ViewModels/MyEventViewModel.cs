@@ -115,6 +115,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     private string _eventDateDisplay = string.Empty;
 
     public string EventHeaderTitle => $"Your {_configService.Config.Event.Name}";
+    public bool IsQuickPickEnabled => _configService.Config.Features.EnableQuickPick;
 
     [ObservableProperty]
     private bool _hasLoadError;

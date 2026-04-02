@@ -132,7 +132,7 @@
                 </Border>
 
                 <!-- Sponsors Section -->
-                <VerticalStackLayout Spacing="10">
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsSponsorsEnabled}">
                     <Label Text="OUR SPONSORS"
                            FontSize="11"
                            FontAttributes="Bold"

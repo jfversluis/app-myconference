@@ -31,7 +31,8 @@
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                        Padding="16">
+                        Padding="16"
+                        IsVisible="{Binding IsRemindersFeatureEnabled}">
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
                                SemanticProperties.Description=""
@@ -198,7 +199,8 @@
                         Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                         StrokeThickness="1"
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
-                        Padding="16">
+                        Padding="16"
+                        IsVisible="{Binding IsHapticFeatureEnabled}">
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <Image Grid.Column="0" HeightRequest="24" WidthRequest="24" VerticalOptions="Center"
                                SemanticProperties.Description=""
@@ -247,6 +249,7 @@
                         StrokeThickness="1"
                         Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                         Padding="16"
+                        IsVisible="{Binding IsOnboardingEnabled}"
                         SemanticProperties.Description="Replay welcome tour"
                         SemanticProperties.Hint="Double tap to restart onboarding">
                     <Border.GestureRecognizers>

@@ -47,7 +47,7 @@ public partial class App : Application
                     await dataService.GetAllDataAsync();
 
                 var reminderService = sp?.GetService<IReminderService>();
-                if (reminderService != null)
+                if (reminderService != null && (configService?.Config.Features.EnableReminders ?? true))
                     await reminderService.ReconcileRemindersAsync();
             }
             catch (Exception ex)
@@ -56,7 +56,9 @@ public partial class App : Application
             }
         });
 
-        if (OnboardingViewModel.IsOnboardingCompleted())
+        // Skip onboarding if feature is disabled or already completed
+        var isOnboardingEnabled = configService?.Config.Features.EnableOnboarding ?? true;
+        if (!isOnboardingEnabled || OnboardingViewModel.IsOnboardingCompleted())
             return new Window(new AppShell());
 
         var onboardingPage = sp!.GetRequiredService<OnboardingPage>();

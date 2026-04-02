@@ -35,6 +35,7 @@ public partial class FavoritesPage : ContentPage
 
     private async void OnConflictBadgeTapped(object? sender, EventArgs e)
     {
+        if (!_viewModel.IsConflictResolverEnabled) return;
         await Shell.Current.GoToAsync(nameof(ConflictResolverPage));
     }
 }

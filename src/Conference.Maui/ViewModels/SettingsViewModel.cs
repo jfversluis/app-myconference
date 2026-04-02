@@ -20,6 +20,9 @@ public partial class SettingsViewModel : BaseViewModel
     public string AppName => _configService.Config.App.DisplayName;
     public string AppVersion => $"Version {Microsoft.Maui.ApplicationModel.AppInfo.VersionString} (Build {Microsoft.Maui.ApplicationModel.AppInfo.BuildString})";
     public string Framework => ".NET MAUI";
+    public bool IsRemindersFeatureEnabled => _configService.Config.Features.EnableReminders;
+    public bool IsHapticFeatureEnabled => _configService.Config.Features.EnableHapticFeedback;
+    public bool IsOnboardingEnabled => _configService.Config.Features.EnableOnboarding;
 
     [ObservableProperty]
     private int _selectedThemeIndex;

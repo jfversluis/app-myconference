@@ -21,6 +21,8 @@ public partial class AboutViewModel : BaseViewModel
     public string VenueName => _configService.Config.Venue.Name;
     public string VenueDetails => _configService.Config.Venue.Address;
     public bool IsPhysicalVenue => !_configService.Config.Event.IsOnline;
+    public bool IsWifiEnabled => _configService.Config.Features.EnableWifi;
+    public bool IsSponsorsEnabled => _configService.Config.Features.EnableSponsors;
 
     public string EventDateRange
     {
@@ -54,7 +56,7 @@ public partial class AboutViewModel : BaseViewModel
     [ObservableProperty]
     private string _wifiPassword = string.Empty;
 
-    public bool HasWifi => !string.IsNullOrEmpty(WifiNetworkName);
+    public bool HasWifi => IsWifiEnabled && !string.IsNullOrEmpty(WifiNetworkName);
 
     public AboutViewModel(IEventConfigService configService)
     {

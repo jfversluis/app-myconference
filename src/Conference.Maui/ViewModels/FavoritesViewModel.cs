@@ -17,6 +17,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
     private readonly IFavoritesService _favoritesService;
     private readonly IReminderService _reminderService;
     private readonly ISessionItemMapper _mapper;
+    private readonly IEventConfigService _configService;
     private readonly ILogger<FavoritesViewModel> _logger;
 
     [ObservableProperty]
@@ -27,18 +28,21 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
     private bool _hasFavorites;
 
     public bool ShowEmptyState => !HasFavorites && !IsBusy;
+    public bool IsConflictResolverEnabled => _configService.Config.Features.EnableConflictResolver;
 
     public FavoritesViewModel(
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
         IReminderService reminderService,
         ISessionItemMapper mapper,
+        IEventConfigService configService,
         ILogger<FavoritesViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _reminderService = reminderService;
         _mapper = mapper;
+        _configService = configService;
         _logger = logger;
         Title = "My Agenda";
 

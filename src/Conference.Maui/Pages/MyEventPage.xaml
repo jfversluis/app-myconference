@@ -195,6 +195,7 @@
                             <FlexLayout Wrap="Wrap" AlignItems="Center" JustifyContent="Start">
                                 <Button Text="Quick Pick"
                                         Command="{Binding NavigateToQuickPickCommand}"
+                                        IsVisible="{Binding IsQuickPickEnabled}"
                                         BackgroundColor="{StaticResource Primary}"
                                         TextColor="White"
                                         FontAttributes="Bold"
