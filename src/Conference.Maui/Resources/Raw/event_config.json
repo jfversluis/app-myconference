@@ -20,7 +20,9 @@
     "apiTimeoutSeconds": 30
   },
   "app": {
-    "displayName": "MyConference"
+    "displayName": "MyConference",
+    "bundleId": "com.myconference.app",
+    "version": "1.0"
   },
   "links": {
     "website": "https://ndccopenhagen.com",

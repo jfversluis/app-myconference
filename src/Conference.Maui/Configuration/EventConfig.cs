@@ -91,6 +91,12 @@ public sealed class AppInfo
 {
     [JsonPropertyName("displayName")]
     public string DisplayName { get; set; } = "MyConference";
+
+    [JsonPropertyName("bundleId")]
+    public string BundleId { get; set; } = "com.myconference.app";
+
+    [JsonPropertyName("version")]
+    public string Version { get; set; } = "1.0";
 }
 
 public sealed class LinksConfig
