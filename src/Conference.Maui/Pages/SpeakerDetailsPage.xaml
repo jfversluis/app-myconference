@@ -79,7 +79,6 @@
                     <Label Text="{Binding Speaker.TagLine}"
                            FontSize="14"
                            TextColor="White"
-                           Opacity="0.9"
                            HorizontalTextAlignment="Center"
                            LineBreakMode="WordWrap" />
                 </VerticalStackLayout>

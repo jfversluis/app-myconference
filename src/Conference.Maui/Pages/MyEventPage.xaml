@@ -32,8 +32,7 @@
                     <Label Grid.Row="0"
                            Text="{Binding EventDateDisplay}"
                            FontSize="13"
-                           TextColor="White"
-                           Opacity="0.8" />
+                           TextColor="White" />
                     <Label Grid.Row="1"
                            Text="{Binding EventHeaderTitle}"
                            FontSize="22"
@@ -45,17 +44,17 @@
                         <HorizontalStackLayout Spacing="4">
                             <Label Text="{Binding TotalSessions}"
                                    FontSize="14" FontAttributes="Bold" TextColor="White" />
-                            <Label Text="sessions" FontSize="13" TextColor="White" Opacity="0.8" />
+                            <Label Text="sessions" FontSize="13" TextColor="White" />
                         </HorizontalStackLayout>
                         <HorizontalStackLayout Spacing="4">
                             <Label Text="{Binding TotalSpeakers}"
                                    FontSize="14" FontAttributes="Bold" TextColor="White" />
-                            <Label Text="speakers" FontSize="13" TextColor="White" Opacity="0.8" />
+                            <Label Text="speakers" FontSize="13" TextColor="White" />
                         </HorizontalStackLayout>
                         <HorizontalStackLayout Spacing="4">
                             <Label Text="{Binding AgendaCount}"
                                    FontSize="14" FontAttributes="Bold" TextColor="White" />
-                            <Label Text="in your agenda" FontSize="13" TextColor="White" Opacity="0.8" />
+                            <Label Text="in your agenda" FontSize="13" TextColor="White" />
                         </HorizontalStackLayout>
                     </HorizontalStackLayout>
                 </Grid>

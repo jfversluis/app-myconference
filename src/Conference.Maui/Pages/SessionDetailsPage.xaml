@@ -70,7 +70,6 @@
                             <Label Text="{Binding Session.StartsAt, StringFormat='{0:ddd d MMM}'}"
                                    FontSize="12"
                                    TextColor="White"
-                                   Opacity="0.9"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
                         
@@ -88,7 +87,6 @@
                             <Label Text="{Binding Session.TimeDisplay}"
                                    FontSize="12"
                                    TextColor="White"
-                                   Opacity="0.9"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
                         
@@ -96,7 +94,6 @@
                         <Label Text="{Binding Session.DurationDisplay, StringFormat='({0})'}"
                                FontSize="12"
                                TextColor="White"
-                               Opacity="0.7"
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
 
@@ -119,7 +116,6 @@
                             <Label Text="{Binding Session.RoomName}"
                                    FontSize="12"
                                    TextColor="White"
-                                   Opacity="0.9"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
 
