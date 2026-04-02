@@ -35,6 +35,7 @@
                                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource DarkPrimary}}" />
                         <HorizontalStackLayout Grid.Column="1" Spacing="4" IsVisible="{Binding HasConflict}" VerticalOptions="Center"
                                                    MinimumHeightRequest="44"
+                                                   MinimumWidthRequest="44"
                                                    SemanticProperties.Description="Resolve schedule conflicts"
                                                    SemanticProperties.Hint="Double tap to resolve">
                             <HorizontalStackLayout.GestureRecognizers>

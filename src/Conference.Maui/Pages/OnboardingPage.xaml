@@ -265,7 +265,8 @@
 
             <Grid Background="{StaticResource HeroGradient}">
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="16" Padding="32">
-                    <Label Text="🔔" FontSize="56" HorizontalTextAlignment="Center" SemanticProperties.Description="" />
+                    <Label Text="🔔" FontSize="56" HorizontalTextAlignment="Center" SemanticProperties.Description=""
+                           AutomationProperties.IsInAccessibleTree="False" />
                     <Label Text="Stay in the loop"
                            FontSize="28" FontAttributes="Bold" TextColor="White"
                            SemanticProperties.HeadingLevel="Level1"
@@ -513,7 +514,11 @@
                                         <HorizontalStackLayout Grid.Row="1" Padding="24,8,24,0" Spacing="6">
                                             <Image Source="clock_regular.png" HeightRequest="14" WidthRequest="14"
                                                    SemanticProperties.Description=""
-                                                   VerticalOptions="Center" />
+                                                   VerticalOptions="Center">
+                                                <Image.Behaviors>
+                                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                                                </Image.Behaviors>
+                                            </Image>
                                             <Label Text="{Binding TimeDisplay}" FontSize="13"
                                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                    VerticalOptions="Center" />
@@ -523,7 +528,11 @@
                                             <Image Source="location_regular.png" HeightRequest="14" WidthRequest="14"
                                                    SemanticProperties.Description=""
                                                    VerticalOptions="Center"
-                                                   IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}" />
+                                                   IsVisible="{Binding RoomName, Converter={toolkit:IsNotNullConverter}}">
+                                                <Image.Behaviors>
+                                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                                                </Image.Behaviors>
+                                            </Image>
                                             <Label Text="{Binding RoomName}" FontSize="13"
                                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                                    VerticalOptions="Center"
@@ -656,7 +665,8 @@
 
             <Grid Background="{StaticResource HeroGradient}">
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="16" Padding="32">
-                    <Label Text="🎉" FontSize="56" HorizontalTextAlignment="Center" SemanticProperties.Description="" />
+                    <Label Text="🎉" FontSize="56" HorizontalTextAlignment="Center" SemanticProperties.Description=""
+                           AutomationProperties.IsInAccessibleTree="False" />
                     <Label Text="You're all set!"
                            FontSize="28" FontAttributes="Bold" TextColor="White"
                            SemanticProperties.HeadingLevel="Level1"

@@ -216,6 +216,7 @@
                                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray800}}"
                                         Padding="24,16,24,16"
                                         Margin="0,14,0,0"
+                                        MinimumHeightRequest="44"
                                         SemanticProperties.Description="Session Details"
                                         SemanticProperties.Hint="Double tap for full session details">
                                     <Border.GestureRecognizers>
@@ -241,7 +242,9 @@
                                 BackgroundColor="#15512BD4"
                                 HorizontalOptions="Start" VerticalOptions="Start"
                                 Margin="36,48" Rotation="-12" Opacity="0"
-                                Padding="14,6">
+                                Padding="14,6"
+                                InputTransparent="True"
+                                AutomationProperties.IsInAccessibleTree="False">
                             <Label Text="ADD" TextColor="{StaticResource Primary}" FontSize="24" FontAttributes="Bold"
                                    CharacterSpacing="2" />
                         </Border>
@@ -254,7 +257,9 @@
                                 BackgroundColor="{AppThemeBinding Light=#10000000, Dark=#15FFFFFF}"
                                 HorizontalOptions="End" VerticalOptions="Start"
                                 Margin="36,48" Rotation="12" Opacity="0"
-                                Padding="14,6">
+                                Padding="14,6"
+                                InputTransparent="True"
+                                AutomationProperties.IsInAccessibleTree="False">
                             <Label Text="SKIP"
                                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                                    FontSize="24" FontAttributes="Bold"

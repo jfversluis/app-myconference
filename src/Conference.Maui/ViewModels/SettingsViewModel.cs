@@ -58,6 +58,7 @@ public partial class SettingsViewModel : BaseViewModel
     partial void OnHapticFeedbackEnabledChanged(bool value)
     {
         HapticService.IsEnabled = value;
+        SemanticScreenReader.Announce(value ? "Haptic feedback enabled" : "Haptic feedback disabled");
     }
 
     partial void OnRemindersEnabledChanged(bool value)
