@@ -41,7 +41,7 @@
         <Border Grid.Row="1"
                 Margin="16,8"
                 StrokeShape="RoundRectangle 12"
-                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray500}}"
                 StrokeThickness="1"
                 Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
                 Padding="0">

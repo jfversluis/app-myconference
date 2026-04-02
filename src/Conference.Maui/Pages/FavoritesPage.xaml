@@ -42,10 +42,10 @@
                             </HorizontalStackLayout.GestureRecognizers>
                             <Image HeightRequest="14" WidthRequest="14" VerticalOptions="Center"
                                    SemanticProperties.Description=""
-                                   mi:MauiIcon.Value="{mi:Fluent Icon=Warning24, IconColor={StaticResource ConflictOrange}}" />
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Warning24, IconColor={AppThemeBinding Light={StaticResource ConflictOrange}, Dark={StaticResource ConflictOrangeDark}}}" />
                             <Label Text="{Binding ConflictText}"
                                    FontSize="12"
-                                   TextColor="{StaticResource ConflictOrange}"
+                                   TextColor="{AppThemeBinding Light={StaticResource ConflictOrange}, Dark={StaticResource ConflictOrangeDark}}"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
                     </Grid>

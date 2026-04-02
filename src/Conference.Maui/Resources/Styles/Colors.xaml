@@ -68,6 +68,7 @@
     <Color x:Key="WarningTextDark">#FFB74D</Color>
     <Color x:Key="ErrorRed">#D32F2F</Color>
     <Color x:Key="ConflictOrange">#B05200</Color>
+    <Color x:Key="ConflictOrangeDark">#FF8C00</Color>
     <Color x:Key="OnboardingBgLight">#F3E5F5</Color>
     <Color x:Key="OnboardingBgDark">#2D1B33</Color>
 

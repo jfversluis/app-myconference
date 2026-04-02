@@ -88,7 +88,7 @@
                         <CollectionView ItemsSource="{Binding NowSessions}"
                                         SelectionMode="Single"
                                         SelectionChanged="OnSessionSelected"
-                                        HeightRequest="130">
+                                        MinimumHeightRequest="130">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                             </CollectionView.ItemsLayout>
@@ -231,7 +231,7 @@
                         <CollectionView ItemsSource="{Binding UpNextSessions}"
                                         SelectionMode="Single"
                                         SelectionChanged="OnSessionSelected"
-                                        HeightRequest="130">
+                                        MinimumHeightRequest="130">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                             </CollectionView.ItemsLayout>
