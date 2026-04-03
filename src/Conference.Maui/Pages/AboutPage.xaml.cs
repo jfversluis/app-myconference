@@ -4,8 +4,10 @@ using Conference.Maui.ViewModels;
 
 namespace Conference.Maui.Pages;
 
-public partial class AboutPage : ContentPage
+public partial class AboutPage : ContentPage, IScrollToTop
 {
+    public void ScrollToTop() => MainScrollView.ScrollToAsync(0, 0, true);
+
     private readonly AboutViewModel _viewModel;
     private readonly IEventConfigService _configService;
 

@@ -3,8 +3,14 @@ using Conference.Maui.ViewModels;
 
 namespace Conference.Maui.Pages;
 
-public partial class FavoritesPage : ContentPage
+public partial class FavoritesPage : ContentPage, IScrollToTop
 {
+    public void ScrollToTop()
+    {
+        if (_viewModel.FavoriteSlots.Count > 0)
+            FavoritesCollectionView.ScrollTo(0);
+    }
+
     private readonly FavoritesViewModel _viewModel;
 
     public FavoritesPage(FavoritesViewModel viewModel)

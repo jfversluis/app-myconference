@@ -18,7 +18,7 @@
                      Order="Primary" />
     </ContentPage.ToolbarItems>
 
-    <ScrollView>
+    <ScrollView x:Name="MainScrollView">
         <VerticalStackLayout Spacing="0">
 
             <!-- Hero Header -->

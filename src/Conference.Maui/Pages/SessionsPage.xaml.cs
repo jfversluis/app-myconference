@@ -4,8 +4,14 @@ using Syncfusion.Maui.Toolkit.TabView;
 
 namespace Conference.Maui.Pages;
 
-public partial class SessionsPage : ContentPage
+public partial class SessionsPage : ContentPage, IScrollToTop
 {
+    public void ScrollToTop()
+    {
+        if (_viewModel.CurrentDaySlots.Count > 0)
+            SessionsCollectionView.ScrollTo(0);
+    }
+
     private readonly SessionsViewModel _viewModel;
 
     public SessionsPage(SessionsViewModel viewModel)

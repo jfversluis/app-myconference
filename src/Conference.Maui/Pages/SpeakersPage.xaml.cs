@@ -3,8 +3,14 @@ using Conference.Maui.ViewModels;
 
 namespace Conference.Maui.Pages;
 
-public partial class SpeakersPage : ContentPage
+public partial class SpeakersPage : ContentPage, IScrollToTop
 {
+    public void ScrollToTop()
+    {
+        if (_viewModel.Speakers.Count > 0)
+            SpeakersCollectionView.ScrollTo(0);
+    }
+
     private readonly SpeakersViewModel _viewModel;
 
     public SpeakersPage(SpeakersViewModel viewModel)
