@@ -12,6 +12,14 @@ using Sessionize.Api.Client.DataTransferObjects;
 
 namespace Conference.Maui.ViewModels;
 
+public enum EventPhase
+{
+    PreEvent,
+    EventEve,
+    DuringEvent,
+    PostEvent
+}
+
 public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChangedMessage>
 {
     private readonly IConferenceDataService _dataService;
@@ -37,6 +45,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     private static readonly (string Label, DateTimeOffset Time)[] DebugPresets =
     [
         ("Real time (no offset)", default),
+        ("Pre-event (2 weeks before)", new(2026, 5, 20, 10, 0, 0, TimeSpan.FromHours(2))),
+        ("Event eve (day before)", new(2026, 6, 2, 14, 0, 0, TimeSpan.FromHours(2))),
         ("Day 1 keynote (9:15 AM)", new(2026, 6, 3, 9, 15, 0, TimeSpan.FromHours(2))),
         ("Day 1 morning (10:25 AM)", new(2026, 6, 3, 10, 25, 0, TimeSpan.FromHours(2))),
         ("Day 1 lunch (12:30 PM)", new(2026, 6, 3, 12, 30, 0, TimeSpan.FromHours(2))),
@@ -134,21 +144,62 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     [ObservableProperty]
     private bool _hasWifi;
 
+    // Event phase properties
+    [ObservableProperty]
+    private EventPhase _currentPhase;
+
+    [ObservableProperty]
+    private string _countdownDaysText = string.Empty;
+
+    [ObservableProperty]
+    private string _countdownSubtext = string.Empty;
+
+    [ObservableProperty]
+    private string _agendaSummaryText = string.Empty;
+
+    [ObservableProperty]
+    private string _venueName = string.Empty;
+
+    [ObservableProperty]
+    private string _venueAddress = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<SessionItem> _firstSessions = [];
+
+    [ObservableProperty]
+    private string _firstSessionsTimeDisplay = string.Empty;
+
+    public bool IsPreEvent => CurrentPhase == EventPhase.PreEvent;
+    public bool IsEventEve => CurrentPhase == EventPhase.EventEve;
+    public bool IsDuringEvent => CurrentPhase == EventPhase.DuringEvent;
+    public bool IsPostEvent => CurrentPhase == EventPhase.PostEvent;
+    public bool HasVenue => !string.IsNullOrEmpty(VenueName);
+    public bool ShowVenueCard => HasVenue && (IsPreEvent || IsEventEve);
+    public bool HasFirstSessions => FirstSessions.Count > 0 && IsEventEve;
+
     public bool HasNowSessions => NowSessions.Count > 0;
     public bool HasUpNext => UpNextSessions.Count > 0;
     public bool HasTodayAgenda => TodayAgenda.Count > 0;
     public bool HasCountdown => !string.IsNullOrEmpty(CountdownText);
-    public bool ShowEmptyState => !IsBusy && !HasLoadError && !HasNowSessions && !HasUpNext && !HasTodayAgenda;
-    public bool ShowOnboarding => !IsBusy && !HasLoadError && AgendaCount == 0 && !ShowEmptyState;
+    public bool ShowEmptyState => !IsBusy && !HasLoadError && IsDuringEvent && !HasNowSessions && !HasUpNext && !HasTodayAgenda;
+    public bool ShowOnboarding => !IsBusy && !HasLoadError && AgendaCount == 0 && IsDuringEvent && !ShowEmptyState;
+    public bool ShowPreEventAgenda => (IsPreEvent || IsEventEve) && AgendaCount > 0;
     public bool ShowSeeAllUpNext => UpNextTotalCount > UpNextSessions.Count;
 
     protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (e.PropertyName is nameof(IsBusy) or nameof(HasLoadError) or nameof(AgendaCount))
+        if (e.PropertyName is nameof(IsBusy) or nameof(HasLoadError) or nameof(AgendaCount) or nameof(CurrentPhase))
         {
             OnPropertyChanged(nameof(ShowEmptyState));
             OnPropertyChanged(nameof(ShowOnboarding));
+            OnPropertyChanged(nameof(ShowPreEventAgenda));
+            OnPropertyChanged(nameof(IsPreEvent));
+            OnPropertyChanged(nameof(IsEventEve));
+            OnPropertyChanged(nameof(IsDuringEvent));
+            OnPropertyChanged(nameof(IsPostEvent));
+            OnPropertyChanged(nameof(ShowVenueCard));
+            OnPropertyChanged(nameof(HasFirstSessions));
         }
     }
 
@@ -213,7 +264,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 #endif
             }
 
-            // Load WiFi config for onboarding
+            // Load WiFi and venue config
             try
             {
                 using var stream = await FileSystem.OpenAppPackageFileAsync("event_config.json");
@@ -226,10 +277,16 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
                     WifiNetworkName = wifi.NetworkName;
                     HasWifi = true;
                 }
+                if (config?.Venue is { } venue && !string.IsNullOrWhiteSpace(venue.Name))
+                {
+                    VenueName = venue.Name;
+                    VenueAddress = venue.Address;
+                    OnPropertyChanged(nameof(HasVenue));
+                }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"WiFi config is optional: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Config extras are optional: {ex.Message}");
             }
         }
         catch (Exception ex)
@@ -294,10 +351,119 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
         var now = Now;
         var today = DateOnly.FromDateTime(now.LocalDateTime);
+        var sessions = _allData.Sessions.Where(s => !s.IsServiceSession).ToList();
 
+        if (sessions.Count == 0) return;
+
+        var firstSessionStart = sessions.Min(s => s.StartsAt);
+        var lastSessionEnd = sessions.Max(s => s.EndsAt);
+
+        // Determine event phase
+        var hoursUntilStart = (firstSessionStart - now).TotalHours;
+        if (now > lastSessionEnd)
+        {
+            CurrentPhase = EventPhase.PostEvent;
+        }
+        else if (now >= firstSessionStart)
+        {
+            CurrentPhase = EventPhase.DuringEvent;
+        }
+        else if (hoursUntilStart <= 24)
+        {
+            CurrentPhase = EventPhase.EventEve;
+        }
+        else
+        {
+            CurrentPhase = EventPhase.PreEvent;
+        }
+
+        // Update phase-specific content
+        UpdatePreEventContent(now, firstSessionStart);
+
+        // Only compute live sections during the event
+        if (IsDuringEvent)
+        {
+            UpdateLiveSections(now, today);
+        }
+        else
+        {
+            // Clear live sections for non-event phases
+            NowSessions = [];
+            UpNextSessions = [];
+            TodayAgenda = [];
+            UpNextTotalCount = 0;
+            UpNextTimeDisplay = string.Empty;
+            CountdownText = string.Empty;
+        }
+
+        // Update agenda summary for pre-event/eve
+        AgendaSummaryText = AgendaCount > 0
+            ? $"You have {AgendaCount} session{(AgendaCount == 1 ? "" : "s")} in your agenda"
+            : "You haven't added any sessions yet";
+
+        OnPropertyChanged(nameof(HasNowSessions));
+        OnPropertyChanged(nameof(HasUpNext));
+        OnPropertyChanged(nameof(HasTodayAgenda));
+        OnPropertyChanged(nameof(HasCountdown));
+        OnPropertyChanged(nameof(HasFirstSessions));
+        OnPropertyChanged(nameof(ShowEmptyState));
+        OnPropertyChanged(nameof(ShowOnboarding));
+        OnPropertyChanged(nameof(ShowSeeAllUpNext));
+        OnPropertyChanged(nameof(ShowPreEventAgenda));
+
+        if (IsDuringEvent)
+            UpdateEmptyStateText();
+    }
+
+    private void UpdatePreEventContent(DateTimeOffset now, DateTimeOffset firstSessionStart)
+    {
+        var daysUntil = (int)Math.Ceiling((firstSessionStart - now).TotalDays);
+        var eventName = _configService.Config.Event.Name;
+
+        if (IsPreEvent)
+        {
+            CountdownDaysText = daysUntil == 1
+                ? $"1 day until {eventName}!"
+                : $"{daysUntil} days until {eventName}!";
+            CountdownSubtext = $"{EventDateDisplay} · {VenueName}";
+        }
+        else if (IsEventEve)
+        {
+            var hoursUntil = (int)Math.Ceiling((firstSessionStart - now).TotalHours);
+            CountdownDaysText = hoursUntil <= 1
+                ? "Starting soon!"
+                : $"See you in {hoursUntil} hours!";
+            CountdownSubtext = $"First session at {firstSessionStart.LocalDateTime:h:mm tt}";
+
+            // Show first time slot as preview cards
+            var sessions = _allData!.Sessions.Where(s => !s.IsServiceSession).ToList();
+            var firstSlotStart = sessions.Min(s => s.StartsAt);
+            var firstSlotSessions = sessions
+                .Where(s => s.StartsAt == firstSlotStart)
+                .OrderByDescending(s => _favoriteIds.Contains(s.Id))
+                .ThenBy(s => _mapper.GetRoomName(s.RoomId))
+                .Select(s => _mapper.MapSession(s, _favoriteIds, _activeReminderIds))
+                .ToList();
+
+            FirstSessions = new ObservableCollection<SessionItem>(firstSlotSessions);
+            FirstSessionsTimeDisplay = $"{firstSlotStart:dddd, MMM d} at {firstSlotStart:h:mm tt}";
+        }
+        else if (IsPostEvent)
+        {
+            CountdownDaysText = "Thanks for attending!";
+            CountdownSubtext = $"We hope you enjoyed {eventName}";
+            FirstSessions = [];
+        }
+        else
+        {
+            FirstSessions = [];
+        }
+    }
+
+    private void UpdateLiveSections(DateTimeOffset now, DateOnly today)
+    {
         // Happening Now: sessions where StartsAt <= now < EndsAt
-        // Favorites first so the user's sessions are immediately visible
-        var liveSessions = _allData.Sessions
+        var liveSessions = _allData!.Sessions
             .Where(s => !s.IsServiceSession && s.StartsAt <= now && s.EndsAt > now)
             .OrderByDescending(s => _favoriteIds.Contains(s.Id))
             .ThenBy(s => s.EndsAt)
@@ -335,7 +501,6 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
             UpNextTotalCount = allNextSessions.Count;
 
-            // Show all sessions in the slot, favorites first
             var nextItems = allNextSessions
                 .OrderByDescending(s => _favoriteIds.Contains(s.Id))
                 .ThenBy(s => _mapper.GetRoomName(s.RoomId))
@@ -374,14 +539,6 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             .ToList();
 
         TodayAgenda = new ObservableCollection<SessionItem>(todayFavorites);
-
-        OnPropertyChanged(nameof(HasNowSessions));
-        OnPropertyChanged(nameof(HasUpNext));
-        OnPropertyChanged(nameof(HasTodayAgenda));
-        OnPropertyChanged(nameof(HasCountdown));
-        OnPropertyChanged(nameof(ShowEmptyState));
-        OnPropertyChanged(nameof(ShowOnboarding));
-        OnPropertyChanged(nameof(ShowSeeAllUpNext));
 
         UpdateEmptyStateText();
     }
@@ -464,6 +621,29 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     private async Task NavigateToQuickPickAsync()
     {
         await Shell.Current.GoToAsync(nameof(Conference.Maui.Pages.QuickPickPage));
+    }
+
+    [RelayCommand]
+    private async Task OpenInMapsAsync()
+    {
+        var venue = _configService.Config.Venue;
+        if (venue.Latitude == 0 && venue.Longitude == 0) return;
+
+        var location = new Location(venue.Latitude, venue.Longitude);
+        var options = new MapLaunchOptions
+        {
+            Name = venue.Name,
+            NavigationMode = NavigationMode.Default
+        };
+
+        try
+        {
+            await Map.Default.OpenAsync(location, options);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not open maps app");
+        }
     }
 
     private void UpdateEmptyStateText()

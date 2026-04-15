@@ -63,6 +63,226 @@
                 <!-- Sections Container -->
                 <VerticalStackLayout Spacing="20" Padding="0,16">
 
+                    <!-- ========================= -->
+                    <!-- PRE-EVENT Countdown Card  -->
+                    <!-- ========================= -->
+                    <VerticalStackLayout Spacing="8" Padding="16,0"
+                                         IsVisible="{Binding IsPreEvent}">
+                        <Border StrokeShape="RoundRectangle 16"
+                                StrokeThickness="0"
+                                Background="{AppThemeBinding Light=#F0F7FF, Dark=#1A2744}"
+                                Padding="24,28">
+                            <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                                <Image HeightRequest="40" WidthRequest="40"
+                                       HorizontalOptions="Center"
+                                       SemanticProperties.Description=""
+                                       mi:MauiIcon.Value="{mi:Fluent Icon=CalendarStar24, IconColor={StaticResource Primary}}" />
+                                <Label Text="{Binding CountdownDaysText}"
+                                       FontSize="24" FontAttributes="Bold"
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource PrimaryDeep}, Dark={StaticResource PrimaryLight}}" />
+                                <Label Text="{Binding CountdownSubtext}"
+                                       FontSize="14"
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- ========================= -->
+                    <!-- EVENT EVE Card            -->
+                    <!-- ========================= -->
+                    <VerticalStackLayout Spacing="8" Padding="16,0"
+                                         IsVisible="{Binding IsEventEve}">
+                        <Border StrokeShape="RoundRectangle 16"
+                                StrokeThickness="0"
+                                Background="{AppThemeBinding Light=#F0F7FF, Dark=#1A2744}"
+                                Padding="24,28">
+                            <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🎉" FontSize="36"
+                                       HorizontalTextAlignment="Center" />
+                                <Label Text="{Binding CountdownDaysText}"
+                                       FontSize="24" FontAttributes="Bold"
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource PrimaryDeep}, Dark={StaticResource PrimaryLight}}" />
+                                <Label Text="{Binding CountdownSubtext}"
+                                       FontSize="14"
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- FIRST SESSIONS preview (Event Eve) -->
+                    <VerticalStackLayout Spacing="10" IsVisible="{Binding HasFirstSessions}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="16,0">
+                            <Label Grid.Column="0"
+                                   Text="FIRST SESSIONS"
+                                   FontSize="11"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   CharacterSpacing="0.5"
+                                   VerticalOptions="Center"
+                                   SemanticProperties.HeadingLevel="Level2" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding FirstSessionsTimeDisplay}"
+                                   FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding FirstSessions}"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnSessionSelected"
+                                        MinimumHeightRequest="130">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.Header>
+                                <ContentView WidthRequest="16" />
+                            </CollectionView.Header>
+                            <CollectionView.Footer>
+                                <ContentView WidthRequest="16" />
+                            </CollectionView.Footer>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:SessionItem">
+                                    <controls:SessionCarouselCardView
+                                        BorderStroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                        BorderThickness="1" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <!-- ========================= -->
+                    <!-- PRE-EVENT Agenda Summary   -->
+                    <!-- ========================= -->
+                    <Border StrokeShape="RoundRectangle 12"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                            StrokeThickness="1"
+                            Background="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}"
+                            Padding="16"
+                            Margin="16,0"
+                            IsVisible="{Binding IsPreEvent}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="YOUR AGENDA"
+                                   FontSize="11" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   CharacterSpacing="0.5" />
+                            <Label Text="{Binding AgendaSummaryText}"
+                                   FontSize="15" FontAttributes="Bold" />
+                            <Label Text="Browse the schedule and star sessions you'd like to attend. They'll appear on this dashboard during the event."
+                                   FontSize="13"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                   LineBreakMode="WordWrap" />
+                            <FlexLayout Wrap="Wrap" AlignItems="Center" JustifyContent="Start" Margin="0,4,0,0">
+                                <Button Text="Quick Pick"
+                                        Command="{Binding NavigateToQuickPickCommand}"
+                                        IsVisible="{Binding IsQuickPickEnabled}"
+                                        BackgroundColor="{StaticResource Primary}"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        CornerRadius="8"
+                                        HorizontalOptions="Start"
+                                        Padding="20,10"
+                                        Margin="0,0,8,0"
+                                        mi:MauiIcon.Value="{mi:Fluent Icon=Flash28, IconColor=White}" />
+                                <Button Text="Browse Sessions"
+                                        Command="{Binding NavigateToSessionsCommand}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource Primary}"
+                                        FontAttributes="Bold"
+                                        CornerRadius="8"
+                                        HorizontalOptions="Start"
+                                        Padding="20,10" />
+                            </FlexLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Event Eve Agenda Summary -->
+                    <Border StrokeShape="RoundRectangle 12"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                            StrokeThickness="1"
+                            Background="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}"
+                            Padding="16"
+                            Margin="16,0"
+                            IsVisible="{Binding IsEventEve}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="YOUR AGENDA"
+                                   FontSize="11" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   CharacterSpacing="0.5" />
+                            <Label Text="{Binding AgendaSummaryText}"
+                                   FontSize="15" FontAttributes="Bold" />
+                            <FlexLayout Wrap="Wrap" AlignItems="Center" JustifyContent="Start" Margin="0,4,0,0">
+                                <Button Text="Browse Sessions"
+                                        Command="{Binding NavigateToSessionsCommand}"
+                                        BackgroundColor="{StaticResource Primary}"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        CornerRadius="8"
+                                        HorizontalOptions="Start"
+                                        Padding="20,10" />
+                            </FlexLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- ========================= -->
+                    <!-- GETTING THERE Card        -->
+                    <!-- ========================= -->
+                    <Border StrokeShape="RoundRectangle 12"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                            StrokeThickness="1"
+                            Background="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}"
+                            Padding="16"
+                            Margin="16,0"
+                            IsVisible="{Binding ShowVenueCard}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="GETTING THERE"
+                                       FontSize="11" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                       CharacterSpacing="0.5" />
+                                <Label Text="{Binding VenueName}"
+                                       FontSize="15" FontAttributes="Bold" />
+                                <Label Text="{Binding VenueAddress}"
+                                       FontSize="13"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                       LineBreakMode="WordWrap" />
+                                <Button Text="Open in Maps"
+                                        Command="{Binding OpenInMapsCommand}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource Primary}"
+                                        FontAttributes="Bold"
+                                        CornerRadius="8"
+                                        HorizontalOptions="Start"
+                                        Padding="0,6"
+                                        mi:MauiIcon.Value="{mi:Fluent Icon=Map24, IconColor={StaticResource Primary}}" />
+                            </VerticalStackLayout>
+                            <Image Grid.Column="1"
+                                   HeightRequest="40" WidthRequest="40"
+                                   VerticalOptions="Start"
+                                   Margin="0,4,0,0"
+                                   SemanticProperties.Description=""
+                                   mi:MauiIcon.Value="{mi:Fluent Icon=Location24, IconColor={StaticResource Primary}}" />
+                        </Grid>
+                    </Border>
+
+                    <!-- POST-EVENT Card -->
+                    <VerticalStackLayout Spacing="12" Padding="32,40"
+                                         HorizontalOptions="Center"
+                                         IsVisible="{Binding IsPostEvent}">
+                        <Label Text="🎊" FontSize="48"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding CountdownDaysText}"
+                               FontSize="22" FontAttributes="Bold"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding CountdownSubtext}"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+                    </VerticalStackLayout>
+
                     <!-- HAPPENING NOW Section -->
                     <VerticalStackLayout Spacing="10" IsVisible="{Binding HasNowSessions}">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="16,0">
