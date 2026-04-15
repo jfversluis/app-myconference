@@ -31,21 +31,20 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
 #if DEBUG
     // Mutable offset to simulate conference time — adjustable from the in-app debug panel.
-    // Actual Sessionize schedule: Sep 10-12, 2025. Default to mid-morning Day 1.
-    private static TimeSpan _debugTimeOffset = new DateTimeOffset(2025, 9, 10, 10, 25, 0, TimeSpan.FromHours(2)).Subtract(DateTimeOffset.Now);
+    // NDC Copenhagen 2026: sessions June 3-4. Default: real time.
+    private static TimeSpan _debugTimeOffset = TimeSpan.Zero;
 
     private static readonly (string Label, DateTimeOffset Time)[] DebugPresets =
     [
-        ("Before event (8:30 AM)", new(2025, 9, 10, 8, 30, 0, TimeSpan.FromHours(2))),
-        ("Keynote live (9:15 AM)", new(2025, 9, 10, 9, 15, 0, TimeSpan.FromHours(2))),
-        ("Sessions live (10:25 AM)", new(2025, 9, 10, 10, 25, 0, TimeSpan.FromHours(2))),
-        ("Lunch (12:30 PM)", new(2025, 9, 10, 12, 30, 0, TimeSpan.FromHours(2))),
-        ("Afternoon (3:05 PM)", new(2025, 9, 10, 15, 5, 0, TimeSpan.FromHours(2))),
-        ("Evening (5:45 PM)", new(2025, 9, 10, 17, 45, 0, TimeSpan.FromHours(2))),
-        ("Day 2 morning (10:25 AM)", new(2025, 9, 11, 10, 25, 0, TimeSpan.FromHours(2))),
-        ("Day 3 morning (10:25 AM)", new(2025, 9, 12, 10, 25, 0, TimeSpan.FromHours(2))),
-        ("After event", new(2025, 9, 12, 18, 0, 0, TimeSpan.FromHours(2))),
         ("Real time (no offset)", default),
+        ("Day 1 keynote (9:15 AM)", new(2026, 6, 3, 9, 15, 0, TimeSpan.FromHours(2))),
+        ("Day 1 morning (10:25 AM)", new(2026, 6, 3, 10, 25, 0, TimeSpan.FromHours(2))),
+        ("Day 1 lunch (12:30 PM)", new(2026, 6, 3, 12, 30, 0, TimeSpan.FromHours(2))),
+        ("Day 1 afternoon (3:05 PM)", new(2026, 6, 3, 15, 5, 0, TimeSpan.FromHours(2))),
+        ("Day 1 evening (5:45 PM)", new(2026, 6, 3, 17, 45, 0, TimeSpan.FromHours(2))),
+        ("Day 2 morning (10:25 AM)", new(2026, 6, 4, 10, 25, 0, TimeSpan.FromHours(2))),
+        ("Day 2 afternoon (3:05 PM)", new(2026, 6, 4, 15, 5, 0, TimeSpan.FromHours(2))),
+        ("After event", new(2026, 6, 4, 18, 0, 0, TimeSpan.FromHours(2))),
     ];
 #endif
 
@@ -63,7 +62,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     [ObservableProperty]
     private bool _showDebugPanel;
 
-    private int _debugPresetIndex = DebugPresets.Length - 1;
+    private int _debugPresetIndex = 0;
 
     [RelayCommand]
     private void ToggleDebugPanel() => ShowDebugPanel = !ShowDebugPanel;
