@@ -29,7 +29,8 @@
 
                 <!-- Event Header -->
                 <Grid Padding="20,16" Background="{StaticResource HeroGradient}"
-                      RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+                      RowDefinitions="Auto,Auto,Auto" RowSpacing="6"
+                      IsVisible="{Binding ShowEventHeader}">
                     <Label Grid.Row="0"
                            Text="{Binding EventDateDisplay}"
                            FontSize="13"
@@ -269,18 +270,34 @@
                     </Border>
 
                     <!-- POST-EVENT Card -->
-                    <VerticalStackLayout Spacing="12" Padding="32,40"
+                    <VerticalStackLayout Spacing="16" Padding="32,48"
                                          HorizontalOptions="Center"
                                          IsVisible="{Binding IsPostEvent}">
-                        <Label Text="🎊" FontSize="48"
+                        <Label Text="🎊" FontSize="56"
                                HorizontalTextAlignment="Center" />
                         <Label Text="{Binding CountdownDaysText}"
-                               FontSize="22" FontAttributes="Bold"
+                               FontSize="24" FontAttributes="Bold"
                                HorizontalTextAlignment="Center" />
                         <Label Text="{Binding CountdownSubtext}"
-                               FontSize="14"
+                               FontSize="16"
                                HorizontalTextAlignment="Center"
                                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+
+                        <!-- Stats recap -->
+                        <Label Text="{Binding PostEventStatsText}"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               IsVisible="{Binding ShowPostEventStats}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                               Margin="0,4,0,0" />
+
+                        <!-- Browse Sessions button -->
+                        <Button Text="Browse All Sessions"
+                                Command="{Binding NavigateToSessionsCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                HorizontalOptions="Center"
+                                Margin="0,8,0,0"
+                                SemanticProperties.Hint="View all conference sessions" />
                     </VerticalStackLayout>
 
                     <!-- HAPPENING NOW Section -->

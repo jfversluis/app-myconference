@@ -169,6 +169,9 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     [ObservableProperty]
     private string _firstSessionsTimeDisplay = string.Empty;
 
+    [ObservableProperty]
+    private string _postEventStatsText = string.Empty;
+
     public bool IsPreEvent => CurrentPhase == EventPhase.PreEvent;
     public bool IsEventEve => CurrentPhase == EventPhase.EventEve;
     public bool IsDuringEvent => CurrentPhase == EventPhase.DuringEvent;
@@ -176,6 +179,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     public bool HasVenue => !string.IsNullOrEmpty(VenueName);
     public bool ShowVenueCard => HasVenue && (IsPreEvent || IsEventEve);
     public bool HasFirstSessions => FirstSessions.Count > 0 && IsEventEve;
+    public bool ShowEventHeader => !IsPostEvent;
+    public bool ShowPostEventStats => IsPostEvent && AgendaCount > 0;
 
     public bool HasNowSessions => NowSessions.Count > 0;
     public bool HasUpNext => UpNextSessions.Count > 0;
@@ -200,6 +205,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             OnPropertyChanged(nameof(IsPostEvent));
             OnPropertyChanged(nameof(ShowVenueCard));
             OnPropertyChanged(nameof(HasFirstSessions));
+            OnPropertyChanged(nameof(ShowEventHeader));
+            OnPropertyChanged(nameof(ShowPostEventStats));
         }
     }
 
@@ -451,7 +458,10 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         else if (IsPostEvent)
         {
             CountdownDaysText = "Thanks for attending!";
-            CountdownSubtext = $"We hope you enjoyed {eventName}";
+            CountdownSubtext = $"See you next year! 👋";
+            PostEventStatsText = AgendaCount > 0
+                ? $"You saved {AgendaCount} session{(AgendaCount == 1 ? "" : "s")} to your agenda"
+                : string.Empty;
             FirstSessions = [];
         }
         else
