@@ -13,7 +13,7 @@
     "longitude": 12.5741
   },
   "api": {
-    "sessionizeEventId": "5g27052o",
+    "sessionizeEventId": "egd7cq76",
     "sessionizeBaseUrl": "https://sessionize.com/api/v2/",
     "cacheExpirationHours": 24,
     "maxRetryAttempts": 3,
