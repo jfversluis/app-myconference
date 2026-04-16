@@ -10,7 +10,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>MyConference</ApplicationTitle>
+		<ApplicationTitle>NDC</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.myconference.app</ApplicationId>
