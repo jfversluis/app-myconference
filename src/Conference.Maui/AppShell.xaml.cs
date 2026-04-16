@@ -43,6 +43,9 @@ public partial class AppShell : Shell
 
         var tap = new UITapGestureRecognizer(HandleTabBarTap);
         tap.ShouldRecognizeSimultaneously = (_, _) => true;
+        tap.DelaysTouchesBegan = false;
+        tap.DelaysTouchesEnded = false;
+        tap.CancelsTouchesInView = false;
         tabBar.AddGestureRecognizer(tap);
     }
 
