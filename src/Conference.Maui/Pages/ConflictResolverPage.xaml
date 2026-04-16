@@ -118,9 +118,9 @@
                                                 Padding="16,14"
                                                 MinimumHeightRequest="44"
                                                 SemanticProperties.Description="{Binding AccessibleDescription}"
-                                                SemanticProperties.Hint="Double tap to keep this session">
+                                                SemanticProperties.Hint="Double tap to view session details">
                                             <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnKeepSessionTapped"
+                                                <TapGestureRecognizer Tapped="OnSessionTapped"
                                                     CommandParameter="{Binding}" />
                                             </Border.GestureRecognizers>
                                             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
@@ -172,7 +172,7 @@
                 Padding="20,14,20,20"
                 IsVisible="{Binding AllResolved, Converter={StaticResource InvertedBoolConverter}}">
             <Grid ColumnDefinitions="*,Auto">
-                <Label Text="Tap 'Keep' on the session you want. The others will be removed from your agenda."
+                <Label Text="Tap a session to see details, or tap 'Keep' to resolve the conflict."
                        FontSize="13"
                        TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
                        LineBreakMode="WordWrap"

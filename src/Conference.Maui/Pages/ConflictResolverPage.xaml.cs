@@ -26,10 +26,15 @@ public partial class ConflictResolverPage : ContentPage
             await _viewModel.KeepSessionCommand.ExecuteAsync(session);
     }
 
-    private async void OnKeepSessionTapped(object? sender, EventArgs e)
+    private async void OnSessionTapped(object? sender, EventArgs e)
     {
         if (sender is BindableObject bo && bo.BindingContext is SessionItem session)
-            await _viewModel.KeepSessionCommand.ExecuteAsync(session);
+        {
+            await Shell.Current.GoToAsync(nameof(SessionDetailsPage), new Dictionary<string, object>
+            {
+                { "Session", session }
+            });
+        }
     }
 
     private async void OnViewAgendaClicked(object? sender, EventArgs e)
