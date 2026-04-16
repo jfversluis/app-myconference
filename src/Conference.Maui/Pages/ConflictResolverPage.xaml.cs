@@ -32,7 +32,7 @@ public partial class ConflictResolverPage : ContentPage
         {
             await Shell.Current.GoToAsync(nameof(SessionDetailsPage), new Dictionary<string, object>
             {
-                { "Session", session }
+                ["SessionId"] = session.Id
             });
         }
     }
