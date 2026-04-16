@@ -13,7 +13,7 @@
 		<ApplicationTitle>NDC</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.myconference.app</ApplicationId>
+		<ApplicationId>dev.jfversluis.ndc</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
