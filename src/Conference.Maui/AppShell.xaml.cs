@@ -1,6 +1,10 @@
 using Conference.Maui.Pages;
 #if IOS
 using UIKit;
+#elif ANDROID
+using Google.Android.Material.Navigation;
+using AView = Android.Views.View;
+using AViewGroup = Android.Views.ViewGroup;
 #endif
 
 namespace Conference.Maui;
@@ -76,6 +80,54 @@ public partial class AppShell : Shell
         {
             var found = FindDescendant<T>(subview);
             if (found is not null) return found;
+        }
+        return null;
+    }
+#elif ANDROID
+    private bool _tabReselectionSetup;
+
+    protected override void OnNavigated(ShellNavigatedEventArgs args)
+    {
+        base.OnNavigated(args);
+
+        if (!_tabReselectionSetup)
+        {
+            _tabReselectionSetup = true;
+            SetupScrollToTopOnTabReselect();
+        }
+    }
+
+    private void SetupScrollToTopOnTabReselect()
+    {
+        if (Handler?.PlatformView is not AView platformView)
+            return;
+
+        var navView = FindDescendant<NavigationBarView>(platformView);
+        if (navView is null)
+            return;
+
+        navView.ItemReselected += OnTabReselected;
+    }
+
+    private void OnTabReselected(object? sender, NavigationBarView.ItemReselectedEventArgs e)
+    {
+        if (Current?.CurrentPage is IScrollToTop scrollable)
+        {
+            scrollable.ScrollToTop();
+        }
+    }
+
+    private static T? FindDescendant<T>(AView? view) where T : AView
+    {
+        if (view is null) return null;
+        if (view is T match) return match;
+        if (view is AViewGroup vg)
+        {
+            for (int i = 0; i < vg.ChildCount; i++)
+            {
+                var found = FindDescendant<T>(vg.GetChildAt(i));
+                if (found is not null) return found;
+            }
         }
         return null;
     }

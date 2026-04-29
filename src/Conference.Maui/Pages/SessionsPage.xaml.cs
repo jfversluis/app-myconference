@@ -1,4 +1,5 @@
 using Conference.Maui.Models;
+using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
 
@@ -26,6 +27,12 @@ public partial class SessionsPage : ContentPage, IScrollToTop
         {
             PopulateDayTabs();
         }
+#if ANDROID
+        if (e.PropertyName == nameof(SessionsViewModel.CurrentDaySlots))
+        {
+            ResetStickyHeader();
+        }
+#endif
     }
 
     private void PopulateDayTabs()
@@ -76,4 +83,67 @@ public partial class SessionsPage : ContentPage, IScrollToTop
         base.OnDisappearing();
         _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
     }
+
+#if ANDROID
+    private int _lastStickyGroupIndex = -1;
+
+    private void OnCollectionViewScrolled(object? sender, ItemsViewScrolledEventArgs e)
+    {
+        var groups = _viewModel.CurrentDaySlots;
+        if (groups == null || groups.Count == 0)
+        {
+            StickyHeaderOverlay.IsVisible = false;
+            return;
+        }
+
+        int groupIndex = GetGroupIndexFromFlatIndex(e.FirstVisibleItemIndex, groups);
+        bool shouldShow = groupIndex >= 0 && e.VerticalOffset > 30;
+        StickyHeaderOverlay.IsVisible = shouldShow;
+
+        if (shouldShow && groupIndex >= 0)
+        {
+            StickyHeaderLabel.Text = groups[groupIndex].TimeDisplay;
+
+            if (groupIndex != _lastStickyGroupIndex)
+            {
+                _lastStickyGroupIndex = groupIndex;
+                if (HapticService.IsEnabled)
+                {
+                    try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); }
+                    catch { /* Haptics not available */ }
+                }
+            }
+        }
+        else
+        {
+            _lastStickyGroupIndex = -1;
+        }
+    }
+
+    private void ResetStickyHeader()
+    {
+        _lastStickyGroupIndex = -1;
+        StickyHeaderOverlay.IsVisible = false;
+    }
+
+    private static int GetGroupIndexFromFlatIndex(int flatIndex, IReadOnlyList<TimeSlotGroup> groups)
+    {
+        if (flatIndex < 0) return -1;
+
+        // Add +1 offset: FirstVisibleItemIndex may point to a barely-visible
+        // trailing item from the previous group at the viewport top edge.
+        int adjustedIndex = flatIndex + 1;
+        int cumulative = 0;
+        for (int i = 0; i < groups.Count; i++)
+        {
+            int groupSize = 1 + groups[i].Count; // header + items in flat adapter
+            if (adjustedIndex < cumulative + groupSize)
+                return i;
+            cumulative += groupSize;
+        }
+        return groups.Count - 1;
+    }
+#else
+    private void OnCollectionViewScrolled(object? sender, ItemsViewScrolledEventArgs e) { }
+#endif
 }
