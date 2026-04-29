@@ -96,7 +96,7 @@ public partial class SessionsPage : ContentPage, IScrollToTop
             return;
         }
 
-        int groupIndex = GetGroupIndexFromFlatIndex(e.FirstVisibleItemIndex, groups);
+        int groupIndex = GetGroupIndexForStickyHeader(e.FirstVisibleItemIndex, groups);
         bool shouldShow = groupIndex >= 0 && e.VerticalOffset > 30;
         StickyHeaderOverlay.IsVisible = shouldShow;
 
@@ -126,20 +126,27 @@ public partial class SessionsPage : ContentPage, IScrollToTop
         StickyHeaderOverlay.IsVisible = false;
     }
 
-    private static int GetGroupIndexFromFlatIndex(int flatIndex, IReadOnlyList<TimeSlotGroup> groups)
+    // Maps FirstVisibleItemIndex to the group whose header the overlay should display.
+    // FVI is items-only on Android (group headers are excluded from the index).
+    // When FVI is the first item of a new group, the real group header is still
+    // visible in the content area below the overlay — we delay the transition by
+    // one item to avoid showing duplicate headers on screen.
+    private static int GetGroupIndexForStickyHeader(int flatIndex, IReadOnlyList<TimeSlotGroup> groups)
     {
         if (flatIndex < 0) return -1;
 
-        // Add +1 offset: FirstVisibleItemIndex may point to a barely-visible
-        // trailing item from the previous group at the viewport top edge.
-        int adjustedIndex = flatIndex + 1;
         int cumulative = 0;
         for (int i = 0; i < groups.Count; i++)
         {
-            int groupSize = 1 + groups[i].Count; // header + items in flat adapter
-            if (adjustedIndex < cumulative + groupSize)
+            cumulative += groups[i].Count;
+            if (flatIndex < cumulative)
+            {
+                // Check if FVI is the first item of this group
+                int groupStart = cumulative - groups[i].Count;
+                if (flatIndex == groupStart && i > 0)
+                    return i - 1; // real header still visible — show previous group
                 return i;
-            cumulative += groupSize;
+            }
         }
         return groups.Count - 1;
     }
