@@ -146,24 +146,9 @@ public partial class AboutViewModel : BaseViewModel
                 return;
             }
 
-            var suggestion = new Android.Net.Wifi.WifiNetworkSuggestion.Builder()
-                .SetSsid(WifiNetworkName)
-                .SetWpa2Passphrase(WifiPassword)
-                .Build();
-
-            var suggestions = new[] { suggestion };
-            var status = wifiManager.AddNetworkSuggestions(suggestions);
-
-            if (status == Android.Net.Wifi.NetworkStatus.SuggestionsSuccess)
-            {
-                await Shell.Current.DisplayAlertAsync("WiFi",
-                    $"Network \"{WifiNetworkName}\" has been suggested. " +
-                    "Your device will connect automatically when in range.", "OK");
-            }
-            else
-            {
-                await CopyWifiFallbackAsync();
-            }
+            #pragma warning disable CA1416 // Platform version guard is on line 143
+            await AddWifiSuggestionAsync(wifiManager);
+            #pragma warning restore CA1416
         }
         catch
         {
@@ -180,6 +165,31 @@ public partial class AboutViewModel : BaseViewModel
         await Shell.Current.DisplayAlertAsync("WiFi",
             $"The password for \"{WifiNetworkName}\" has been copied to your clipboard.", "OK");
     }
+
+#if ANDROID
+    [System.Runtime.Versioning.SupportedOSPlatform("android29.0")]
+    private async Task AddWifiSuggestionAsync(Android.Net.Wifi.WifiManager wifiManager)
+    {
+        var suggestion = new Android.Net.Wifi.WifiNetworkSuggestion.Builder()
+            .SetSsid(WifiNetworkName)
+            .SetWpa2Passphrase(WifiPassword)
+            .Build();
+
+        var suggestions = new[] { suggestion };
+        var status = wifiManager.AddNetworkSuggestions(suggestions);
+
+        if (status == Android.Net.Wifi.NetworkStatus.SuggestionsSuccess)
+        {
+            await Shell.Current.DisplayAlertAsync("WiFi",
+                $"Network \"{WifiNetworkName}\" has been suggested. " +
+                "Your device will connect automatically when in range.", "OK");
+        }
+        else
+        {
+            await CopyWifiFallbackAsync();
+        }
+    }
+#endif
 
     [RelayCommand]
     private async Task OpenConferenceWebsiteAsync()
