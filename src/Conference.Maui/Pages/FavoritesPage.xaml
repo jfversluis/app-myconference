@@ -20,7 +20,6 @@
                         IsGrouped="True"
                         SelectionMode="Single"
                         SelectionChanged="OnSessionSelected"
-                        Scrolled="OnCollectionViewScrolled"
                         IsVisible="{Binding HasFavorites}">
             <CollectionView.Behaviors>
                 <behaviors:StickyHeaderHapticBehavior />
@@ -63,27 +62,6 @@
                 <BoxView HeightRequest="90" BackgroundColor="Transparent" />
             </CollectionView.Footer>
         </CollectionView>
-
-        <!-- Sticky header overlay (Android) -->
-        <Grid x:Name="StickyHeaderOverlay"
-              IsVisible="False"
-              VerticalOptions="Start"
-              Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
-              Padding="12,8"
-              ColumnDefinitions="*,Auto"
-              ZIndex="10"
-              InputTransparent="True">
-            <Label x:Name="StickyHeaderLabel"
-                   FontSize="14"
-                   FontAttributes="Bold"
-                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource DarkPrimary}}" />
-            <Label x:Name="StickyHeaderConflict"
-                   Grid.Column="1"
-                   FontSize="12"
-                   IsVisible="False"
-                   VerticalOptions="Center"
-                   TextColor="{AppThemeBinding Light={StaticResource ConflictOrange}, Dark={StaticResource ConflictOrangeDark}}" />
-        </Grid>
 
         <!-- Empty State -->
         <VerticalStackLayout VerticalOptions="Center"

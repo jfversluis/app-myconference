@@ -1,5 +1,4 @@
 using Conference.Maui.Models;
-using Conference.Maui.Services;
 using Conference.Maui.ViewModels;
 using Syncfusion.Maui.Toolkit.TabView;
 
@@ -27,12 +26,6 @@ public partial class SessionsPage : ContentPage, IScrollToTop
         {
             PopulateDayTabs();
         }
-#if ANDROID
-        if (e.PropertyName == nameof(SessionsViewModel.CurrentDaySlots))
-        {
-            ResetStickyHeader();
-        }
-#endif
     }
 
     private void PopulateDayTabs()
@@ -84,73 +77,4 @@ public partial class SessionsPage : ContentPage, IScrollToTop
         _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
     }
 
-#if ANDROID
-    private int _lastStickyGroupIndex = -1;
-
-    private void OnCollectionViewScrolled(object? sender, ItemsViewScrolledEventArgs e)
-    {
-        var groups = _viewModel.CurrentDaySlots;
-        if (groups == null || groups.Count == 0)
-        {
-            StickyHeaderOverlay.IsVisible = false;
-            return;
-        }
-
-        int groupIndex = GetGroupIndexForStickyHeader(e.FirstVisibleItemIndex, groups);
-        bool shouldShow = groupIndex >= 0 && e.VerticalOffset > 30;
-        StickyHeaderOverlay.IsVisible = shouldShow;
-
-        if (shouldShow && groupIndex >= 0)
-        {
-            StickyHeaderLabel.Text = groups[groupIndex].TimeDisplay;
-
-            if (groupIndex != _lastStickyGroupIndex)
-            {
-                _lastStickyGroupIndex = groupIndex;
-                if (HapticService.IsEnabled)
-                {
-                    try { HapticFeedback.Default.Perform(HapticFeedbackType.Click); }
-                    catch { /* Haptics not available */ }
-                }
-            }
-        }
-        else
-        {
-            _lastStickyGroupIndex = -1;
-        }
-    }
-
-    private void ResetStickyHeader()
-    {
-        _lastStickyGroupIndex = -1;
-        StickyHeaderOverlay.IsVisible = false;
-    }
-
-    // Maps FirstVisibleItemIndex to the group whose header the overlay should display.
-    // FVI is items-only on Android (group headers are excluded from the index).
-    // When FVI is the first item of a new group, the real group header is still
-    // visible in the content area below the overlay — we delay the transition by
-    // one item to avoid showing duplicate headers on screen.
-    private static int GetGroupIndexForStickyHeader(int flatIndex, IReadOnlyList<TimeSlotGroup> groups)
-    {
-        if (flatIndex < 0) return -1;
-
-        int cumulative = 0;
-        for (int i = 0; i < groups.Count; i++)
-        {
-            cumulative += groups[i].Count;
-            if (flatIndex < cumulative)
-            {
-                // Check if FVI is the first item of this group
-                int groupStart = cumulative - groups[i].Count;
-                if (flatIndex == groupStart && i > 0)
-                    return i - 1; // real header still visible — show previous group
-                return i;
-            }
-        }
-        return groups.Count - 1;
-    }
-#else
-    private void OnCollectionViewScrolled(object? sender, ItemsViewScrolledEventArgs e) { }
-#endif
 }

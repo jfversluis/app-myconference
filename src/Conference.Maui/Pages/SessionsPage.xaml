@@ -96,15 +96,13 @@
         </Border>
 
         <!-- Sessions CollectionView -->
-        <Grid Grid.Row="2">
-        <RefreshView IsRefreshing="{Binding IsRefreshing}"
+        <RefreshView Grid.Row="2" IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshDataCommand}">
             <CollectionView x:Name="SessionsCollectionView"
                             ItemsSource="{Binding CurrentDaySlots}"
                             IsGrouped="True"
                             SelectionMode="Single"
-                            SelectionChanged="OnSessionSelected"
-                            Scrolled="OnCollectionViewScrolled">
+                            SelectionChanged="OnSessionSelected">
                 <CollectionView.Behaviors>
                     <behaviors:StickyHeaderHapticBehavior />
                 </CollectionView.Behaviors>
@@ -151,21 +149,6 @@
             </CollectionView.EmptyView>
         </CollectionView>
         </RefreshView>
-
-            <!-- Sticky header overlay (Android) -->
-            <Grid x:Name="StickyHeaderOverlay"
-                  IsVisible="False"
-                  VerticalOptions="Start"
-                  Background="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
-                  Padding="12,8"
-                  ZIndex="10"
-                  InputTransparent="True">
-                <Label x:Name="StickyHeaderLabel"
-                       FontSize="14"
-                       FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource DarkPrimary}}" />
-            </Grid>
-        </Grid>
 
         <!-- Loading Indicator -->
         <VerticalStackLayout Grid.RowSpan="3"
