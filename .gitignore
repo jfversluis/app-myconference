@@ -401,3 +401,4 @@ nohup.out
 
 # MauiDevFlow screenshots
 screenshot_*.png
+*.keystore

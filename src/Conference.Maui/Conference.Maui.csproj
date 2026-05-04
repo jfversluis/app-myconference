@@ -30,7 +30,16 @@
 
 	<!-- Allow interpreter fallback for assemblies that fail AOT on iOS -->
 	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-		<MtouchInterpreter>MauiIcons.FluentFilled,aot-instances</MtouchInterpreter>
+		<MtouchInterpreter>MauiIcons.Fluent.Filled,aot-instances</MtouchInterpreter>
+	</PropertyGroup>
+
+	<!-- Android release signing -->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' AND '$(Configuration)' == 'Release'">
+		<AndroidKeyStore>true</AndroidKeyStore>
+		<AndroidSigningKeyStore>..\..\ndc.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>ndc</AndroidSigningKeyAlias>
+		<AndroidSigningStorePass>env:NDC_KEYSTORE_PASSWORD</AndroidSigningStorePass>
+		<AndroidSigningKeyPass>env:NDC_KEYSTORE_PASSWORD</AndroidSigningKeyPass>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -53,7 +62,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.Fluent" Version="6.0.0" />
-		<PackageReference Include="AathifMahir.Maui.MauiIcons.FluentFilled" Version="1.2.0" />
+		<PackageReference Include="AathifMahir.Maui.MauiIcons.Fluent.Filled" Version="6.0.0" />
 		<PackageReference Include="Akavache" Version="10.0.1" />
 		<!-- Pin transitive deps to fix vulnerabilities and 16KB page size warning -->
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
