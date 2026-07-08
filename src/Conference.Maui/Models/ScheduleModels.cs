@@ -28,8 +28,8 @@ public class TimeSlotGroup : List<SessionItem>
     public DateOnly? Date { get; set; }
     
     public string TimeDisplay => Date.HasValue 
-        ? $"{Date.Value:ddd} {Date.Value.Day} {Date.Value:MMM} · {StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}"
-        : $"{StartTime.LocalDateTime:h:mm tt} - {EndTime.LocalDateTime:h:mm tt}";
+        ? $"{Date.Value:ddd} {Date.Value.Day} {Date.Value:MMM} · {StartTime.DateTime:h:mm tt} - {EndTime.DateTime:h:mm tt}"
+        : $"{StartTime.DateTime:h:mm tt} - {EndTime.DateTime:h:mm tt}";
 
     public bool HasConflict => Count > 1;
     public string ConflictText => $"{Count} sessions";
@@ -55,7 +55,7 @@ public partial class SessionItem : ObservableObject
     [ObservableProperty]
     private bool _hasReminder;
 
-    public string TimeDisplay => $"{StartsAt.LocalDateTime:h:mm tt} - {EndsAt.LocalDateTime:h:mm tt}";
+    public string TimeDisplay => $"{StartsAt.DateTime:h:mm tt} - {EndsAt.DateTime:h:mm tt}";
     public string DurationDisplay => $"{(EndsAt - StartsAt).TotalMinutes:0} min";
     public bool HasMultipleSpeakers => Speakers.Count > 1;
     public string SpeakerNames => string.Join(", ", Speakers.Select(s => s.FullName));
@@ -68,7 +68,7 @@ public partial class SessionItem : ObservableObject
             var parts = new List<string> { Title };
             if (Speakers.Count > 0)
                 parts.Add($"by {SpeakerNames}");
-            parts.Add(StartsAt.LocalDateTime.ToString("dddd h:mm tt"));
+            parts.Add(StartsAt.DateTime.ToString("dddd h:mm tt"));
             if (!string.IsNullOrEmpty(RoomName))
                 parts.Add(RoomName);
             parts.Add(DurationDisplay);

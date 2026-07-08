@@ -26,6 +26,7 @@ public partial class OnboardingViewModel : ObservableObject
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly ISessionItemMapper _mapper;
+    private readonly IEventTimeService _eventTimeService;
     private readonly ILogger<OnboardingViewModel> _logger;
     private readonly IEventConfigService _configService;
 
@@ -104,12 +105,14 @@ public partial class OnboardingViewModel : ObservableObject
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
         ISessionItemMapper mapper,
+        IEventTimeService eventTimeService,
         IEventConfigService configService,
         ILogger<OnboardingViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _mapper = mapper;
+        _eventTimeService = eventTimeService;
         _configService = configService;
         _logger = logger;
     }
@@ -452,8 +455,8 @@ public partial class OnboardingViewModel : ObservableObject
         var conflicting = _allData.Sessions
             .Where(s => allFavIds.Contains(s.Id)
                 && s.Id != currentSession.Id
-                && s.StartsAt < currentSession.EndsAt
-                && s.EndsAt > currentSession.StartsAt)
+                && _eventTimeService.NormalizeSessionizeLocalTime(s.StartsAt) < currentSession.EndsAt
+                && _eventTimeService.NormalizeSessionizeLocalTime(s.EndsAt) > currentSession.StartsAt)
             .ToList();
 
         HasConflict = conflicting.Count > 0;

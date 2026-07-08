@@ -1,37 +1,38 @@
 {
   "event": {
-    "name": "NDC Copenhagen 2026",
-    "description": "Two days of software development talks covering .NET, cloud, AI, architecture, security, and more. Join world-class speakers and the developer community in Copenhagen.",
-    "startDate": "2026-06-03",
-    "endDate": "2026-06-04",
+    "name": "NDC Oslo 2026",
+    "description": "NDC Oslo 2026 is a five-day event for software developers, with two days of deep-dive workshops followed by three days of conference sessions in Oslo Spektrum.",
+    "startDate": "2026-09-16",
+    "endDate": "2026-09-18",
+    "timeZone": "Europe/Oslo",
     "isOnline": false
   },
   "venue": {
-    "name": "Øksnehallen",
-    "address": "Halmtorvet 11, 1700 København V, Denmark",
-    "latitude": 55.6377,
-    "longitude": 12.5741
+    "name": "Oslo Spektrum",
+    "address": "Sonja Henies plass 2, 0185 Oslo, Norway",
+    "latitude": 59.9143,
+    "longitude": 10.7564
   },
   "api": {
-    "sessionizeEventId": "egd7cq76",
+    "sessionizeEventId": "m8lhlemi",
     "sessionizeBaseUrl": "https://sessionize.com/api/v2/",
     "cacheExpirationHours": 24,
     "maxRetryAttempts": 3,
     "apiTimeoutSeconds": 30
   },
   "app": {
-    "displayName": "MyConference",
-    "bundleId": "com.myconference.app",
+    "displayName": "NDC Oslo",
+    "bundleId": "dev.jfversluis.ndc",
     "version": "1.0"
   },
   "links": {
-    "website": "https://ndccopenhagen.com",
+    "website": "https://ndcoslo.com",
     "github": "https://github.com/jfversluis/app-myconference",
     "sessionize": "https://sessionize.com"
   },
   "wifi": {
-    "networkName": "NDC-CPH-2026",
-    "password": "ndccopenhagen"
+    "networkName": "",
+    "password": ""
   },
   "branding": {
     "primaryColor": "#0078D4",
@@ -48,7 +49,7 @@
     "enableQuickPick": true,
     "enableOnboarding": true,
     "enableReminders": true,
-    "enableWifi": true,
+    "enableWifi": false,
     "enableSponsors": true,
     "enableConflictResolver": true,
     "enableHapticFeedback": true

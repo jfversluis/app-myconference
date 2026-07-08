@@ -129,7 +129,7 @@ public partial class ConflictResolverViewModel : BaseViewModel
                 foreach (var s in groupSessions)
                     processed.Add(s.Id);
 
-                var timeSlotLabel = $"{session.StartsAt.LocalDateTime:ddd, MMM d \u00b7 h:mm tt}";
+                var timeSlotLabel = $"{session.StartsAt.DateTime:ddd, MMM d \u00b7 h:mm tt}";
                 var group = new ConflictGroup(timeSlotLabel, groupSessions);
                 groups.Add(group);
             }

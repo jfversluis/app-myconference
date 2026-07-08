@@ -9,6 +9,7 @@ using Conference.Maui.Models;
 using Conference.Maui.Pages;
 using Microsoft.Extensions.Logging;
 using Sessionize.Api.Client.DataTransferObjects;
+using Sessionize.Api.Client.ValueObjects;
 
 namespace Conference.Maui.ViewModels;
 
@@ -28,6 +29,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     private readonly ISessionItemMapper _mapper;
     private readonly ILogger<MyEventViewModel> _logger;
     private readonly IEventConfigService _configService;
+    private readonly IEventTimeService _eventTimeService;
 
     private const int TimerIntervalSeconds = 30;
     private const int UpNextWindowMinutes = 60;
@@ -37,35 +39,16 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     private IReadOnlySet<string> _activeReminderIds = new HashSet<string>();
     private CancellationTokenSource? _timerCts;
 
-#if DEBUG
-    // Mutable offset to simulate conference time — adjustable from the in-app debug panel.
-    // NDC Copenhagen 2026: sessions June 3-4. Default: real time.
-    private static TimeSpan _debugTimeOffset = TimeSpan.Zero;
-
-    private static readonly (string Label, DateTimeOffset Time)[] DebugPresets =
-    [
-        ("Real time (no offset)", default),
-        ("Pre-event (2 weeks before)", new(2026, 5, 20, 10, 0, 0, TimeSpan.FromHours(2))),
-        ("Event eve (day before)", new(2026, 6, 2, 14, 0, 0, TimeSpan.FromHours(2))),
-        ("Day 1 keynote (9:15 AM)", new(2026, 6, 3, 9, 15, 0, TimeSpan.FromHours(2))),
-        ("Day 1 morning (10:25 AM)", new(2026, 6, 3, 10, 25, 0, TimeSpan.FromHours(2))),
-        ("Day 1 lunch (12:30 PM)", new(2026, 6, 3, 12, 30, 0, TimeSpan.FromHours(2))),
-        ("Day 1 afternoon (3:05 PM)", new(2026, 6, 3, 15, 5, 0, TimeSpan.FromHours(2))),
-        ("Day 1 evening (5:45 PM)", new(2026, 6, 3, 17, 45, 0, TimeSpan.FromHours(2))),
-        ("Day 2 morning (10:25 AM)", new(2026, 6, 4, 10, 25, 0, TimeSpan.FromHours(2))),
-        ("Day 2 afternoon (3:05 PM)", new(2026, 6, 4, 15, 5, 0, TimeSpan.FromHours(2))),
-        ("After event", new(2026, 6, 4, 18, 0, 0, TimeSpan.FromHours(2))),
-    ];
-#endif
-
     private DateTimeOffset Now =>
 #if DEBUG
-        DateTimeOffset.Now + _debugTimeOffset;
+        _eventTimeService.GetNow() + _debugTimeOffset;
 #else
-        DateTimeOffset.Now;
+        _eventTimeService.GetNow();
 #endif
 
 #if DEBUG
+    private static TimeSpan _debugTimeOffset = TimeSpan.Zero;
+
     [ObservableProperty]
     private string _debugTimeDisplay = string.Empty;
 
@@ -80,9 +63,10 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     [RelayCommand]
     private void CycleDebugTime()
     {
-        _debugPresetIndex = (_debugPresetIndex + 1) % DebugPresets.Length;
-        var preset = DebugPresets[_debugPresetIndex];
-        _debugTimeOffset = preset.Time == default ? TimeSpan.Zero : preset.Time - DateTimeOffset.Now;
+        var presets = GetDebugPresets();
+        _debugPresetIndex = (_debugPresetIndex + 1) % presets.Length;
+        var preset = presets[_debugPresetIndex];
+        _debugTimeOffset = preset.Time == default ? TimeSpan.Zero : preset.Time - _eventTimeService.GetNow();
 
         UpdateDebugTimeDisplay();
         UpdateTimeSections();
@@ -91,7 +75,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     private void UpdateDebugTimeDisplay()
     {
         var now = Now;
-        var preset = DebugPresets[_debugPresetIndex];
+        var preset = GetDebugPresets()[_debugPresetIndex];
         DebugTimeDisplay = $"🐞 {now:MMM d, h:mm:ss tt} — {preset.Label}";
     }
 #endif
@@ -216,6 +200,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         IReminderService reminderService,
         ISessionItemMapper mapper,
         IEventConfigService configService,
+        IEventTimeService eventTimeService,
         ILogger<MyEventViewModel> logger)
     {
         _dataService = dataService;
@@ -223,6 +208,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         _reminderService = reminderService;
         _mapper = mapper;
         _configService = configService;
+        _eventTimeService = eventTimeService;
         _logger = logger;
         Title = "My Event";
 
@@ -257,8 +243,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
                 if (sessions.Count > 0)
                 {
-                    var firstDate = sessions.Min(s => s.StartsAt);
-                    var lastDate = sessions.Max(s => s.EndsAt);
+                    var firstDate = sessions.Min(GetStartsAt);
+                    var lastDate = sessions.Max(GetEndsAt);
                     EventDateDisplay = firstDate.Year == lastDate.Year && firstDate.Month == lastDate.Month && firstDate.Day == lastDate.Day
                         ? firstDate.ToString("MMMM d, yyyy")
                         : $"{firstDate:MMM d} – {lastDate:MMM d, yyyy}";
@@ -357,13 +343,13 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         if (_allData == null) return;
 
         var now = Now;
-        var today = DateOnly.FromDateTime(now.LocalDateTime);
+        var today = _eventTimeService.GetEventDate(now);
         var sessions = _allData.Sessions.Where(s => !s.IsServiceSession).ToList();
 
         if (sessions.Count == 0) return;
 
-        var firstSessionStart = sessions.Min(s => s.StartsAt);
-        var lastSessionEnd = sessions.Max(s => s.EndsAt);
+        var firstSessionStart = sessions.Min(GetStartsAt);
+        var lastSessionEnd = sessions.Max(GetEndsAt);
 
         // Determine event phase
         var hoursUntilStart = (firstSessionStart - now).TotalHours;
@@ -440,13 +426,13 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             CountdownDaysText = hoursUntil <= 1
                 ? "Starting soon!"
                 : $"See you in {hoursUntil} hours!";
-            CountdownSubtext = $"First session at {firstSessionStart.LocalDateTime:h:mm tt}";
+            CountdownSubtext = $"First session at {firstSessionStart.DateTime:h:mm tt}";
 
             // Show first time slot as preview cards
             var sessions = _allData!.Sessions.Where(s => !s.IsServiceSession).ToList();
-            var firstSlotStart = sessions.Min(s => s.StartsAt);
+            var firstSlotStart = sessions.Min(GetStartsAt);
             var firstSlotSessions = sessions
-                .Where(s => s.StartsAt == firstSlotStart)
+                .Where(s => GetStartsAt(s) == firstSlotStart)
                 .OrderByDescending(s => _favoriteIds.Contains(s.Id))
                 .ThenBy(s => _mapper.GetRoomName(s.RoomId))
                 .Select(s => _mapper.MapSession(s, _favoriteIds, _activeReminderIds))
@@ -474,9 +460,9 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     {
         // Happening Now: sessions where StartsAt <= now < EndsAt
         var liveSessions = _allData!.Sessions
-            .Where(s => !s.IsServiceSession && s.StartsAt <= now && s.EndsAt > now)
+            .Where(s => !s.IsServiceSession && GetStartsAt(s) <= now && GetEndsAt(s) > now)
             .OrderByDescending(s => _favoriteIds.Contains(s.Id))
-            .ThenBy(s => s.EndsAt)
+            .ThenBy(GetEndsAt)
             .Select(s => _mapper.MapSession(s, _favoriteIds, _activeReminderIds))
             .ToList();
 
@@ -485,9 +471,9 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         // Up Next: next time slot that hasn't started yet (today first, then any future date)
         var nextSlotStart = _allData.Sessions
             .Where(s => !s.IsServiceSession
-                && s.StartsAt > now
-                && new DateOnly(s.StartsAt.Year, s.StartsAt.Month, s.StartsAt.Day) == today)
-            .Select(s => s.StartsAt)
+                && GetStartsAt(s) > now
+                && _eventTimeService.GetEventDate(s.StartsAt) == today)
+            .Select(GetStartsAt)
             .Distinct()
             .OrderBy(t => t)
             .FirstOrDefault();
@@ -496,8 +482,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         if (nextSlotStart == default)
         {
             nextSlotStart = _allData.Sessions
-                .Where(s => !s.IsServiceSession && s.StartsAt > now)
-                .Select(s => s.StartsAt)
+                .Where(s => !s.IsServiceSession && GetStartsAt(s) > now)
+                .Select(GetStartsAt)
                 .Distinct()
                 .OrderBy(t => t)
                 .FirstOrDefault();
@@ -506,7 +492,7 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         if (nextSlotStart != default)
         {
             var allNextSessions = _allData.Sessions
-                .Where(s => !s.IsServiceSession && s.StartsAt == nextSlotStart)
+                .Where(s => !s.IsServiceSession && GetStartsAt(s) == nextSlotStart)
                 .ToList();
 
             UpNextTotalCount = allNextSessions.Count;
@@ -519,10 +505,11 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
 
             UpNextSessions = new ObservableCollection<SessionItem>(nextItems);
 
-            var nextDate = new DateOnly(nextSlotStart.Year, nextSlotStart.Month, nextSlotStart.Day);
+            var displayStart = nextItems.FirstOrDefault()?.StartsAt ?? nextSlotStart;
+            var nextDate = _eventTimeService.GetEventDate(displayStart);
             UpNextTimeDisplay = nextDate == today
-                ? nextSlotStart.ToString("h:mm tt")
-                : $"Tomorrow {nextSlotStart:h:mm tt}";
+                ? $"{displayStart.DateTime:h:mm tt}"
+                : $"Tomorrow {displayStart.DateTime:h:mm tt}";
 
             var timeUntil = nextSlotStart - now;
             CountdownText = timeUntil.TotalMinutes < 1
@@ -543,8 +530,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         var todayFavorites = _allData.Sessions
             .Where(s => !s.IsServiceSession
                 && _favoriteIds.Contains(s.Id)
-                && new DateOnly(s.StartsAt.Year, s.StartsAt.Month, s.StartsAt.Day) == today)
-            .OrderBy(s => s.StartsAt)
+                && _eventTimeService.GetEventDate(s.StartsAt) == today)
+            .OrderBy(GetStartsAt)
             .Select(s => _mapper.MapSession(s, _favoriteIds, _activeReminderIds))
             .ToList();
 
@@ -660,12 +647,12 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
     {
         if (_allData == null || !ShowEmptyState) return;
 
-        var now = Now.DateTime;
+        var now = Now;
         var sessions = _allData.Sessions.Where(s => !s.IsServiceSession).ToList();
         if (sessions.Count == 0) return;
 
-        var firstSession = sessions.Min(s => s.StartsAt);
-        var lastSession = sessions.Max(s => s.EndsAt);
+        var firstSession = sessions.Min(GetStartsAt);
+        var lastSession = sessions.Max(GetEndsAt);
 
         if (now < firstSession)
         {
@@ -683,8 +670,8 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
         {
             // During the event but in a gap (break/lunch)
             var nextSession = sessions
-                .Where(s => s.StartsAt > now)
-                .OrderBy(s => s.StartsAt)
+                .Where(s => GetStartsAt(s) > now)
+                .OrderBy(GetStartsAt)
                 .FirstOrDefault();
 
             if (nextSession != null)
@@ -717,4 +704,25 @@ public partial class MyEventViewModel : BaseViewModel, IRecipient<FavoriteChange
             }
         });
     }
+
+    private DateTimeOffset GetStartsAt(SessionDetails session) => _eventTimeService.NormalizeSessionizeLocalTime(session.StartsAt);
+
+    private DateTimeOffset GetEndsAt(SessionDetails session) => _eventTimeService.NormalizeSessionizeLocalTime(session.EndsAt);
+
+#if DEBUG
+    private (string Label, DateTimeOffset Time)[] GetDebugPresets() =>
+    [
+        ("Real time (no offset)", default),
+        ("Pre-event (2 weeks before)", _eventTimeService.CreateEventTime(2026, 5, 20, 10, 0)),
+        ("Event eve (day before)", _eventTimeService.CreateEventTime(2026, 6, 2, 14, 0)),
+        ("Day 1 keynote (9:15 AM)", _eventTimeService.CreateEventTime(2026, 6, 3, 9, 15)),
+        ("Day 1 morning (10:25 AM)", _eventTimeService.CreateEventTime(2026, 6, 3, 10, 25)),
+        ("Day 1 lunch (12:30 PM)", _eventTimeService.CreateEventTime(2026, 6, 3, 12, 30)),
+        ("Day 1 afternoon (3:05 PM)", _eventTimeService.CreateEventTime(2026, 6, 3, 15, 5)),
+        ("Day 1 evening (5:45 PM)", _eventTimeService.CreateEventTime(2026, 6, 3, 17, 45)),
+        ("Day 2 morning (10:25 AM)", _eventTimeService.CreateEventTime(2026, 6, 4, 10, 25)),
+        ("Day 2 afternoon (3:05 PM)", _eventTimeService.CreateEventTime(2026, 6, 4, 15, 5)),
+        ("After event", _eventTimeService.CreateEventTime(2026, 6, 4, 18, 0)),
+    ];
+#endif
 }

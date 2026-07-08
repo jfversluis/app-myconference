@@ -10,8 +10,14 @@ namespace Conference.Maui.Services;
 /// </summary>
 public class SessionItemMapper : ISessionItemMapper
 {
+    private readonly IEventTimeService _eventTimeService;
     private Dictionary<string, SpeakerDetails> _speakerLookup = [];
     private Dictionary<int, string> _roomLookup = [];
+
+    public SessionItemMapper(IEventTimeService eventTimeService)
+    {
+        _eventTimeService = eventTimeService;
+    }
 
     public void Initialize(AllDataResponse allData)
     {
@@ -34,8 +40,8 @@ public class SessionItemMapper : ISessionItemMapper
             Id = session.Id,
             Title = session.Title,
             Description = session.Description,
-            StartsAt = session.StartsAt,
-            EndsAt = session.EndsAt,
+            StartsAt = _eventTimeService.NormalizeSessionizeLocalTime(session.StartsAt),
+            EndsAt = _eventTimeService.NormalizeSessionizeLocalTime(session.EndsAt),
             RoomId = session.RoomId,
             RoomName = _roomLookup.GetValueOrDefault(session.RoomId),
             Speakers = speakers,

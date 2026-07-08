@@ -18,6 +18,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
     private readonly IReminderService _reminderService;
     private readonly ISessionItemMapper _mapper;
     private readonly IEventConfigService _configService;
+    private readonly IEventTimeService _eventTimeService;
     private readonly ILogger<FavoritesViewModel> _logger;
 
     [ObservableProperty]
@@ -36,6 +37,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
         IReminderService reminderService,
         ISessionItemMapper mapper,
         IEventConfigService configService,
+        IEventTimeService eventTimeService,
         ILogger<FavoritesViewModel> logger)
     {
         _dataService = dataService;
@@ -43,6 +45,7 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
         _reminderService = reminderService;
         _mapper = mapper;
         _configService = configService;
+        _eventTimeService = eventTimeService;
         _logger = logger;
         Title = "My Agenda";
 
@@ -92,11 +95,11 @@ public partial class FavoritesViewModel : BaseViewModel, IRecipient<FavoriteChan
             .Select(slotGroup =>
             {
                 var firstSession = slotGroup.First();
-                var date = new DateOnly(firstSession.StartsAt.Year, firstSession.StartsAt.Month, firstSession.StartsAt.Day);
+                var date = _eventTimeService.GetEventDate(firstSession.StartsAt);
                 var slot = new TimeSlotGroup
                 {
-                    StartTime = slotGroup.Key.StartsAt,
-                    EndTime = slotGroup.Key.EndsAt,
+                    StartTime = _eventTimeService.NormalizeSessionizeLocalTime(slotGroup.Key.StartsAt),
+                    EndTime = _eventTimeService.NormalizeSessionizeLocalTime(slotGroup.Key.EndsAt),
                     Date = date
                 };
 

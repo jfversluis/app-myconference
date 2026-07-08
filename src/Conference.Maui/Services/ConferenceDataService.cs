@@ -1,8 +1,12 @@
+using System.Collections;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Reflection;
 using System.Text.Json;
 using Akavache;
 using Conference.Maui.Interfaces;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
 using Sessionize.Api.Client.Abstractions;
@@ -17,27 +21,36 @@ public class ConferenceDataService : IConferenceDataService
     private readonly IBlobCache _cache;
     private readonly ILogger<ConferenceDataService> _logger;
     private readonly IEventConfigService _configService;
+    private readonly IEventTimeService _eventTimeService;
+    private readonly JsonSerializerSettings _sessionizeJsonSettings;
     private readonly AsyncRetryPolicy _retryPolicy;
 
-    private const string AllDataCacheKey = "sessionize_all_data";
-    private const string ScheduleGridCacheKey = "sessionize_schedule_grid";
-    private const string LastModifiedCacheKey = "sessionize_last_modified";
-    private const string CategoryTagsCacheKey = "sessionize_category_tags";
-    private const string TagSessionCountsCacheKey = "sessionize_tag_session_counts";
-    private const string SessionTagMapCacheKey = "sessionize_session_tag_map";
+    private string AllDataCacheKey => $"sessionize_all_data_v3_timezonefix_rawjson_{_configService.Config.Api.SessionizeEventId}";
+    private string ScheduleGridCacheKey => $"sessionize_schedule_grid_v3_timezonefix_rawjson_{_configService.Config.Api.SessionizeEventId}";
+    private string LastModifiedCacheKey => $"sessionize_last_modified_{_configService.Config.Api.SessionizeEventId}";
+    private string CategoryTagsCacheKey => $"sessionize_category_tags_{_configService.Config.Api.SessionizeEventId}";
+    private string TagSessionCountsCacheKey => $"sessionize_tag_session_counts_{_configService.Config.Api.SessionizeEventId}";
+    private string SessionTagMapCacheKey => $"sessionize_session_tag_map_{_configService.Config.Api.SessionizeEventId}";
 
     public ConferenceDataService(
         ISessionizeApiClient sessionizeClient,
         IHttpClientFactory httpClientFactory,
         IEventConfigService configService,
+        IEventTimeService eventTimeService,
         ILogger<ConferenceDataService> logger)
     {
         _sessionizeClient = sessionizeClient;
         _configService = configService;
+        _eventTimeService = eventTimeService;
         _sessionizeClient.SessionizeApiId = _configService.Config.Api.SessionizeEventId;
         _httpClientFactory = httpClientFactory;
         _cache = BlobCache.LocalMachine;
         _logger = logger;
+        _sessionizeJsonSettings = new JsonSerializerSettings
+        {
+            DateParseHandling = DateParseHandling.None,
+            Converters = [new SessionizeLocalDateTimeOffsetConverter(_eventTimeService)]
+        };
 
         _retryPolicy = Policy
             .Handle<HttpRequestException>()
@@ -63,7 +76,7 @@ public class ConferenceDataService : IConferenceDataService
             {
                 try
                 {
-                    cachedData = await _cache.GetObject<AllDataResponse>(AllDataCacheKey);
+                    cachedData = await GetCachedSessionizeResponseAsync<AllDataResponse>(AllDataCacheKey);
                     _logger.LogDebug("Loaded conference data from cache");
                 }
                 catch (KeyNotFoundException)
@@ -87,11 +100,11 @@ public class ConferenceDataService : IConferenceDataService
                         }
 
                         var freshData = await FetchFromApiAsync(CancellationToken.None);
-                        if (freshData != null)
+                        if (freshData.Data != null)
                         {
-                            await _cache.InsertObject(
+                            await CacheSessionizeResponseAsync(
                                 AllDataCacheKey,
-                                freshData,
+                                freshData.Json,
                                 TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours));
                             _logger.LogInformation("Conference data refreshed in background");
                         }
@@ -109,15 +122,15 @@ public class ConferenceDataService : IConferenceDataService
             {
                 var freshData = await FetchFromApiAsync(cancellationToken);
 
-                if (freshData != null)
+                if (freshData.Data != null)
                 {
-                    await _cache.InsertObject(
+                    await CacheSessionizeResponseAsync(
                         AllDataCacheKey,
-                        freshData,
+                        freshData.Json,
                         TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours));
 
                     _logger.LogInformation("Conference data fetched and cached");
-                    return freshData;
+                    return freshData.Data;
                 }
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
@@ -134,14 +147,10 @@ public class ConferenceDataService : IConferenceDataService
         }
     }
 
-    private async Task<AllDataResponse?> FetchFromApiAsync(CancellationToken cancellationToken)
+    private async Task<(AllDataResponse? Data, string Json)> FetchFromApiAsync(CancellationToken cancellationToken)
     {
-        var data = await _retryPolicy.ExecuteAsync(async () =>
-        {
-            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            cts.CancelAfter(TimeSpan.FromSeconds(_configService.Config.Api.ApiTimeoutSeconds));
-            return await _sessionizeClient.GetAllDataAsync(cancellationToken: cts.Token);
-        });
+        var payload = await _retryPolicy.ExecuteAsync(ct => FetchSessionizePayloadAsync<AllDataResponse>("view/All", ct), cancellationToken);
+        var data = NormalizeSessionizeTimes(payload.Data);
 
         if (data != null)
         {
@@ -167,7 +176,7 @@ public class ConferenceDataService : IConferenceDataService
             }
         }
 
-        return data;
+        return (data, payload.Json);
     }
 
     public async Task<List<ScheduleGridResponse>> GetScheduleGridAsync(bool forceRefresh = false, CancellationToken cancellationToken = default)
@@ -179,7 +188,7 @@ public class ConferenceDataService : IConferenceDataService
             {
                 try
                 {
-                    var cachedData = await _cache.GetObject<List<ScheduleGridResponse>>(ScheduleGridCacheKey);
+                    var cachedData = await GetCachedSessionizeResponseAsync<List<ScheduleGridResponse>>(ScheduleGridCacheKey);
                     if (cachedData != null && cachedData.Count > 0)
                     {
                         _logger.LogDebug("Loaded schedule grid from cache");
@@ -197,24 +206,21 @@ public class ConferenceDataService : IConferenceDataService
             }
 
             // Fetch from API
-            var freshData = await _retryPolicy.ExecuteAsync(async () =>
-            {
-                using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                cts.CancelAfter(TimeSpan.FromSeconds(_configService.Config.Api.ApiTimeoutSeconds));
-                return await _sessionizeClient.GetScheduleGridAsync(cancellationToken: cts.Token);
-            });
+            var freshData = await _retryPolicy.ExecuteAsync(ct => FetchSessionizePayloadAsync<List<ScheduleGridResponse>>("view/grid-smart", ct), cancellationToken);
 
-            if (freshData != null)
+            var normalizedData = NormalizeSessionizeTimes(freshData.Data);
+
+            if (normalizedData != null)
             {
-                await _cache.InsertObject(
+                await CacheSessionizeResponseAsync(
                     ScheduleGridCacheKey,
-                    freshData,
+                    freshData.Json,
                     TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours));
 
                 _logger.LogInformation("Schedule grid refreshed and cached");
             }
 
-            return freshData ?? [];
+            return normalizedData ?? [];
         }
         catch (Exception ex)
         {
@@ -229,18 +235,15 @@ public class ConferenceDataService : IConferenceDataService
         {
             await Task.Delay(100, cancellationToken); // Small delay to not block UI
             
-            var freshData = await _retryPolicy.ExecuteAsync(async () =>
-            {
-                using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                cts.CancelAfter(TimeSpan.FromSeconds(_configService.Config.Api.ApiTimeoutSeconds));
-                return await _sessionizeClient.GetScheduleGridAsync(cancellationToken: cts.Token);
-            });
+            var freshData = await _retryPolicy.ExecuteAsync(ct => FetchSessionizePayloadAsync<List<ScheduleGridResponse>>("view/grid-smart", ct), cancellationToken);
 
-            if (freshData != null)
+            var normalizedData = NormalizeSessionizeTimes(freshData.Data);
+
+            if (normalizedData != null)
             {
-                await _cache.InsertObject(
+                await CacheSessionizeResponseAsync(
                     ScheduleGridCacheKey,
-                    freshData,
+                    freshData.Json,
                     TimeSpan.FromHours(_configService.Config.Api.CacheExpirationHours));
 
                 _logger.LogDebug("Schedule grid background refresh completed");
@@ -482,5 +485,105 @@ public class ConferenceDataService : IConferenceDataService
         {
             _logger.LogError(ex, "Error clearing cache");
         }
+    }
+
+    private T? NormalizeSessionizeTimes<T>(T? value) where T : class
+    {
+        if (value is null)
+            return null;
+
+        NormalizeObjectGraph(value, new HashSet<object>(ReferenceEqualityComparer.Instance));
+        return value;
+    }
+
+    private void NormalizeObjectGraph(object value, HashSet<object> visited)
+    {
+        var type = value.GetType();
+        if (IsTerminal(type))
+            return;
+
+        if (!type.IsValueType && !visited.Add(value))
+            return;
+
+        if (value is IEnumerable enumerable && value is not string)
+        {
+            foreach (var item in enumerable)
+            {
+                if (item is not null)
+                    NormalizeObjectGraph(item, visited);
+            }
+
+            return;
+        }
+
+        if (!IsSessionizeType(type))
+            return;
+
+        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (!property.CanRead)
+                continue;
+
+            if (property.PropertyType == typeof(DateTimeOffset) &&
+                property.CanWrite &&
+                (property.Name == "StartsAt" || property.Name == "EndsAt"))
+            {
+                var timestamp = (DateTimeOffset?)property.GetValue(value);
+                if (timestamp.HasValue)
+                    property.SetValue(value, _eventTimeService.NormalizeSessionizeLocalTime(timestamp.Value));
+
+                continue;
+            }
+
+            var propertyValue = property.GetValue(value);
+            if (propertyValue is not null)
+                NormalizeObjectGraph(propertyValue, visited);
+        }
+    }
+
+    private static bool IsSessionizeType(Type type) =>
+        type.Namespace?.StartsWith("Sessionize.Api.Client", StringComparison.Ordinal) == true;
+
+    private static bool IsTerminal(Type type) =>
+        type.IsPrimitive ||
+        type.IsEnum ||
+        type == typeof(string) ||
+        type == typeof(decimal) ||
+        type == typeof(DateTime) ||
+        type == typeof(DateTimeOffset) ||
+        type == typeof(DateOnly) ||
+        type == typeof(TimeOnly) ||
+        type == typeof(Guid);
+
+    private async Task<T?> GetCachedSessionizeResponseAsync<T>(string cacheKey)
+    {
+        var cachedJson = await _cache.GetObject<string>(cacheKey);
+        return DeserializeSessionize<T>(cachedJson);
+    }
+
+    private Task CacheSessionizeResponseAsync(string cacheKey, string json, TimeSpan expiry) =>
+        _cache.InsertObject(cacheKey, json, expiry).ToTask();
+
+    private async Task<(T? Data, string Json)> FetchSessionizePayloadAsync<T>(string relativePath, CancellationToken cancellationToken)
+    {
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(TimeSpan.FromSeconds(_configService.Config.Api.ApiTimeoutSeconds));
+
+        var client = _httpClientFactory.CreateClient();
+        var url = $"{_configService.Config.Api.SessionizeBaseUrl}{_configService.Config.Api.SessionizeEventId}/{relativePath}";
+        var json = await client.GetStringAsync(url, cts.Token);
+
+        return (DeserializeSessionize<T>(json), json);
+    }
+
+    private T? DeserializeSessionize<T>(string json)
+    {
+        using var stringReader = new StringReader(json);
+        using var jsonReader = new JsonTextReader(stringReader)
+        {
+            DateParseHandling = DateParseHandling.None
+        };
+
+        return Newtonsoft.Json.JsonSerializer.Create(_sessionizeJsonSettings).Deserialize<T>(jsonReader);
     }
 }

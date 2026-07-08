@@ -16,6 +16,7 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly IEventConfigService _configService;
+    private readonly IEventTimeService _eventTimeService;
     private readonly ILogger<SessionsViewModel> _logger;
 
     private AllDataResponse? _allData;
@@ -51,11 +52,13 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
         IEventConfigService configService,
+        IEventTimeService eventTimeService,
         ILogger<SessionsViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _configService = configService;
+        _eventTimeService = eventTimeService;
         _logger = logger;
         Title = "Sessions";
 
@@ -134,13 +137,17 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
         var days = await Task.Run(() =>
         {
             var result = new List<ScheduleDay>();
-
-            var sessionsByDate = allData.Sessions
-                .GroupBy(s =>
+            var normalizedSessions = allData.Sessions
+                .Select(session => new
                 {
-                    var dt = s.StartsAt;
-                    return new DateOnly(dt.Year, dt.Month, dt.Day);
+                    Session = session,
+                    StartsAt = _eventTimeService.NormalizeSessionizeLocalTime(session.StartsAt),
+                    EndsAt = _eventTimeService.NormalizeSessionizeLocalTime(session.EndsAt)
                 })
+                .ToList();
+
+            var sessionsByDate = normalizedSessions
+                .GroupBy(s => _eventTimeService.GetEventDate(s.StartsAt))
                 .OrderBy(g => g.Key)
                 .ToList();
 
@@ -164,8 +171,9 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
                             EndTime = slotGroup.Key.EndsAt
                         };
 
-                        foreach (var session in slotGroup.OrderBy(s => roomLookup.GetValueOrDefault(s.RoomId)))
+                        foreach (var sessionInfo in slotGroup.OrderBy(s => roomLookup.GetValueOrDefault(s.Session.RoomId)))
                         {
+                            var session = sessionInfo.Session;
                             var speakers = session.Speakers
                                 .Select(speakerId => speakerLookup.GetValueOrDefault(speakerId))
                                 .Where(s => s != null)
@@ -177,8 +185,8 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
                                 Id = session.Id,
                                 Title = session.Title,
                                 Description = session.Description,
-                                StartsAt = session.StartsAt,
-                                EndsAt = session.EndsAt,
+                                StartsAt = sessionInfo.StartsAt,
+                                EndsAt = sessionInfo.EndsAt,
                                 RoomId = session.RoomId,
                                 RoomName = roomLookup.GetValueOrDefault(session.RoomId),
                                 Speakers = speakers,
@@ -213,7 +221,7 @@ public partial class SessionsViewModel : BaseViewModel, IRecipient<FavoriteChang
     {
         if (Days.Count == 0) return;
 
-        var today = DateOnly.FromDateTime(DateTime.Now);
+        var today = _eventTimeService.GetEventDate(_eventTimeService.GetNow());
         var matchingDay = Days.FirstOrDefault(d => d.Date == today) ?? Days.First();
         
         // Set the initial selection

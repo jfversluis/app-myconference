@@ -50,6 +50,9 @@ public sealed class EventInfo
     [JsonPropertyName("isOnline")]
     public bool IsOnline { get; set; }
 
+    [JsonPropertyName("timeZone")]
+    public string TimeZone { get; set; } = "Europe/Copenhagen";
+
     public DateTime StartDateTime => DateTime.TryParse(StartDate, out var d) ? d : DateTime.Today;
     public DateTime EndDateTime => DateTime.TryParse(EndDate, out var d) ? d : DateTime.Today;
 }

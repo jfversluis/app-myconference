@@ -54,7 +54,7 @@
                                        VerticalOptions="Center"
                                        SemanticProperties.Description=""
                                        mi:MauiIcon.Value="{mi:Fluent Icon=Alert16, IconColor={AppThemeBinding Light={StaticResource PrimaryDeep}, Dark=#93C5FD}}" />
-                                <Label Text="{Binding StartsAt.LocalDateTime, StringFormat='{0:h:mm tt}'}"
+                                <Label Text="{Binding StartsAt.DateTime, StringFormat='{0:h:mm tt}'}"
                                        FontSize="11" FontAttributes="Bold"
                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDeep}, Dark=#93C5FD}"
                                        VerticalOptions="Center" />

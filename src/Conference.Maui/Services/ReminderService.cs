@@ -15,6 +15,7 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
 {
     private readonly IFavoritesService _favoritesService;
     private readonly IConferenceDataService _dataService;
+    private readonly IEventTimeService _eventTimeService;
     private readonly ILogger<ReminderService> _logger;
     private readonly IBlobCache _cache;
     private readonly SemaphoreSlim _lock = new(1, 1);
@@ -27,10 +28,12 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
     public ReminderService(
         IFavoritesService favoritesService,
         IConferenceDataService dataService,
+        IEventTimeService eventTimeService,
         ILogger<ReminderService> logger)
     {
         _favoritesService = favoritesService;
         _dataService = dataService;
+        _eventTimeService = eventTimeService;
         _logger = logger;
         _cache = BlobCache.UserAccount;
 
@@ -57,7 +60,7 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
         if (await IsSessionOverriddenOffAsync(sessionId))
             return;
 
-        var notifyTime = startsAt.LocalDateTime.AddMinutes(-LeadTimeMinutes);
+        var notifyTime = startsAt.ToLocalTime().DateTime.AddMinutes(-LeadTimeMinutes);
         var now = DateTime.Now;
 
 #if DEBUG
@@ -169,7 +172,7 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
             }
 
             var sessionMap = allData.Sessions.ToDictionary(s => s.Id);
-            var now = DateTimeOffset.Now;
+            var now = _eventTimeService.GetNow();
 
             // Cancel all first, then reschedule active ones — simplest reconciliation
             LocalNotificationCenter.Current.CancelAll();
@@ -186,7 +189,7 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
                 if (!sessionMap.TryGetValue(sessionId, out var session))
                     continue;
 
-                if (session.StartsAt <= now)
+                if (_eventTimeService.NormalizeSessionizeLocalTime(session.StartsAt) <= now)
                     continue; // Past session
 
                 if (await IsSessionOverriddenOffAsync(sessionId))
@@ -196,7 +199,7 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
                     ? allData.Rooms.FirstOrDefault(r => r.Id == session.RoomId)?.Name
                     : null;
 
-                await ScheduleReminderInternalAsync(sessionId, session.Title, roomName, session.StartsAt);
+                await ScheduleReminderInternalAsync(sessionId, session.Title, roomName, _eventTimeService.NormalizeSessionizeLocalTime(session.StartsAt));
                 scheduled++;
             }
 
@@ -249,7 +252,7 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
             ? allData.Rooms.FirstOrDefault(r => r.Id == session.RoomId)?.Name
             : null;
 
-        await ScheduleReminderAsync(sessionId, session.Title, roomName, session.StartsAt);
+        await ScheduleReminderAsync(sessionId, session.Title, roomName, _eventTimeService.NormalizeSessionizeLocalTime(session.StartsAt));
     }
 
     /// <summary>
@@ -257,7 +260,7 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
     /// </summary>
     private async Task ScheduleReminderInternalAsync(string sessionId, string title, string? roomName, DateTimeOffset startsAt)
     {
-        var notifyTime = startsAt.LocalDateTime.AddMinutes(-LeadTimeMinutes);
+        var notifyTime = startsAt.ToLocalTime().DateTime.AddMinutes(-LeadTimeMinutes);
         var now = DateTime.Now;
 
 #if DEBUG

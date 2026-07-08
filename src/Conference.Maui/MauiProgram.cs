@@ -51,6 +51,7 @@ public static class MauiProgram
 
         // Register config service (must be before Sessionize which depends on it)
         builder.Services.AddSingleton<IEventConfigService, EventConfigService>();
+        builder.Services.AddSingleton<IEventTimeService, EventTimeService>();
 
         // Configure Sessionize API client (defaults overridden at startup after config loads)
         builder.Services.Configure<SessionizeConfiguration>(options =>

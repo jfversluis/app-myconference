@@ -17,6 +17,7 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly IReminderService _reminderService;
+    private readonly IEventTimeService _eventTimeService;
     private readonly ILogger<SessionDetailsViewModel> _logger;
 
     [ObservableProperty]
@@ -42,11 +43,13 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
         IReminderService reminderService,
+        IEventTimeService eventTimeService,
         ILogger<SessionDetailsViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _reminderService = reminderService;
+        _eventTimeService = eventTimeService;
         _logger = logger;
         Title = "Session";
 
@@ -85,8 +88,8 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
                     Id = sessionData.Id,
                     Title = sessionData.Title,
                     Description = sessionData.Description,
-                    StartsAt = sessionData.StartsAt,
-                    EndsAt = sessionData.EndsAt,
+                    StartsAt = _eventTimeService.NormalizeSessionizeLocalTime(sessionData.StartsAt),
+                    EndsAt = _eventTimeService.NormalizeSessionizeLocalTime(sessionData.EndsAt),
                     RoomName = allData?.Rooms.FirstOrDefault(r => r.Id == sessionData.RoomId)?.Name,
                     RoomId = sessionData.RoomId,
                     Speakers = speakers,
@@ -117,7 +120,7 @@ public partial class SessionDetailsViewModel : BaseViewModel, IRecipient<Favorit
             // In debug builds, treat all sessions as future so reminders UI is testable with past conference data
             var isFuture = true;
 #else
-            var isFuture = Session.StartsAt > DateTimeOffset.Now;
+            var isFuture = Session.StartsAt > _eventTimeService.GetNow();
 #endif
             ShowReminderToggle = Session.IsFavorite && _reminderService.IsGlobalRemindersEnabled && isFuture;
             IsReminderActive = ShowReminderToggle && await _reminderService.IsReminderActiveAsync(Session.Id);

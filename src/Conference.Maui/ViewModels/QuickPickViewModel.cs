@@ -20,6 +20,7 @@ public partial class QuickPickViewModel : BaseViewModel, IRecipient<FavoriteChan
     private readonly IConferenceDataService _dataService;
     private readonly IFavoritesService _favoritesService;
     private readonly ISessionItemMapper _mapper;
+    private readonly IEventTimeService _eventTimeService;
     private readonly ILogger<QuickPickViewModel> _logger;
 
     private AllDataResponse? _allData;
@@ -90,11 +91,13 @@ public partial class QuickPickViewModel : BaseViewModel, IRecipient<FavoriteChan
         IConferenceDataService dataService,
         IFavoritesService favoritesService,
         ISessionItemMapper mapper,
+        IEventTimeService eventTimeService,
         ILogger<QuickPickViewModel> logger)
     {
         _dataService = dataService;
         _favoritesService = favoritesService;
         _mapper = mapper;
+        _eventTimeService = eventTimeService;
         _logger = logger;
 
         WeakReferenceMessenger.Default.Register<FavoriteChangedMessage>(this);
@@ -275,8 +278,8 @@ public partial class QuickPickViewModel : BaseViewModel, IRecipient<FavoriteChan
         var conflicting = _allData.Sessions
             .Where(s => (_favoriteIds.Contains(s.Id) || _sessionFavoritedIds.Contains(s.Id))
                 && s.Id != session.Id
-                && s.StartsAt < session.EndsAt
-                && s.EndsAt > session.StartsAt)
+                && _eventTimeService.NormalizeSessionizeLocalTime(s.StartsAt) < session.EndsAt
+                && _eventTimeService.NormalizeSessionizeLocalTime(s.EndsAt) > session.StartsAt)
             .ToList();
 
         if (conflicting.Count == 1)
