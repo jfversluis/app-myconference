@@ -252,7 +252,7 @@ public partial class ConflictResolverViewModel : BaseViewModel
             SwipeState state;
             try
             {
-                state = await BlobCache.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
+                state = await CacheDatabase.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
             }
             catch
             {
@@ -266,7 +266,7 @@ public partial class ConflictResolverViewModel : BaseViewModel
             }
 
             state.LastUpdated = DateTime.UtcNow;
-            await BlobCache.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, state);
+            await CacheDatabase.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, state);
         }
         catch (Exception ex)
         {
@@ -278,11 +278,11 @@ public partial class ConflictResolverViewModel : BaseViewModel
     {
         try
         {
-            var state = await BlobCache.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
+            var state = await CacheDatabase.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
             foreach (var id in sessionIds)
                 state.SkippedSessionIds.Remove(id);
             state.LastUpdated = DateTime.UtcNow;
-            await BlobCache.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, state);
+            await CacheDatabase.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, state);
         }
         catch (Exception ex)
         {

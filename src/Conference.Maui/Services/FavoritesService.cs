@@ -17,7 +17,7 @@ public class FavoritesService : IFavoritesService
 
     public FavoritesService(ILogger<FavoritesService> logger)
     {
-        _cache = BlobCache.UserAccount;
+        _cache = CacheDatabase.UserAccount;
         _logger = logger;
     }
 
