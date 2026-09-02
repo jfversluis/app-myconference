@@ -44,7 +44,7 @@ public class ConferenceDataService : IConferenceDataService
         _eventTimeService = eventTimeService;
         _sessionizeClient.SessionizeApiId = _configService.Config.Api.SessionizeEventId;
         _httpClientFactory = httpClientFactory;
-        _cache = BlobCache.LocalMachine;
+        _cache = CacheDatabase.LocalMachine;
         _logger = logger;
         _sessionizeJsonSettings = new JsonSerializerSettings
         {

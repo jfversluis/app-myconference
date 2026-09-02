@@ -472,7 +472,7 @@ public partial class QuickPickViewModel : BaseViewModel, IRecipient<FavoriteChan
     {
         try
         {
-            var state = await BlobCache.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
+            var state = await CacheDatabase.UserAccount.GetObject<SwipeState>(PreferenceKeys.QuickPickSwipeState);
             _logger.LogDebug("Loaded swipe state: {SkipCount} skipped, last updated {Updated}",
                 state.SkippedSessionIds.Count, state.LastUpdated);
             return state;
@@ -487,6 +487,6 @@ public partial class QuickPickViewModel : BaseViewModel, IRecipient<FavoriteChan
     private async Task SaveSwipeStateAsync()
     {
         _swipeState.LastUpdated = DateTime.UtcNow;
-        await BlobCache.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, _swipeState);
+        await CacheDatabase.UserAccount.InsertObject(PreferenceKeys.QuickPickSwipeState, _swipeState);
     }
 }

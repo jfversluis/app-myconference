@@ -35,7 +35,7 @@ public class ReminderService : IReminderService, IRecipient<FavoriteChangedMessa
         _dataService = dataService;
         _eventTimeService = eventTimeService;
         _logger = logger;
-        _cache = BlobCache.UserAccount;
+        _cache = CacheDatabase.UserAccount;
 
         WeakReferenceMessenger.Default.Register<FavoriteChangedMessage>(this);
     }

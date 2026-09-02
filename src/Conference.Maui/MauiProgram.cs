@@ -1,4 +1,7 @@
 ﻿using Akavache;
+using Akavache.NewtonsoftJson;
+using Akavache.Sqlite3;
+using Akavache.V10toV11;
 using CommunityToolkit.Maui;
 using Conference.Maui.Configuration;
 using Conference.Maui.Interfaces;
@@ -10,6 +13,7 @@ using Plugin.LocalNotification;
 using Sessionize.Api.Client;
 using Sessionize.Api.Client.Abstractions;
 using Sessionize.Api.Client.Configuration;
+using Splat.Builder;
 using Syncfusion.Maui.Toolkit.Hosting;
 using MauiIcons.Fluent;
 #if DEBUG
@@ -22,6 +26,13 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        AppBuilder.CreateSplatBuilder()
+            .WithAkavacheCacheDatabase<NewtonsoftBsonSerializer>(cache =>
+                cache.WithSqliteProvider()
+                    .WithSqliteDefaults()
+                    .WithV10FileNames(),
+                "Conference.Maui");
+
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
@@ -99,10 +110,6 @@ public static class MauiProgram
         builder.Logging.AddDebug();
         builder.AddMauiDevFlowAgent();
 #endif
-
-        // Initialize Akavache after DI is configured but before Build
-        // (required before BlobCache is accessed in service constructors)
-        Registrations.Start("Conference.Maui");
 
         return builder.Build();
     }

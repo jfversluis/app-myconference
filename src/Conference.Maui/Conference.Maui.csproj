@@ -35,6 +35,7 @@
 
 	<!-- Android release signing -->
 	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' AND '$(Configuration)' == 'Release'">
+		<AndroidLinkTool>r8</AndroidLinkTool>
 		<AndroidKeyStore>true</AndroidKeyStore>
 		<AndroidSigningKeyStore>..\..\ndc.keystore</AndroidSigningKeyStore>
 		<AndroidSigningKeyAlias>ndc</AndroidSigningKeyAlias>
@@ -63,10 +64,11 @@
 	<ItemGroup>
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.Fluent" Version="6.0.0" />
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.Fluent.Filled" Version="6.0.0" />
-		<PackageReference Include="Akavache" Version="10.0.1" />
+		<PackageReference Include="Akavache.NewtonsoftJson" Version="13.0.0" />
+		<PackageReference Include="Akavache.Sqlite3" Version="13.0.0" />
+		<PackageReference Include="Akavache.V10toV11" Version="13.0.0" />
 		<!-- Pin transitive deps to fix vulnerabilities and 16KB page size warning -->
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.11" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="13.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.41" />
@@ -77,6 +79,7 @@
 		<PackageReference Include="Polly" Version="8.5.2" />
 		<PackageReference Include="Redth.MauiDevFlow.Agent" Version="0.23.1" />
 		<PackageReference Include="Sessionize.Api.Client" Version="1.2.0" />
+		<PackageReference Include="System.Reactive" Version="7.0.0" />
 		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.8" />
 	</ItemGroup>
 
