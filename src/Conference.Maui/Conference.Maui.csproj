@@ -43,6 +43,26 @@
 		<AndroidSigningKeyPass>env:NDC_KEYSTORE_PASSWORD</AndroidSigningKeyPass>
 	</PropertyGroup>
 
+	<Target Name="IncludeR8BuildMetadata"
+			BeforeTargets="_CompileToDalvik"
+			Condition="'$(AndroidLinkTool)' == 'r8'">
+		<PropertyGroup>
+			<_R8BuildMetadataFile>$(IntermediateOutputPath)r8.json</_R8BuildMetadataFile>
+			<_R8JarFile>$([System.IO.Path]::GetFullPath('$(IntermediateOutputPath)r8-9.0.32.jar'))</_R8JarFile>
+			<AndroidR8JarPath>$(_R8JarFile)</AndroidR8JarPath>
+			<AndroidR8ExtraArguments>--build-metadata-output &quot;$(_R8BuildMetadataFile)&quot;</AndroidR8ExtraArguments>
+		</PropertyGroup>
+
+		<DownloadFile Condition="!Exists('$(_R8JarFile)')"
+					  SourceUrl="https://storage.googleapis.com/r8-releases/raw/9.0.32/r8.jar"
+					  DestinationFolder="$(IntermediateOutputPath)"
+					  DestinationFileName="r8-9.0.32.jar" />
+
+		<ItemGroup>
+			<AndroidAppBundleMetaDataFile Include="com.android.tools/r8.json:$(_R8BuildMetadataFile)" />
+		</ItemGroup>
+	</Target>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
